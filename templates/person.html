@@ -1,28 +1,41 @@
 {% extends "base.html" %}
 
-{% block title %}{{ person.full_name}}{% endblock %}
+{% block title %}{{ person.name }}{% endblock %}
 
 {% block content %}
-<h1>{{ person.full_name}}</h1>
-Born: {{ person.date_of_birth|date:"l j F Y" }}
-<h2>Immediate Relatives</h2>
-<dl>
-{% if person.mother or person.father %}
-  <dt>Parents</dt>
-  {% if person.mother %}<dd><a href="../{{ person.mother.id }}/">{{ person.mother.full_name }}</a></dd>{% endif %}
-  {% if person.father %}<dd><a href="../{{ person.father.id }}/">{{ person.father.full_name }}</a></dd>{% endif %}
-{% endif %}
-{% if person.siblings %}
-  <dt>Siblings</dt>
-  {% for sibling in person.siblings %}
-    <dd><a href="../{{ sibling.id }}/">{{ sibling.full_name }}</a></dd>
-  {% endfor %}
-{% endif %}
-{% if person.children %}
-  <dt>Children</dt>
-  {% for child in person.children %}
-    <dd><a href="../{{ child.id }}/">{{ child.full_name }}</a></dd>
-  {% endfor %}
-{% endif %}
-</dl>
+  <h1>{{ person.name }}</h1>
+  Born: {{ person.date_of_birth|date:"l j F Y" }}
+  
+  <h2>Immediate Relatives</h2>
+  <dl>
+  {% if person.spouses %}
+    <dt>
+      {% ifequal person.gender 'F' %}Husband{{ person.spouses|length|pluralize }}{% endifequal %}
+      {% ifequal person.gender 'M' %}Wi{{ person.spouses|length|pluralize:"fe,ves"}}{% endifequal %}
+    </dt>
+    {% for spouse in person.spouses %}
+      <dd><a href="../{{ spouse.id }}/">{{ spouse.name }}</a></dd>
+    {% endfor %}
+  {% endif %}
+  
+  {% if person.children %}
+    <dt>Children</dt>
+    {% for child in person.children %}
+      <dd><a href="../{{ child.id }}/">{{ child.name }}</a></dd>
+    {% endfor %}
+  {% endif %}
+  
+  {% if person.mother or person.father %}
+    <dt>Parents</dt>
+    {% if person.mother %}<dd><a href="../{{ person.mother.id }}/">{{ person.mother.name }}</a></dd>{% endif %}
+    {% if person.father %}<dd><a href="../{{ person.father.id }}/">{{ person.father.name }}</a></dd>{% endif %}
+  {% endif %}
+  
+  {% if person.siblings %}
+    <dt>Siblings</dt>
+    {% for sibling in person.siblings %}
+      <dd><a href="../{{ sibling.id }}/">{{ sibling.name }}</a></dd>
+    {% endfor %}
+  {% endif %}
+  </dl>
 {% endblock %}
