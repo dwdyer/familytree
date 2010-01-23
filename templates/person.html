@@ -12,5 +12,17 @@ Born: {{ person.date_of_birth|date:"l j F Y" }}
   {% if person.mother %}<dd><a href="../{{ person.mother.id }}/">{{ person.mother.full_name }}</a></dd>{% endif %}
   {% if person.father %}<dd><a href="../{{ person.father.id }}/">{{ person.father.full_name }}</a></dd>{% endif %}
 {% endif %}
+{% if person.siblings %}
+  <dt>Siblings</dt>
+  {% for sibling in person.siblings %}
+    <dd><a href="../{{ sibling.id }}/">{{ sibling.full_name }}</a></dd>
+  {% endfor %}
+{% endif %}
+{% if person.children %}
+  <dt>Children</dt>
+  {% for child in person.children %}
+    <dd><a href="../{{ child.id }}/">{{ child.full_name }}</a></dd>
+  {% endfor %}
+{% endif %}
 </dl>
 {% endblock %}
