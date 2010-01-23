@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}{{ person.full_name}}{% endblock %}
+
+{% block content %}
+<h1>{{ person.full_name}}</h1>
+Born: {{ person.date_of_birth|date:"l j F Y" }}
+<h2>Immediate Relatives</h2>
+<dl>
+{% if person.mother or person.father %}
+  <dt>Parents</dt>
+  {% if person.mother %}<dd><a href="../{{ person.mother.id }}/">{{ person.mother.full_name }}</a></dd>{% endif %}
+  {% if person.father %}<dd><a href="../{{ person.father.id }}/">{{ person.father.full_name }}</a></dd>{% endif %}
+{% endif %}
+</dl>
+{% endblock %}
