@@ -1,3 +1,4 @@
+from datetime import date
 from django.db import models
 from django.db.models import Q
 
@@ -5,7 +6,6 @@ class Person(models.Model):
     forename = models.CharField(max_length=20)
     middle_names = models.CharField(blank=True, max_length=50)
     surname = models.CharField(max_length=30)
-    
     maiden_name = models.CharField(blank=True, max_length=30) # Maiden name is optional.
     gender = models.CharField(max_length=1, choices=(('M', 'Male'), ('F', 'Female')))
     date_of_birth = models.DateField()
@@ -20,6 +20,14 @@ class Person(models.Model):
             return name + " " + (self.maiden_name if use_maiden_name else self.surname + u" (n\xe9e " + self.maiden_name + ")")
         else:
             return name + " " + self.surname
+
+    def age(self):
+        '''Calculate the person's age in years.'''
+        today = date.today()
+        years = today.year - self.date_of_birth.year
+        if today.month < self.date_of_birth.month or (today.month == self.date_of_birth.month and today.day < self.date_of_birth.day):
+            years -= 1
+        return years
 
     def is_deceased(self):
         return self.date_of_death != None

@@ -4,7 +4,8 @@
 
 {% block content %}
   <h1>{{ person.name }}</h1>
-  Born: {{ person.date_of_birth|date:"l j F Y" }}
+  Born: {{ person.date_of_birth|date:"l j F Y" }}<br />
+  Age: {{ person.age }} years
   
   <h2>Immediate Relatives</h2>
   <dl>
