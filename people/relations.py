@@ -1,8 +1,6 @@
-from familytree.people.models import Person
-
 def describe_relative(person, relative):
-    person_ancestors = person.ancestors()
-    relative_ancestors = relative.ancestors()
+    person_ancestors = person.ancestor_distances()
+    relative_ancestors = relative.ancestor_distances()
     # First check for direct ancestors (i.e. parents, grandparents, great-grandparents, etc.)
     if relative in person_ancestors:
         distance = person_ancestors[relative]
@@ -16,10 +14,14 @@ def describe_relative(person, relative):
     # Then check for shared ancestors.
     (ancestor, distance1, distance2) = closest_common_ancestor(person_ancestors, relative_ancestors)
     if ancestor: 
-        if distance1 == 1 and distance2 == 1:   return 'Sister' if relative.gender == 'F' else 'Brother'
-        elif distance1 == 1:                    return ('Great-' * distance2 - 2) + ('Niece' if relative.gender == 'F' else 'Nephew')
-        elif distance2 == 1:                    return ('Great-' * distance1 - 2) + ('Aunt' if relative.gender == 'F' else 'Uncle')
-        else:                                   return 'Cousin' # TO DO: Be more specific.
+        if distance1 == 1 and distance2 == 1: return 'Sister' if relative.gender == 'F' else 'Brother'
+        elif distance1 == 1:                  return ('Great-' * (distance2 - 2)) + ('Niece' if relative.gender == 'F' else 'Nephew')
+        elif distance2 == 1:                  return ('Great-' * (distance1 - 2)) + ('Aunt' if relative.gender == 'F' else 'Uncle')
+        else:
+            pos = min((distance1, distance2)) - 1
+            removes = abs(distance1 - distance2)
+            if removes > 0: return ' {0} Cousin {1} Removed'.format(position(pos), number_of_times(removes))
+            else:           return ' {0} Cousin'.format(position(pos))
     return None
 
 
@@ -34,3 +36,17 @@ def closest_common_ancestor(person_ancestors, relative_ancestors):
             if common_ancestor == None or distance < person_distance or distance2 < relative_distance:
                 (common_ancestor, person_distance, relative_distance) = (ancestor, distance, distance2)
     return (common_ancestor, person_distance, relative_distance)
+
+def position(position):
+    remainder = position % 10
+    if remainder == 1: return str(position) + 'st'
+    elif remainder == 2: return str(position) + 'nd'
+    elif remainder == 3: return str(position) + 'rd'
+    return str(position) + 'th'
+
+def number_of_times(number):
+    if number == 1 : return 'Once'
+    elif number == 2 : return 'Twice'
+    elif number == 3 : return 'Thrice'
+    else: return str(number_of_times) + ' Times'
+

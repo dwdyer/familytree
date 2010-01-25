@@ -1,6 +1,7 @@
 from datetime import date
 from django.db import models
 from django.db.models import Q
+from familytree.people.relations import describe_relative
 from sets import Set
 
 class Person(models.Model):
@@ -59,23 +60,34 @@ class Person(models.Model):
         descendants += children
         for child in children:
             descendants += child.descendants()
-        return descendants
+        annotated_descendants = {}
+        for descendant in descendants:
+            annotated_descendants[descendant] = describe_relative(self, descendant)
+        return annotated_descendants
 
     # Returns a dictionary of this person's ancestors.  The ancestors are the keys and each value is the distance (number of generations) from
     # this person to that ancestor (e.g parent is 1, grandparent is 2, etc.)
-    def ancestors(self, offset=0):
-        '''Returns a map of this person's ancestors (their parents and all of their parents's ancestors) and distance to each ancestor.'''
+    def ancestor_distances(self, offset=0):
+        '''Returns a dictionary of this person's ancestors (their parents and all of their parents's ancestors) with distance to each ancestor.'''
         ancestors = {} 
         if self.mother:
             ancestors[self.mother] = offset + 1
-            ancestors.update(self.mother.ancestors(offset + 1))
+            ancestors.update(self.mother.ancestor_distances(offset + 1))
         if self.father:
             ancestors[self.father] = offset + 1
-            ancestors.update(self.father.ancestors(offset + 1))
+            ancestors.update(self.father.ancestor_distances(offset + 1))
         return ancestors
 
-    def living_relatives(self):
-        '''Returns a list of all of this person's living blood relatives.'''
+    def ancestors(self):
+        '''Returns a list of this person's ancestors (their parents and all of their parent's ancestors).'''
+        ancestors = self.ancestor_distances().keys()
+        annotated_ancestors = {}
+        for ancestor in ancestors:
+            annotated_ancestors[ancestor] = describe_relative(self, ancestor)
+        return annotated_ancestors
+
+    def relatives(self):
+        '''Returns a map of all of this person's blood relatives.  The keys are the relatives and the values describe the relationship.'''
         # Two people are related by blood if they share a common ancestor.
         ancestors = self.ancestors()
         # For efficiency, only consider root ancestors since their descendants' blood relatives will be a
@@ -83,9 +95,12 @@ class Person(models.Model):
         root_ancestors = filter(lambda a : not (a.father and a.mother), ancestors.keys()) if ancestors else [self]
         relatives = Set(root_ancestors)
         for ancestor in root_ancestors:
-            relatives.update(ancestor.descendants())
-        # This person can't be their own relative.  Also remove any dead relatives.
-        return filter(lambda r : r != self and not r.is_deceased(), relatives)
+            relatives.update(ancestor.descendants().keys())
+        relatives.remove(self) # This person can't be their own relative.
+        annotated_relatives = {}
+        for relative in relatives:
+            annotated_relatives[relative] = describe_relative(self, relative)
+        return annotated_relatives
 
     def __unicode__(self):
         return self.name()

@@ -45,8 +45,8 @@
 
   <h2>Extended Family</h2>
   <ul>
-    <li><a href="#">All Descendants</a> ({{ person.descendants|length }})</li>
-    <li><a href="#">All Ancestors</a> ({{ person.ancestors|length }})</li>
-    <li><a href="#">All Living Blood Relatives</a> ({{ person.living_relatives|length }})</li>
+    {% if person.descendants %}<li><a href="./relatives/descendants/">All Descendants</a> ({{ person.descendants|length }})</li>{% endif %}
+    {% if person.ancestors %}<li><a href="./relatives/ancestors/">All Ancestors</a> ({{ person.ancestors|length }})</li>{% endif %}
+    <li><a href="./relatives/">All Blood Relatives</a> ({{ person.relatives|length }})</li>
   </ul>
 {% endblock %}
