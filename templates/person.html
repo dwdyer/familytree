@@ -4,9 +4,12 @@
 
 {% block content %}
   <h1>{{ person.name }}</h1>
-  Born: {{ person.date_of_birth|date:"l j F Y" }}<br />
-  Age: {{ person.age }} years
-  
+  <table>
+    <tr><td>Born:</td><td>{{ person.date_of_birth|date:"l j F Y" }}</td></tr>
+    {% if person.is_deceased %}<tr><td>Died:</td><td>{{ person.date_of_death|date:"l j F Y" }}</td></tr>{% endif %}
+    <tr><td>Age:</td><td>{{ person.age }} years</td></tr>
+  </table>
+
   <h2>Immediate Relatives</h2>
   <dl>
   {% if person.spouses %}
@@ -39,4 +42,11 @@
     {% endfor %}
   {% endif %}
   </dl>
+
+  <h2>Extended Family</h2>
+  <ul>
+    <li><a href="#">All Descendants</a> ({{ person.descendants|length }})</li>
+    <li><a href="#">All Ancestors</a> ({{ person.ancestors|length }})</li>
+    <li><a href="#">All Living Blood Relatives</a> ({{ person.living_relatives|length }})</li>
+  </ul>
 {% endblock %}
