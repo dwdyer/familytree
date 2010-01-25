@@ -1,3 +1,4 @@
+import os.path
 from django.conf.urls.defaults import *
 
 from django.contrib import admin
@@ -11,4 +12,5 @@ urlpatterns = patterns('',
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     (r'^admin/', include(admin.site.urls)),
+    (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.join(os.path.dirname(__file__), 'templates/media').replace('\\','/')}),
 )

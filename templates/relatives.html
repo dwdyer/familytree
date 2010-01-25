@@ -7,7 +7,7 @@
   <table>
   {% for relative, description in relatives.items %}
     <tr class="{% if relative.is_deceased %}deceased{% else %}living{% endif %}">
-      <td><a href="../../{{ relative.id }}/">{{ relative.name }}</a></td>
+      <td><a href="/people/{{ relative.id }}/">{{ relative.name }}</a></td>
       <td>{{ description }}</td>
     </tr>
   {% endfor %}
