@@ -87,7 +87,7 @@ class Person(models.Model):
         return annotated_ancestors
 
     def relatives(self):
-        '''Returns a map of all of this person's blood relatives.  The keys are the relatives and the values describe the relationship.'''
+        '''Returns a dictionary of all of this person's blood relatives.  The keys are the relatives and the values describe the relationship.'''
         # Two people are related by blood if they share a common ancestor.
         ancestors = self.ancestors()
         # For efficiency, only consider root ancestors since their descendants' blood relatives will be a
@@ -101,6 +101,10 @@ class Person(models.Model):
         for relative in relatives:
             annotated_relatives[relative] = describe_relative(self, relative)
         return annotated_relatives
+
+    def photos(self):
+        '''Returns a list of all photos associated with this person.'''
+        return Photograph.objects.filter(person=self)
 
     def __unicode__(self):
         return self.name()
@@ -116,3 +120,13 @@ class Marriage(models.Model):
     def __unicode__(self):
         return self.husband.name(False) + ' & ' + self.wife.name(False, True)
 
+
+class Photograph(models.Model):
+    '''The photograph record combines an image with an optional caption and date and links it to a person.'''
+    image = models.ImageField(upload_to='uploads', blank=True, null=True)
+    person = models.ForeignKey(Person)
+    caption = models.TextField(blank=True)
+    date = models.DateField(blank=True, null=True)
+
+    def __unicode__(self):
+        return self.image.url

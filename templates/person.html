@@ -2,54 +2,95 @@
 
 {% block title %}{{ person.name }}{% endblock %}
 
+{% block head %}
+  <!-- YUI Carousel -->
+  <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/2.8.0r4/build/carousel/assets/skins/sam/carousel.css" />  
+  <script type="text/javascript" src="http://yui.yahooapis.com/combo?2.8.0r4/build/yahoo-dom-event/yahoo-dom-event.js&amp;2.8.0r4/build/element/element-min.js&amp;2.8.0r4/build/carousel/carousel-min.js"></script>
+{% endblock %}
+
 {% block content %}
-  <h1>{{ person.name }}</h1>
-  <table>
-    <tr><td>Born:</td><td>{{ person.date_of_birth|date:"l j F Y" }}</td></tr>
-    {% if person.is_deceased %}<tr><td>Died:</td><td>{{ person.date_of_death|date:"l j F Y" }}</td></tr>{% endif %}
-    <tr><td>Age:</td><td>{{ person.age }} years</td></tr>
-  </table>
-  
   <div id="sidebar">
-    <h2>Immediate Relatives</h2>
-    <dl>
-    {% if person.spouses %}
-      <dt>
-        {% ifequal person.gender 'F' %}Husband{{ person.spouses|length|pluralize }}{% endifequal %}
-        {% ifequal person.gender 'M' %}Wi{{ person.spouses|length|pluralize:"fe,ves"}}{% endifequal %}
-      </dt>
-      {% for spouse in person.spouses %}
-        <dd><a href="../{{ spouse.id }}/">{{ spouse.name }}</a></dd>
-      {% endfor %}
-    {% endif %}
+    <div class="contents yui-skin-sam">
+      {% if person.photos %}
+        <div id="photos">
+          <ol>
+          {% for photo in person.photos %}
+            <li>
+              <a href="{{ photo.image.url }}"><img src="{{ photo.image.url }}" class="photo"/></a>
+              <p class="caption">
+                {{ photo.caption }}
+              </p>
+            </li>
+          {% endfor %}
+          </ol>
+        </div>
+        <script type="text/javascript">
+          (function () {
+            var carousel;
+            YAHOO.util.Event.onDOMReady(function (ev) {
+              var index = (Math.floor(Math.random() * {{ photos|length }}));
+              var carousel = new YAHOO.widget.Carousel("photos", {
+                isCircular: true, numVisible: 1
+              });
+              carousel.render();
+              carousel.scrollTo(index);
+            });
+          })();
+        </script>
+      {% endif %}
+      <h2>Immediate Relatives</h2>
+      <dl>
+      {% if person.spouses %}
+        <dt>
+          {% ifequal person.gender 'F' %}Husband{{ person.spouses|length|pluralize }}{% endifequal %}
+          {% ifequal person.gender 'M' %}Wi{{ person.spouses|length|pluralize:"fe,ves"}}{% endifequal %}
+        </dt>
+        {% for spouse in person.spouses %}
+          <dd><a href="../{{ spouse.id }}/">{{ spouse.name }}</a></dd>
+        {% endfor %}
+      {% endif %}
+      
+      {% if person.children %}
+        <dt>Children</dt>
+        {% for child in person.children %}
+          <dd><a href="../{{ child.id }}/">{{ child.name }}</a></dd>
+        {% endfor %}
+      {% endif %}
+      
+      {% if person.mother or person.father %}
+        <dt>Parents</dt>
+        {% if person.mother %}<dd><a href="../{{ person.mother.id }}/">{{ person.mother.name }}</a></dd>{% endif %}
+        {% if person.father %}<dd><a href="../{{ person.father.id }}/">{{ person.father.name }}</a></dd>{% endif %}
+      {% endif %}
+      
+      {% if person.siblings %}
+        <dt>Siblings</dt>
+        {% for sibling in person.siblings %}
+          <dd><a href="../{{ sibling.id }}/">{{ sibling.name }}</a></dd>
+        {% endfor %}
+      {% endif %}
+      </dl>
     
-    {% if person.children %}
-      <dt>Children</dt>
-      {% for child in person.children %}
-        <dd><a href="../{{ child.id }}/">{{ child.name }}</a></dd>
-      {% endfor %}
-    {% endif %}
-    
-    {% if person.mother or person.father %}
-      <dt>Parents</dt>
-      {% if person.mother %}<dd><a href="../{{ person.mother.id }}/">{{ person.mother.name }}</a></dd>{% endif %}
-      {% if person.father %}<dd><a href="../{{ person.father.id }}/">{{ person.father.name }}</a></dd>{% endif %}
-    {% endif %}
-    
-    {% if person.siblings %}
-      <dt>Siblings</dt>
-      {% for sibling in person.siblings %}
-        <dd><a href="../{{ sibling.id }}/">{{ sibling.name }}</a></dd>
-      {% endfor %}
-    {% endif %}
-    </dl>
-  
-    <h2>Extended Family</h2>
-    <ul>
-      {% if person.descendants %}<li><a href="./relatives/descendants/">All Descendants</a> ({{ person.descendants|length }})</li>{% endif %}
-      {% if person.ancestors %}<li><a href="./relatives/ancestors/">All Ancestors</a> ({{ person.ancestors|length }})</li>{% endif %}
-      <li><a href="./relatives/">All Blood Relatives</a> ({{ person.relatives|length }})</li>
-    </ul>
+      <h2>Extended Family</h2>
+      <ul>
+        {% if person.descendants %}<li><a href="./relatives/descendants/">All Descendants</a> ({{ person.descendants|length }})</li>{% endif %}
+        {% if person.ancestors %}<li><a href="./relatives/ancestors/">All Ancestors</a> ({{ person.ancestors|length }})</li>{% endif %}
+        <li><a href="./relatives/">All Blood Relatives</a> ({{ person.relatives|length }})</li>
+      </ul>
+    </div>
   </div>
+
+  <div class="contents">
+    <h1>{{ person.name }}</h1>
+    <table>
+      <tr><td>Born:</td><td>{{ person.date_of_birth|date:"l j F Y" }}</td></tr>
+      {% if person.is_deceased %}<tr><td>Died:</td><td>{{ person.date_of_death|date:"l j F Y" }}</td></tr>{% endif %}
+      <tr><td>Age:</td><td>{{ person.age }} years</td></tr>
+    </table>
+    <h2>Notes</h2>
+    <h2>Education</h2>
+    <h2>Documents</h2>
+  </div>
+  
 {% endblock %}
 

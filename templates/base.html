@@ -3,7 +3,8 @@
 <html>
   <head>
     <title>{% block title %}{% endblock %}</title>
-    <link href="/static/style.css" rel="stylesheet" type="text/css" />
+    <link href="/media/templates/style.css" rel="stylesheet" type="text/css" />
+    {% block head %}{% endblock %}
   </head>
   <body>
     <div id="container">
