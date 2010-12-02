@@ -39,9 +39,9 @@ def closest_common_ancestor(person_ancestors, relative_ancestors):
 
 def position(position):
     remainder = position % 10
-    if remainder == 1: return str(position) + 'st'
-    elif remainder == 2: return str(position) + 'nd'
-    elif remainder == 3: return str(position) + 'rd'
+    if remainder == 1 and position != 11: return str(position) + 'st'
+    elif remainder == 2 and position != 12: return str(position) + 'nd'
+    elif remainder == 3 and position != 13: return str(position) + 'rd'
     return str(position) + 'th'
 
 def number_of_times(number):
