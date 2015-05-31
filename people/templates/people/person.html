@@ -1,0 +1,93 @@
+{% extends "people/base.html" %}
+
+{% block title %}{{ person.name }}{% endblock %}
+
+{% block content %}
+  <h1 class="page-header">{{ person.name }}</h1>
+  <div class="row">
+    <div class="col-md-8">
+      <table class="table table-condensed">
+        <tr><td>Born:</td><td>{{ person.date_of_birth|date:"l j F Y" }}</td></tr>
+        {% if person.is_deceased %}<tr><td>Died:</td><td>{{ person.date_of_death|date:"l j F Y" }}</td></tr>{% endif %}
+        <tr><td>Age:</td><td>{{ person.age }} years</td></tr>
+      </table>
+      <h2>Notes</h2>
+      <h2>Education</h2>
+      <h2>Documents</h2>
+    </div>
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Immediate Relatives</h3>
+        </div>
+        <div class="panel-body">
+          <table class="table">
+            {% if person.spouses %}
+              <tr>
+                <th>
+                  {% ifequal person.gender 'F' %}Husband{{ person.spouses|length|pluralize }}{% endifequal %}
+                  {% ifequal person.gender 'M' %}Wi{{ person.spouses|length|pluralize:"fe,ves"}}{% endifequal %}
+                </th>
+                <td>
+                  {% for spouse in person.spouses %}
+                    <a href="../{{ spouse.id }}/">{{ spouse.name }}</a><br/>
+                  {% endfor %}
+                </td>
+              </tr>
+            {% endif %}
+            
+            {% if person.children %}
+              <tr>
+                <th>Children</th>
+                <td>
+                  {% for child in person.children %}
+                    <a href="../{{ child.id }}/">{{ child.name }}</a><br/>
+                  {% endfor %}
+                </td>
+              </tr>
+            {% endif %}
+            
+            {% if person.mother or person.father %}
+              <tr>
+                <th>Parents</th>
+                <td>
+                  {% if person.mother %}<a href="../{{ person.mother.id }}/">{{ person.mother.name }}</a><br/>{% endif %}
+                  {% if person.father %}<a href="../{{ person.father.id }}/">{{ person.father.name }}</a>{% endif %}
+                </td>
+              </tr>
+            {% endif %}
+            
+            {% if person.siblings %}
+              <tr>
+                <th>Siblings</th>
+                <td>
+                  {% for sibling in person.siblings %}
+                    <a href="../{{ sibling.id }}/">{{ sibling.name }}</a><br/>
+                  {% endfor %}
+                </td>
+              </tr>
+            {% endif %}
+          </table>
+        </div>
+      </div>
+      
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Extended Family</h3>
+        </div>
+        <div class="panel-body">
+          <ul>
+            {% if person.descendants %}
+              <li><a href="./relatives/descendants/">All Descendants</a> <span class="badge">{{ person.descendants|length }}</span></li>
+            {% endif %}
+            {% if person.ancestors %}
+              <li><a href="./relatives/ancestors/">All Ancestors</a> <span class="badge">{{ person.ancestors|length }}</span></li>
+            {% endif %}
+            <li><a href="./relatives/">All Blood Relatives</a> <span class="badge">{{ person.relatives|length }}</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

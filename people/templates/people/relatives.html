@@ -1,12 +1,12 @@
-{% extends "base.html" %}
+{% extends "people/base.html" %}
 
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-  <h1>{{ title }}</h1>
-  <table>
+  <h1 class="page-header">{{ title }}</h1>
+  <table class="table">
   {% for relative, description in relatives.items %}
-    <tr class="{% if relative.is_deceased %}deceased{% else %}living{% endif %}">
+    <tr{% if not relative.is_deceased %} class="active"{% endif %}>
       <td><a href="/people/{{ relative.id }}/">{{ relative.name }}</a></td>
       <td>{{ description }}</td>
     </tr>
