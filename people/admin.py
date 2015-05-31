@@ -1,4 +1,4 @@
-from familytree.people.models import Person, Marriage, Photograph
+from people.models import Person, Marriage, Photograph
 from django.contrib import admin
 
 class PersonAdmin(admin.ModelAdmin):

@@ -1,6 +1,6 @@
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns
 
-urlpatterns = patterns('familytree.people.views',
+urlpatterns = patterns('people.views',
     (r'^(?P<person_id>\d+)/$', 'person'),
     (r'^(?P<person_id>\d+)/relatives/$', 'relatives'),
     (r'^(?P<person_id>\d+)/relatives/descendants/$', 'descendants'),

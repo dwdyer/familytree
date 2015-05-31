@@ -1,7 +1,7 @@
 from datetime import date
 from django.db import models
 from django.db.models import Q
-from familytree.people.relations import describe_relative
+from people.relations import describe_relative
 from sets import Set
 
 class Person(models.Model):

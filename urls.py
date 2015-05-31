@@ -1,17 +1,15 @@
-import os.path
-from django.conf.urls.defaults import *
-
+from django.conf.urls import patterns, include, url
 from django.contrib import admin
-admin.autodiscover()
+import os.path
 
 urlpatterns = patterns('',
-    (r'^people/', include('familytree.people.urls')),
-
-    # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
-    # to INSTALLED_APPS to enable admin documentation:
-    # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    (r'^people/', include('people.urls')),
 
     (r'^admin/', include(admin.site.urls)),
-    (r'^media/templates/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.join(os.path.dirname(__file__), 'templates/media').replace('\\','/')}),
-    (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.join(os.path.dirname(__file__), 'media').replace('\\','/')}),
+    (r'^media/templates/(?P<path>.*)$',
+     'django.views.static.serve',
+     {'document_root': os.path.join(os.path.dirname(__file__), 'templates/media').replace('\\','/')}),
+    (r'^media/(?P<path>.*)$',
+     'django.views.static.serve',
+     {'document_root': os.path.join(os.path.dirname(__file__), 'media').replace('\\','/')}),
 )
