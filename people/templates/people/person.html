@@ -8,8 +8,8 @@
     <div class="col-md-8">
       <table class="table table-condensed">
         <tr><td>Born:</td><td>{{ person.date_of_birth|date:"l j F Y" }}</td></tr>
-        {% if person.is_deceased %}<tr><td>Died:</td><td>{{ person.date_of_death|date:"l j F Y" }}</td></tr>{% endif %}
-        <tr><td>Age:</td><td>{{ person.age }} years</td></tr>
+        {% if person.deceased %}<tr><td>Died:</td><td>{{ person.date_of_death|date:"l j F Y" }}</td></tr>{% endif %}
+        <tr><td>Age:</td><td>{{ person.age|default_if_none:"?" }} years</td></tr>
       </table>
       <h2>Notes</h2>
       <h2>Education</h2>
@@ -35,7 +35,7 @@
                 </td>
               </tr>
             {% endif %}
-            
+
             {% if person.children %}
               <tr>
                 <th>Children</th>
@@ -46,7 +46,7 @@
                 </td>
               </tr>
             {% endif %}
-            
+
             {% if person.mother or person.father %}
               <tr>
                 <th>Parents</th>
@@ -56,7 +56,7 @@
                 </td>
               </tr>
             {% endif %}
-            
+
             {% if person.siblings %}
               <tr>
                 <th>Siblings</th>
@@ -70,7 +70,7 @@
           </table>
         </div>
       </div>
-      
+
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">Extended Family</h3>
