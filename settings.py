@@ -24,6 +24,7 @@ USE_L10N = True
 
 # Static files
 STATIC_URL = '/static/'
+STATIC_ROOT = '/var/www/familytree-static'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -75,4 +76,17 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'people',
+    'tinymce',
 )
+
+# TinyMCE configuration
+TINYMCE_DEFAULT_CONFIG = {'theme': 'advanced',
+                          'relative_urls': False,
+                          'plugins': 'paste,autoresize',
+                          'width': '100%',
+                          'paste_text_sticky': True,
+                          'paste_text_sticky_default': True,
+                          'paste_text_linebreaktype': 'p',
+                          'content_css': '/static/tinymce.css',
+                          'theme_advanced_resizing': True,
+                          'theme_advanced_buttons1': 'bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,|,bullist,numlist,|,outdent,indent,|,link,unlink,|,sub,sup,charmap,|,undo,redo,|,cleanup,code'}

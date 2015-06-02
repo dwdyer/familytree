@@ -12,8 +12,7 @@
         <tr><td>Age:</td><td>{{ person.age|default_if_none:"?" }} years</td></tr>
       </table>
       <h2>Notes</h2>
-      <h2>Education</h2>
-      <h2>Documents</h2>
+      {{ person.notes|safe }}
     </div>
     <div class="col-md-4">
       <div class="panel panel-default">

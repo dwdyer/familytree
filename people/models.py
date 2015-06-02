@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models import Q
 from people.relations import describe_relative
 from sets import Set
+from tinymce.models import HTMLField
 
 class Person(models.Model):
     '''The main class of the model. Every individual is represented by a person
@@ -18,6 +19,7 @@ class Person(models.Model):
     deceased = models.BooleanField()
     mother = models.ForeignKey('self', blank=True, null=True, limit_choices_to = {'gender': 'F'}, related_name='mother_of')
     father = models.ForeignKey('self', blank=True, null=True, limit_choices_to = {'gender': 'M'}, related_name='father_of')
+    notes = HTMLField(blank=True)
 
     def name(self, use_middle_names=True, use_maiden_name=False):
         '''Returns the full name of this person.'''
@@ -29,7 +31,7 @@ class Person(models.Model):
 
     def age(self):
         '''Calculate the person's age in years.'''
-        if not self.date_of_birth:
+        if not self.date_of_birth or (self.deceased and not self.date_of_death):
             return None
         end = self.date_of_death if self.deceased else date.today()
         years = end.year - self.date_of_birth.year
