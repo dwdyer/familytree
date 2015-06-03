@@ -17,8 +17,8 @@ class Person(models.Model):
     date_of_birth = models.DateField(blank=True, null=True)
     date_of_death = models.DateField(blank=True, null=True)
     deceased = models.BooleanField()
-    mother = models.ForeignKey('self', blank=True, null=True, limit_choices_to = {'gender': 'F'}, related_name='mother_of')
-    father = models.ForeignKey('self', blank=True, null=True, limit_choices_to = {'gender': 'M'}, related_name='father_of')
+    mother = models.ForeignKey('self', blank=True, null=True, limit_choices_to={'gender': 'F'}, related_name='children_of_mother')
+    father = models.ForeignKey('self', blank=True, null=True, limit_choices_to={'gender': 'M'}, related_name='children_of_father')
     notes = HTMLField(blank=True)
 
     def name(self, use_middle_names=True, use_maiden_name=False):
@@ -42,9 +42,9 @@ class Person(models.Model):
     def spouses(self):
         '''Return a list of anybody that this person is or was married to.'''
         if self.gender == 'F':
-            return [m.husband for m in Marriage.objects.filter(wife=self).order_by('wedding_date')]
+            return (m.husband for m in self.husband_of.all())
         else:
-            return [m.wife for m in Marriage.objects.filter(husband=self).order_by('wedding_date')]
+            return (m.wife for m in self.wife_of.all())
 
     def siblings(self):
         '''Returns a list of this person's brothers and sisters, including
@@ -54,10 +54,8 @@ class Person(models.Model):
 
     def children(self):
         '''Returns a list of this person's children.'''
-        if self.gender == 'F':
-            return Person.objects.filter(mother=self).order_by('date_of_birth')
-        else:
-            return Person.objects.filter(father=self).order_by('date_of_birth')
+        offspring = self.children_of_mother if self.gender == 'F' else self.children_of_father
+        return offspring.order_by('date_of_birth')
 
     def descendants(self):
         '''Returns a list of this person's descendants (their children and all
@@ -78,7 +76,7 @@ class Person(models.Model):
     def ancestor_distances(self, offset=0):
         '''Returns a dictionary of this person's ancestors (their parents and
         all of their parents's ancestors) with distance to each ancestor.'''
-        ancestors = {} 
+        ancestors = {}
         if self.mother:
             ancestors[self.mother] = offset + 1
             ancestors.update(self.mother.ancestor_distances(offset + 1))
@@ -88,7 +86,8 @@ class Person(models.Model):
         return ancestors
 
     def ancestors(self):
-        '''Returns a list of this person's ancestors (their parents and all of their parent's ancestors).'''
+        '''Returns a list of this person's ancestors (their parents and all of
+        their parent's ancestors).'''
         ancestors = self.ancestor_distances().keys()
         annotated_ancestors = {}
         for ancestor in ancestors:
@@ -96,12 +95,13 @@ class Person(models.Model):
         return annotated_ancestors
 
     def relatives(self):
-        '''Returns a dictionary of all of this person's blood relatives.  The keys are the relatives and the values describe the relationship.'''
+        '''Returns a dictionary of all of this person's blood relatives. The
+        keys are the relatives and the values describe the relationship.'''
         # Two people are related by blood if they share a common ancestor.
         ancestors = self.ancestors()
         # For efficiency, only consider root ancestors since their descendants' blood relatives will be a
         # subset of theirs and don't need to be considered separately.
-        root_ancestors = filter(lambda a : not (a.father and a.mother), ancestors.keys()) if ancestors else [self]
+        root_ancestors = [a for a in ancestors.keys() if not (a.father and a.mother)] or [self]
         relatives = Set(root_ancestors)
         for ancestor in root_ancestors:
             relatives.update(ancestor.descendants().keys())
@@ -125,8 +125,8 @@ class Person(models.Model):
 
 class Marriage(models.Model):
     '''The marriage record links spouses.'''
-    husband = models.ForeignKey(Person, limit_choices_to = {'gender': 'M'}, related_name='wife_of')
-    wife = models.ForeignKey(Person, limit_choices_to = {'gender': 'F'}, related_name='husband_of')
+    husband = models.ForeignKey(Person, limit_choices_to={'gender': 'M'}, related_name='wife_of')
+    wife = models.ForeignKey(Person, limit_choices_to={'gender': 'F'}, related_name='husband_of')
     wedding_date = models.DateField(blank=True, null=True)
     divorce_date = models.DateField(blank=True, null=True)
 

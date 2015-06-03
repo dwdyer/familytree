@@ -67,6 +67,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+if DEBUG: MIDDLEWARE_CLASSES += ('middleware.QueryCountDebugMiddleware',)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -90,3 +91,18 @@ TINYMCE_DEFAULT_CONFIG = {'theme': 'advanced',
                           'content_css': '/static/tinymce.css',
                           'theme_advanced_resizing': True,
                           'theme_advanced_buttons1': 'bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,|,bullist,numlist,|,outdent,indent,|,link,unlink,|,sub,sup,charmap,|,undo,redo,|,cleanup,code'}
+
+# Send 500 errors to admins and log DB request counts in DEBUG mode.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'mail_admins': {'level': 'ERROR', 'filters': ['require_debug_false'], 'class': 'django.utils.log.AdminEmailHandler'},
+        'console': {'level': 'DEBUG', 'class': 'logging.StreamHandler'},
+    },
+    'filters': {'require_debug_false': {'()': 'django.utils.log.RequireDebugFalse'}},
+    'loggers': {
+        'django.request': {'handlers': ['mail_admins'], 'level': 'ERROR', 'propagate': True},
+        'middleware': {'handlers': ['console'], 'level': 'DEBUG'},
+    }
+}

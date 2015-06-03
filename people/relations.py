@@ -4,24 +4,33 @@ def describe_relative(person, relative):
     # First check for direct ancestors (i.e. parents, grandparents, great-grandparents, etc.)
     if relative in person_ancestors:
         distance = person_ancestors[relative]
-        if distance == 1: return 'Mother' if relative.gender == 'F' else 'Father'
-        else:             return ('Great-' * (distance - 2)) + ('Grandmother' if relative.gender == 'F' else 'Grandfather')
+        if distance == 1:
+            return 'Mother' if relative.gender == 'F' else 'Father'
+        else:
+            return ('Great-' * (distance - 2)) + ('Grandmother' if relative.gender == 'F' else 'Grandfather')
     elif person in relative_ancestors:
         distance = relative_ancestors[person]
-        if distance == 1: return 'Daughter' if relative.gender == 'F' else 'Son'
-        else:             return ('Great-' * (distance - 2)) + ('Granddaughter' if relative.gender == 'F' else 'Grandson')
+        if distance == 1:
+            return 'Daughter' if relative.gender == 'F' else 'Son'
+        else:
+            return ('Great-' * (distance - 2)) + ('Granddaughter' if relative.gender == 'F' else 'Grandson')
 
     # Then check for shared ancestors.
     (ancestor, distance1, distance2) = closest_common_ancestor(person_ancestors, relative_ancestors)
     if ancestor: 
-        if distance1 == 1 and distance2 == 1: return 'Sister' if relative.gender == 'F' else 'Brother'
-        elif distance1 == 1:                  return ('Great-' * (distance2 - 2)) + ('Niece' if relative.gender == 'F' else 'Nephew')
-        elif distance2 == 1:                  return ('Great-' * (distance1 - 2)) + ('Aunt' if relative.gender == 'F' else 'Uncle')
+        if distance1 == 1 and distance2 == 1:
+            return 'Sister' if relative.gender == 'F' else 'Brother'
+        elif distance1 == 1:
+            return ('Great-' * (distance2 - 2)) + ('Niece' if relative.gender == 'F' else 'Nephew')
+        elif distance2 == 1:
+            return ('Great-' * (distance1 - 2)) + ('Aunt' if relative.gender == 'F' else 'Uncle')
         else:
             pos = min((distance1, distance2)) - 1
             removes = abs(distance1 - distance2)
-            if removes > 0: return ' {0} Cousin {1} Removed'.format(position(pos), number_of_times(removes))
-            else:           return ' {0} Cousin'.format(position(pos))
+            if removes > 0:
+                return ' {0} Cousin {1} Removed'.format(position(pos), number_of_times(removes))
+            else:
+                return ' {0} Cousin'.format(position(pos))
     return None
 
 
@@ -37,16 +46,24 @@ def closest_common_ancestor(person_ancestors, relative_ancestors):
                 (common_ancestor, person_distance, relative_distance) = (ancestor, distance, distance2)
     return (common_ancestor, person_distance, relative_distance)
 
+
 def position(position):
     remainder = position % 10
-    if remainder == 1 and position != 11: return str(position) + 'st'
-    elif remainder == 2 and position != 12: return str(position) + 'nd'
-    elif remainder == 3 and position != 13: return str(position) + 'rd'
+    if remainder == 1 and position != 11:
+        return str(position) + 'st'
+    elif remainder == 2 and position != 12:
+        return str(position) + 'nd'
+    elif remainder == 3 and position != 13:
+        return str(position) + 'rd'
     return str(position) + 'th'
 
 def number_of_times(number):
-    if number == 1 : return 'Once'
-    elif number == 2 : return 'Twice'
-    elif number == 3 : return 'Thrice'
-    else: return str(number_of_times) + ' Times'
+    if number == 1:
+        return 'Once'
+    elif number == 2:
+        return 'Twice'
+    elif number == 3:
+        return 'Thrice'
+    else:
+        return str(number_of_times) + ' Times'
 
