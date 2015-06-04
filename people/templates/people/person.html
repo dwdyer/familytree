@@ -9,7 +9,7 @@
       <table class="table table-condensed">
         <tr><td>Born:</td><td>{{ person.date_of_birth|date:"l j F Y" }}</td></tr>
         {% if person.deceased %}<tr><td>Died:</td><td>{{ person.date_of_death|date:"l j F Y" }}</td></tr>{% endif %}
-        <tr><td>Age:</td><td>{{ person.age|default_if_none:"?" }} years</td></tr>
+        {% if person.age %}<tr><td>Age:</td><td>{{ person.age }} years</td></tr>{% endif %}
       </table>
       <h2>Notes</h2>
       {{ person.notes|safe }}
@@ -82,7 +82,7 @@
             {% if person.ancestors %}
               <li><a href="./relatives/ancestors/">All Ancestors</a> <span class="badge">{{ person.ancestors|length }}</span></li>
             {% endif %}
-            <li><a href="./relatives/">All Blood Relatives</a> <span class="badge">{{ person.relatives|length }}</span></li>
+            <li><a href="./relatives/">All Blood Relatives</a> <span class="badge"></span></li>
           </ul>
         </div>
       </div>

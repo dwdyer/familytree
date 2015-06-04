@@ -1,6 +1,6 @@
 def describe_relative(person, relative):
-    person_ancestors = person.ancestor_distances()
-    relative_ancestors = relative.ancestor_distances()
+    person_ancestors = person._ancestor_distances()
+    relative_ancestors = relative._ancestor_distances()
     # First check for direct ancestors (i.e. parents, grandparents, great-grandparents, etc.)
     if relative in person_ancestors:
         distance = person_ancestors[relative]
@@ -35,7 +35,8 @@ def describe_relative(person, relative):
 
 
 def closest_common_ancestor(person_ancestors, relative_ancestors):
-    '''Returns the closest common ancestor of two people, or None if they are not blood relations.'''
+    '''Returns the closest common ancestor of two people, or None if they are
+    not blood relations.'''
     common_ancestor = None
     person_distance = 0
     relative_distance = 0

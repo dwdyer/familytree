@@ -2,7 +2,7 @@ from datetime import date
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
-from people.relations import describe_relative
+from people.relations import closest_common_ancestor, describe_relative
 from sets import Set
 from tinymce.models import HTMLField
 
@@ -57,6 +57,13 @@ class Person(models.Model):
         offspring = self.children_of_mother if self.gender == 'F' else self.children_of_father
         return offspring.order_by('date_of_birth')
 
+    def _descendant_distances(self, offset=0):
+        descendants = {}
+        for child in self.children():
+            descendants[child] = offset + 1
+            descendants.update(child._descendant_distances(offset + 1))
+        return descendants
+
     def descendants(self):
         '''Returns a list of this person's descendants (their children and all
         of their children's descendents).'''
@@ -71,10 +78,12 @@ class Person(models.Model):
         '''Returns a list of this person's descendants annotated with the name
         of the relationship to this person (so a list of (Person, relationship)
         tuples.'''
-        annotated = []
-        for descendant in self.descendants():
-            annotated.append((descendant, describe_relative(self, descendant)))
-        return annotated
+        distances = self._descendant_distances()
+        descendants = []
+        for descendant in distances.keys():
+            descendants.append((descendant, describe_relative(self, descendant), distances[descendant]))
+        descendants.sort(key=lambda (p, r, d): (d, r, p.surname))
+        return descendants
 
     # Returns a dictionary of this person's ancestors.  The ancestors are the
     # keys and each value is the distance (number of generations) from this
@@ -94,35 +103,43 @@ class Person(models.Model):
     def ancestors(self):
         '''Returns a list of this person's ancestors (their parents and all of
         their parent's ancestors).'''
-        return self.ancestor_distances().keys()
+        return self._ancestor_distances().keys()
 
     def annotated_ancestors(self):
         '''Returns a list of this person's ancestors annotated with the name of
         the relationship to this person (so a list of (Person, relationship)
         tuples.'''
-        ancestors = self.ancestors()
-        annotated_ancestors = []
-        for ancestor in ancestors:
-            annotated_ancestors.append((ancestor, describe_relative(self, ancestor)))
-        return annotated_ancestors
+        distances = self._ancestor_distances()
+        ancestors = []
+        for ancestor in distances.keys():
+            ancestors.append((ancestor, describe_relative(self, ancestor), distances[ancestor]))
+        ancestors.sort(key=lambda (p, r, d): (d, r, p.surname))
+        return ancestors
 
     def relatives(self):
         '''Returns a list of all of this person's blood relatives. The first
         item in each tuple is the person and the second is the relationship.'''
         # Two people are related by blood if they share a common ancestor.
-        ancestors = self.ancestors()
+        ancestor_distances = self._ancestor_distances()
         # For efficiency, only consider root ancestors since their
         # descendants' blood relatives will be a subset of theirs and don't need
         # to be considered separately.
-        root_ancestors = [p for p in ancestors if not (p.father and p.mother)] or [self]
+        root_ancestors = [p for p in ancestor_distances.keys() if not (p.father and p.mother)] or [self]
         relatives = Set(root_ancestors)
         for ancestor in root_ancestors:
             relatives.update(ancestor.descendants())
         relatives.remove(self) # This person can't be their own relative.
-        annotated_relatives = []
+        distances = ancestor_distances.copy()
+        distances.update(self._descendant_distances())
+        annotated = []
         for relative in relatives:
-            annotated_relatives.append((relative, describe_relative(self, relative)))
-        return annotated_relatives
+            distance = distances.get(relative, None)
+            if not distance:
+                (_, d1, d2) = closest_common_ancestor(ancestor_distances, relative._ancestor_distances())
+                distance = max(d1, d2)
+            annotated.append((relative, describe_relative(self, relative), distance))
+        annotated.sort(key=lambda (p, r, d): (p.deceased, d, r, p.surname))
+        return annotated
 
     def photos(self):
         '''Returns a list of all photos associated with this person.'''
