@@ -5,7 +5,7 @@
 {% block content %}
   <h1 class="page-header">{{ title }}</h1>
   <table class="table">
-  {% for relative, description in relatives.items %}
+  {% for relative, description in relatives %}
     <tr{% if not relative.deceased %} class="active"{% endif %}>
       <td><a href="/people/{{ relative.id }}/">{{ relative.name }}</a></td>
       <td>{{ description }}</td>

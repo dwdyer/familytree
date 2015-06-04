@@ -42,9 +42,9 @@ class Person(models.Model):
     def spouses(self):
         '''Return a list of anybody that this person is or was married to.'''
         if self.gender == 'F':
-            return (m.husband for m in self.husband_of.all())
+            return [m.husband for m in self.husband_of.all()]
         else:
-            return (m.wife for m in self.wife_of.all())
+            return [m.wife for m in self.wife_of.all()]
 
     def siblings(self):
         '''Returns a list of this person's brothers and sisters, including
@@ -65,50 +65,63 @@ class Person(models.Model):
         descendants += children
         for child in children:
             descendants += child.descendants()
-        annotated_descendants = {}
-        for descendant in descendants:
-            annotated_descendants[descendant] = describe_relative(self, descendant)
-        return annotated_descendants
+        return descendants
+
+    def annotated_descendants(self):
+        '''Returns a list of this person's descendants annotated with the name
+        of the relationship to this person (so a list of (Person, relationship)
+        tuples.'''
+        annotated = []
+        for descendant in self.descendants():
+            annotated.append((descendant, describe_relative(self, descendant)))
+        return annotated
 
     # Returns a dictionary of this person's ancestors.  The ancestors are the
     # keys and each value is the distance (number of generations) from this
     # person to that ancestor (e.g parent is 1, grandparent is 2, etc.)
-    def ancestor_distances(self, offset=0):
+    def _ancestor_distances(self, offset=0):
         '''Returns a dictionary of this person's ancestors (their parents and
         all of their parents's ancestors) with distance to each ancestor.'''
         ancestors = {}
         if self.mother:
             ancestors[self.mother] = offset + 1
-            ancestors.update(self.mother.ancestor_distances(offset + 1))
+            ancestors.update(self.mother._ancestor_distances(offset + 1))
         if self.father:
             ancestors[self.father] = offset + 1
-            ancestors.update(self.father.ancestor_distances(offset + 1))
+            ancestors.update(self.father._ancestor_distances(offset + 1))
         return ancestors
 
     def ancestors(self):
         '''Returns a list of this person's ancestors (their parents and all of
         their parent's ancestors).'''
-        ancestors = self.ancestor_distances().keys()
-        annotated_ancestors = {}
+        return self.ancestor_distances().keys()
+
+    def annotated_ancestors(self):
+        '''Returns a list of this person's ancestors annotated with the name of
+        the relationship to this person (so a list of (Person, relationship)
+        tuples.'''
+        ancestors = self.ancestors()
+        annotated_ancestors = []
         for ancestor in ancestors:
-            annotated_ancestors[ancestor] = describe_relative(self, ancestor)
+            annotated_ancestors.append((ancestor, describe_relative(self, ancestor)))
         return annotated_ancestors
 
     def relatives(self):
-        '''Returns a dictionary of all of this person's blood relatives. The
-        keys are the relatives and the values describe the relationship.'''
+        '''Returns a list of all of this person's blood relatives. The first
+        item in each tuple is the person and the second is the relationship.'''
         # Two people are related by blood if they share a common ancestor.
         ancestors = self.ancestors()
-        # For efficiency, only consider root ancestors since their descendants' blood relatives will be a
-        # subset of theirs and don't need to be considered separately.
-        root_ancestors = [a for a in ancestors.keys() if not (a.father and a.mother)] or [self]
+        # For efficiency, only consider root ancestors since their
+        # descendants' blood relatives will be a subset of theirs and don't need
+        # to be considered separately.
+        root_ancestors = [p for p in ancestors if not (p.father and p.mother)] or [self]
         relatives = Set(root_ancestors)
         for ancestor in root_ancestors:
-            relatives.update(ancestor.descendants().keys())
+            relatives.update(ancestor.descendants())
         relatives.remove(self) # This person can't be their own relative.
-        annotated_relatives = {}
+        annotated_relatives = []
         for relative in relatives:
-            annotated_relatives[relative] = describe_relative(self, relative)
+            annotated_relatives.append((relative, describe_relative(self, relative)))
         return annotated_relatives
 
     def photos(self):

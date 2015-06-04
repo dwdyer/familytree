@@ -2,12 +2,22 @@ from people.models import Person, Marriage, Photograph
 from django.contrib import admin
 
 class PersonAdmin(admin.ModelAdmin):
+    fieldsets = [(None, {'fields': [('forename', 'middle_names'),
+                                    ('surname', 'maiden_name'),
+                                    'gender',
+                                    ('date_of_birth', 'deceased', 'date_of_death'),
+                                    ('mother', 'father'),
+                                    'notes']})]
     list_display = ['surname', 'name', 'gender', 'date_of_birth', 'deceased']
     list_filter = ['gender', 'deceased', 'surname']
 admin.site.register(Person, PersonAdmin)
+
 
 class PhotographAdmin(admin.ModelAdmin):
     list_display = ['__unicode__', 'caption']
 admin.site.register(Photograph, PhotographAdmin)
 
-admin.site.register(Marriage)
+
+class MarriageAdmin(admin.ModelAdmin):
+    list_display = ['husband', 'wife', 'wedding_date']
+admin.site.register(Marriage, MarriageAdmin)
