@@ -1,14 +1,17 @@
-from people.models import Person, Marriage, Photograph
+from people.models import Country, Location, Person, Marriage, Photograph
 from django.contrib import admin
 
 class PersonAdmin(admin.ModelAdmin):
     fieldsets = [(None, {'fields': [('forename', 'middle_names'),
                                     ('surname', 'maiden_name'),
                                     'gender',
-                                    ('date_of_birth', 'deceased', 'date_of_death'),
+                                    ('date_of_birth', 'birth_location'),
+                                    ('deceased', 'date_of_death'),
                                     ('mother', 'father'),
                                     'notes']})]
-    list_display = ['surname', 'name', 'gender', 'date_of_birth', 'deceased']
+    list_display = ['surname', 'name', 'gender', 'date_of_birth', 'birth_location', 'deceased']
+    list_display_links = ['name']
+    list_editable = ['date_of_birth', 'birth_location']
     list_filter = ['gender', 'deceased', 'surname']
 admin.site.register(Person, PersonAdmin)
 
@@ -21,3 +24,14 @@ admin.site.register(Photograph, PhotographAdmin)
 class MarriageAdmin(admin.ModelAdmin):
     list_display = ['husband', 'wife', 'wedding_date']
 admin.site.register(Marriage, MarriageAdmin)
+
+
+class LocationInline(admin.TabularInline):
+    model = Location
+
+class CountryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'country_code']
+    inlines = [LocationInline]
+admin.site.register(Country, CountryAdmin)
+
+admin.site.register(Location)

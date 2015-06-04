@@ -1,5 +1,5 @@
 {% extends "people/base.html" %}
-
+{% load static %}
 {% block title %}{{ person.name }}{% endblock %}
 
 {% block content %}
@@ -7,9 +7,26 @@
   <div class="row">
     <div class="col-md-8">
       <table class="table table-condensed">
-        <tr><td>Born:</td><td>{{ person.date_of_birth|date:"l j F Y" }}</td></tr>
-        {% if person.deceased %}<tr><td>Died:</td><td>{{ person.date_of_death|date:"l j F Y" }}</td></tr>{% endif %}
-        {% if person.age %}<tr><td>Age:</td><td>{{ person.age }} years</td></tr>{% endif %}
+        <tr>
+          <td>Born:</td>
+          <td>{{ person.date_of_birth|date:"l j F Y" }}</td>
+          <td class="text-right">
+            {% if person.birth_location %}
+              <img src="{% get_static_prefix %}/images/flags/{{ person.birth_location.country.country_code }}.png"
+                   alt="{{ person.birth_location.country }}" width="24" height="24" style="margin: -2px 5px;"/>
+              {{ person.birth_location }}
+            {% endif %}
+          </td>
+        </tr>
+        {% if person.deceased %}
+          <tr>
+            <td>Died:</td>
+            <td>{{ person.date_of_death|date:"l j F Y" }}</td>
+            <td class="text-right">{% if person.age %}(aged {{ person.age }} years){% endif %}</td>
+          </tr>
+        {% elif person.age %}
+          <tr><td>Age:</td><td colspan="2">{{ person.age }} years</td></tr>
+        {% endif %}
       </table>
       <h2>Notes</h2>
       {{ person.notes|safe }}

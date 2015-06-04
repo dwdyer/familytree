@@ -6,6 +6,29 @@ from people.relations import closest_common_ancestor, describe_relative
 from sets import Set
 from tinymce.models import HTMLField
 
+class Country(models.Model):
+    name = models.CharField(max_length=50)
+    country_code = models.CharField(max_length=3)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+
+
+class Location(models.Model):
+    name = models.CharField(max_length=50)
+    county_state_province = models.CharField(max_length=30)
+    country = models.ForeignKey(Country)
+
+    def __unicode__(self):
+        return '{0}, {1}'.format(self.name, self.county_state_province)
+
+    class Meta:
+        ordering = ['country', 'county_state_province', 'name']
+
+
 class Person(models.Model):
     '''The main class of the model. Every individual is represented by a person
     record.'''
@@ -15,8 +38,9 @@ class Person(models.Model):
     maiden_name = models.CharField(blank=True, max_length=30) # Maiden name is optional.
     gender = models.CharField(max_length=1, choices=(('M', 'Male'), ('F', 'Female')))
     date_of_birth = models.DateField(blank=True, null=True)
+    birth_location = models.ForeignKey(Location, blank=True, null=True)
     date_of_death = models.DateField(blank=True, null=True)
-    deceased = models.BooleanField()
+    deceased = models.BooleanField(default=True)
     mother = models.ForeignKey('self', blank=True, null=True, limit_choices_to={'gender': 'F'}, related_name='children_of_mother')
     father = models.ForeignKey('self', blank=True, null=True, limit_choices_to={'gender': 'M'}, related_name='children_of_father')
     notes = HTMLField(blank=True)
@@ -151,6 +175,9 @@ class Person(models.Model):
 
     def __unicode__(self):
         return self.name()
+
+    class Meta:
+        ordering = ['surname', '-date_of_birth']
 
 
 class Marriage(models.Model):

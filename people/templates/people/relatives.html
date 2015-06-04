@@ -1,5 +1,5 @@
 {% extends "people/base.html" %}
-
+{% load static %}
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
@@ -9,6 +9,21 @@
     <tr{% if not relative.deceased %} class="active"{% endif %}>
       <td><a href="/people/{{ relative.id }}/">{{ relative.name }}</a></td>
       <td>{{ description }}</td>
+      <td>
+        {% if relative.date_of_birth %}
+          {{ relative.date_of_birth.year }} -
+          {% if relative.deceased %}
+            {% if relative.date_of_death %}{{ relative.date_of_death.year }}{% else %}????{% endif %}
+          {% endif %}
+        {% endif %}
+      </td>
+      <td>
+        {% if relative.birth_location %}
+          <img src="{% get_static_prefix %}/images/flags/{{ relative.birth_location.country.country_code }}.png"
+               alt="{{ relative.birth_location.country }}" width="24" height="24" style="margin: -2px 5px;"/>
+          {{ relative.birth_location }}
+        {% endif %}
+      </td>
     </tr>
   {% endfor %}
   </table>
