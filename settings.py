@@ -78,6 +78,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'people',
     'tinymce',
+    'dbbackup',
 )
 
 # TinyMCE configuration
