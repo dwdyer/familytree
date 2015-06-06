@@ -15,6 +15,7 @@ class Country(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name_plural = 'countries'
 
 
 class Location(models.Model):

@@ -34,4 +34,7 @@ class CountryAdmin(admin.ModelAdmin):
     inlines = [LocationInline]
 admin.site.register(Country, CountryAdmin)
 
-admin.site.register(Location)
+
+class LocationAdmin(admin.ModelAdmin):
+    list_display = ['name', 'county_state_province', 'country']
+admin.site.register(Location, LocationAdmin)

@@ -21,15 +21,17 @@
         {% if person.deceased %}
           <tr>
             <td>Died:</td>
-            <td>{{ person.date_of_death|date:"l j F Y" }}</td>
+            <td>{% if person.date_of_death %}{{ person.date_of_death|date:"l j F Y" }}{% else %}????{% endif %}</td>
             <td class="text-right">{% if person.age %}(aged {{ person.age }} years){% endif %}</td>
           </tr>
         {% elif person.age %}
           <tr><td>Age:</td><td colspan="2">{{ person.age }} years</td></tr>
         {% endif %}
       </table>
-      <h2>Notes</h2>
-      {{ person.notes|safe }}
+      {% if person.notes %}
+        <h3>Notes</h3>
+        {{ person.notes|safe }}
+      {% endif %}
     </div>
     <div class="col-md-4">
       <div class="panel panel-default">

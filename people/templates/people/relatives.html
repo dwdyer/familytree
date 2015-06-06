@@ -17,12 +17,15 @@
           {% endif %}
         {% endif %}
       </td>
-      <td>
+      <td class="hidden-xs">
         {% if relative.birth_location %}
           <img src="{% get_static_prefix %}/images/flags/{{ relative.birth_location.country.country_code }}.png"
                alt="{{ relative.birth_location.country }}" width="24" height="24" style="margin: -2px 5px;"/>
           {{ relative.birth_location }}
         {% endif %}
+      </td>
+      <td class="text-right">
+        {% if relative.notes %}<span class="glyphicon glyphicon-book" title="Has Notes"></span>{% endif %}
       </td>
     </tr>
   {% endfor %}
