@@ -107,5 +107,21 @@
       </div>
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-12">
+      {% if person.tags.names %}
+        <table class="table">
+          <tr>
+            <td>Tags:</td>
+            <td class="text-right">
+              {% for tag in person.tags.names %}
+                <a href="#" class="label label-default">{{ tag }}</a>
+              {% endfor %}
+            </td>
+          </tr>
+        </table>
+      {% endif %}
+    </div>
+  </div>
 {% endblock %}
 

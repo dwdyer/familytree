@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models import Q
 from people.relations import closest_common_ancestor, describe_relative
 from sets import Set
+from taggit.managers import TaggableManager
 from tinymce.models import HTMLField
 
 class Country(models.Model):
@@ -45,6 +46,7 @@ class Person(models.Model):
     mother = models.ForeignKey('self', blank=True, null=True, limit_choices_to={'gender': 'F'}, related_name='children_of_mother')
     father = models.ForeignKey('self', blank=True, null=True, limit_choices_to={'gender': 'M'}, related_name='children_of_father')
     notes = HTMLField(blank=True)
+    tags = TaggableManager(blank=True)
 
     def name(self, use_middle_names=True, use_maiden_name=False):
         '''Returns the full name of this person.'''
