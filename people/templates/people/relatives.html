@@ -24,8 +24,9 @@
           {{ relative.birth_location }}
         {% endif %}
       </td>
-      <td class="text-right">
-        {% if relative.notes %}<span class="glyphicon glyphicon-book" title="Has Notes"></span>{% endif %}
+      <td class="text-right hidden-xs">
+        {% if relative.tags.names %}<span class="glyphicon glyphicon-tag" title="Is Tagged"></span>{% endif %}
+        {% if relative.notes %}&nbsp;<span class="glyphicon glyphicon-book" title="Has Notes"></span>{% endif %}
       </td>
     </tr>
   {% endfor %}

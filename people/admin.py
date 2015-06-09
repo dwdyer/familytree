@@ -1,4 +1,4 @@
-from people.models import Country, Location, Person, Marriage, Photograph
+from people.models import Country, Location, Person, Marriage, Photograph, Document
 from django.contrib import admin
 
 class PersonAdmin(admin.ModelAdmin):
@@ -20,6 +20,11 @@ admin.site.register(Person, PersonAdmin)
 class PhotographAdmin(admin.ModelAdmin):
     list_display = ['__unicode__', 'caption']
 admin.site.register(Photograph, PhotographAdmin)
+
+
+class DocumentAdmin(admin.ModelAdmin):
+    list_display = ['title']
+admin.site.register(Document, DocumentAdmin)
 
 
 class MarriageAdmin(admin.ModelAdmin):

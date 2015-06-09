@@ -32,6 +32,32 @@
         <h3>Notes</h3>
         {{ person.notes|safe }}
       {% endif %}
+      {% if person.photos.all %}
+        <h3>Photos</h3>
+        <div class="row">
+          {% for photo in person.photos.all %}
+            <div class="col-md-4">
+              <a href="{{ MEDIA_URL }}{{ photo.image }}" class="thumbnail">
+                <img src="{{ MEDIA_URL }}{{ photo.image }}" alt="Thumbnail" />
+                <div class="caption">
+                  <small class="clearfix">
+                    {{ photo.caption }}<br/>
+                    <em class="text-muted pull-right">{{ photo.date|date:"F Y" }}</em>
+                  </small>
+                </div>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% if person.documents.all %}
+        <h3>Documents</h3>
+        <ul>
+          {% for document in person.documents.all %}
+            <li><a href="{{ MEDIA_URL }}{{ document.file }}">{{ document.title }}</a></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
     </div>
     <div class="col-md-4">
       <div class="panel panel-default">

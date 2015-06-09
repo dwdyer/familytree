@@ -196,11 +196,23 @@ class Marriage(models.Model):
 
 class Photograph(models.Model):
     '''The photograph record combines an image with an optional caption and date
-    and links it to a person.'''
-    image = models.ImageField(upload_to='uploads', blank=True, null=True)
-    person = models.ForeignKey(Person)
+    and links it to one or more people.'''
+    image = models.ImageField(upload_to='photos', blank=False, null=False)
+    people = models.ManyToManyField(Person, related_name='photos')
     caption = models.TextField(blank=True)
     date = models.DateField(blank=True, null=True)
 
     def __unicode__(self):
         return self.image.url
+
+    class Meta:
+        ordering = ['date']
+
+
+class Document(models.Model):
+    file = models.FileField(upload_to='documents', blank=False, null=False)
+    title = models.CharField(max_length=100)
+    people = models.ManyToManyField(Person, related_name='documents')
+
+    def __unicode__(self):
+        return self.title
