@@ -1,5 +1,6 @@
 {% extends "people/base.html" %}
 {% load static %}
+{% load thumbnail %}
 {% block title %}{{ person.name }}{% endblock %}
 
 {% block content %}
@@ -28,36 +29,51 @@
           <tr><td>Age:</td><td colspan="2">{{ person.age }} years</td></tr>
         {% endif %}
       </table>
-      {% if person.notes %}
-        <h3>Notes</h3>
-        {{ person.notes|safe }}
-      {% endif %}
-      {% if person.photos.all %}
-        <h3>Photos</h3>
-        <div class="row">
-          {% for photo in person.photos.all %}
-            <div class="col-md-4">
-              <a href="{{ MEDIA_URL }}{{ photo.image }}" class="thumbnail">
-                <img src="{{ MEDIA_URL }}{{ photo.image }}" alt="Thumbnail" />
-                <div class="caption">
-                  <small class="clearfix">
-                    {{ photo.caption }}<br/>
-                    <em class="text-muted pull-right">{{ photo.date|date:"F Y" }}</em>
-                  </small>
-                </div>
-              </a>
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-      {% if person.documents.all %}
-        <h3>Documents</h3>
-        <ul>
-          {% for document in person.documents.all %}
-            <li><a href="{{ MEDIA_URL }}{{ document.file }}">{{ document.title }}</a></li>
-          {% endfor %}
+      <div role="tab-panel">
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active">
+            <a href="#notes" role="tab" data-toggle="tab">Notes</a>
+          </li>
+          <li role="presentation"{% if person.photos.count == 0 %} class="disabled"{% endif %}>
+            <a href="#photos" role="tab"{% if person.photos.count > 0 %} data-toggle="tab"{% endif %}>Photos</a>
+          </li>
+          <li role="presentation"{% if person.documents.count == 0 %} class="disabled"{% endif %}>
+            <a href="#documents" role="tab"{% if person.documents.count > 0 %} data-toggle="tab"{% endif %}>Documents</a>
+          </li>
         </ul>
-      {% endif %}
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane active" id="notes">
+            <h3>Notes</h3>
+            {{ person.notes|safe }}
+          </div>
+          <div role="tabpanel" class="tab-pane" id="photos">
+            <h3>Photos</h3>
+            <div class="row">
+              {% for photo in person.photos.all %}
+                <div class="col-md-3">
+                  <a href="{{ MEDIA_URL }}{{ photo.image }}" class="thumbnail">
+                    <img src="{% thumbnail photo.image 155x155 crop="scale" %}" alt="Thumbnail" />
+                    <div class="caption text-center">
+                      <small>
+                        {{ photo.caption }}<br/>
+                        <em class="text-muted">{{ photo.date|date:"F Y" }}</em>
+                      </small>
+                    </div>
+                  </a>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div role="tabpanel" class="tab-pane" id="documents">
+            <h3>Documents</h3>
+            <ul>
+              {% for document in person.documents.all %}
+                <li><a href="{{ MEDIA_URL }}{{ document.file }}">{{ document.title }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="col-md-4">
       <div class="panel panel-default">

@@ -68,6 +68,7 @@ INSTALLED_APPS = (
     'people',
     'tinymce',
     'taggit',
+    'easy_thumbnails',
     'dbbackup',
 )
 
@@ -82,6 +83,8 @@ TINYMCE_DEFAULT_CONFIG = {'theme': 'advanced',
                           'content_css': '/static/tinymce.css',
                           'theme_advanced_resizing': True,
                           'theme_advanced_buttons1': 'bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,|,bullist,numlist,|,outdent,indent,|,link,unlink,|,sub,sup,charmap,|,undo,redo,|,cleanup,code'}
+
+DBBACKUP_BACKUP_DIRECTORY = '/home/dan/Dropbox/Dan/Ancestry/Backup'
 
 # Send 500 errors to admins and log DB request counts in DEBUG mode.
 LOGGING = {

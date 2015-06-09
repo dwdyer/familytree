@@ -25,8 +25,19 @@
         {% endif %}
       </td>
       <td class="text-right hidden-xs">
-        {% if relative.tags.names %}<span class="glyphicon glyphicon-tag" title="Is Tagged"></span>{% endif %}
         {% if relative.notes %}&nbsp;<span class="glyphicon glyphicon-book" title="Has Notes"></span>{% endif %}
+        {% if relative.documents.all %}
+          &nbsp;<span class="glyphicon glyphicon-paperclip"
+                      title="{{ relative.documents.count }} Document{{ relative.documents.count|pluralize }}"></span>
+        {% endif %}
+        {% if relative.photos.all %}
+          &nbsp;<span class="glyphicon glyphicon-picture"
+                      title="{{ relative.photos.count }} Photo{{ relative.photos.cout|pluralize }}"></span>
+        {% endif %}
+        {% if relative.tags.names %}
+          &nbsp;<span class="glyphicon glyphicon-tag"
+                      title="{{ relative.tags.count }} Tag{{ relative.tags.count|pluralize }}"></span>
+        {% endif %}
       </td>
     </tr>
   {% endfor %}
