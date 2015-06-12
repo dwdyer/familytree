@@ -40,7 +40,7 @@ class Person(models.Model):
     maiden_name = models.CharField(blank=True, max_length=30) # Maiden name is optional.
     gender = models.CharField(max_length=1, choices=(('M', 'Male'), ('F', 'Female')))
     date_of_birth = models.DateField(blank=True, null=True)
-    birth_location = models.ForeignKey(Location, blank=True, null=True)
+    birth_location = models.ForeignKey(Location, blank=True, null=True, related_name='natives')
     date_of_death = models.DateField(blank=True, null=True)
     deceased = models.BooleanField(default=True)
     mother = models.ForeignKey('self', blank=True, null=True, limit_choices_to={'gender': 'F'}, related_name='children_of_mother')

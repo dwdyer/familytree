@@ -13,7 +13,7 @@
           <td>{{ person.date_of_birth|date:"l j F Y" }}</td>
           <td class="text-right">
             {% if person.birth_location %}
-              <img src="{% get_static_prefix %}/images/flags/{{ person.birth_location.country.country_code }}.png"
+              <img src="{% get_static_prefix %}people/images/flags/{{ person.birth_location.country.country_code }}.png"
                    alt="{{ person.birth_location.country }}" width="24" height="24" style="margin: -2px 5px;"/>
               {{ person.birth_location }}
             {% endif %}
@@ -46,32 +46,36 @@
             <h3>Notes</h3>
             {{ person.notes|safe }}
           </div>
-          <div role="tabpanel" class="tab-pane" id="photos">
-            <h3>Photos</h3>
-            <div class="row">
-              {% for photo in person.photos.all %}
-                <div class="col-md-3">
-                  <a href="{{ MEDIA_URL }}{{ photo.image }}" class="thumbnail">
-                    <img src="{% thumbnail photo.image 155x155 crop="scale" %}" alt="Thumbnail" />
-                    <div class="caption text-center">
-                      <small>
-                        {{ photo.caption }}<br/>
-                        <em class="text-muted">{{ photo.date|date:"F Y" }}</em>
-                      </small>
-                    </div>
-                  </a>
-                </div>
-              {% endfor %}
+          {% if person.photos.count > 0 %}
+            <div role="tabpanel" class="tab-pane" id="photos">
+              <h3>Photos</h3>
+              <div class="row">
+                {% for photo in person.photos.all %}
+                  <div class="col-md-3">
+                    <a href="{{ MEDIA_URL }}{{ photo.image }}" class="thumbnail">
+                      <img src="{% thumbnail photo.image 155x155 crop="scale" %}" alt="Thumbnail" />
+                      <div class="caption text-center">
+                        <small>
+                          {{ photo.caption }}<br/>
+                          <em class="text-muted">{{ photo.date|date:"F Y" }}</em>
+                        </small>
+                      </div>
+                    </a>
+                  </div>
+                {% endfor %}
+              </div>
             </div>
-          </div>
-          <div role="tabpanel" class="tab-pane" id="documents">
-            <h3>Documents</h3>
-            <ul>
-              {% for document in person.documents.all %}
-                <li><a href="{{ MEDIA_URL }}{{ document.file }}">{{ document.title }}</a></li>
-              {% endfor %}
-            </ul>
-          </div>
+          {% endif %}
+          {% if person.documents.count > 0 %}
+            <div role="tabpanel" class="tab-pane" id="documents">
+              <h3>Documents</h3>
+              <ul>
+                {% for document in person.documents.all %}
+                  <li><a href="{{ MEDIA_URL }}{{ document.file }}">{{ document.title }}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
         </div>
       </div>
     </div>
@@ -156,8 +160,8 @@
           <tr>
             <td>Tags:</td>
             <td class="text-right">
-              {% for tag in person.tags.names %}
-                <a href="#" class="label label-default">{{ tag }}</a>
+              {% for tag in person.tags.all %}
+                <a href="{% url 'tag' tag.slug %}" class="label label-default">{{ tag.name }}</a>
               {% endfor %}
             </td>
           </tr>

@@ -80,7 +80,7 @@ TINYMCE_DEFAULT_CONFIG = {'theme': 'advanced',
                           'paste_text_sticky': True,
                           'paste_text_sticky_default': True,
                           'paste_text_linebreaktype': 'p',
-                          'content_css': '/static/tinymce.css',
+                          'content_css': '/static/people/css/tinymce.css',
                           'theme_advanced_resizing': True,
                           'theme_advanced_buttons1': 'bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,|,bullist,numlist,|,outdent,indent,|,link,unlink,|,sub,sup,charmap,|,undo,redo,|,cleanup,code'}
 

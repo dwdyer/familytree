@@ -1,0 +1,50 @@
+{% extends "people/base.html" %}
+{% load static %}
+{% load staticfiles %}
+{% load thumbnail %}
+{% block title %}Family Tree - Overview{% endblock %}
+{% block head %}
+  <script src="{% static 'people/js/jquery.tagcloud.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+  <h1 class="page-header">Overview</h1>
+  <div class="row">
+    <div class="col-md-8">
+      <div id="surname-cloud" class="text-center">
+        {% for surname in surnames %}
+          <a href="{% url 'surname' surname.surname %}" rel="{{ surname.surname__count }}">{{ surname.surname }}</a>
+        {% endfor %}
+      </div>
+      <script>
+        $(document).ready(function(){
+          $('#surname-cloud a').tagcloud({size: {start: 12, end: 27, unit: 'pt'},
+                                          color: {'start': '#9c9', end: '#93c54b'}});
+        });
+      </script>
+    </div>
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Most Common Birthplaces</h3>
+        </div>
+        <div class="panel-body">
+          <table class="table">
+            {% for region in regions %}
+              <tr>
+                <td>
+                  <img src="{% get_static_prefix %}people/images/flags/{{ region.country__country_code }}.png"
+                       alt="{{ region.country__country_name }}" width="24" height="24" style="margin: -2px 5px;"/>
+                  <a href="{% url 'region' region.county_state_province %}">{{ region.county_state_province }}</a>
+                </td>
+                <td>{{ region.natives__count }}</td>
+              </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+
