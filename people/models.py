@@ -2,10 +2,12 @@ from datetime import date
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
+from opencage.geocoder import OpenCageGeocode
 from people.relations import closest_common_ancestor, describe_relative
 from sets import Set
 from taggit.managers import TaggableManager
 from tinymce.models import HTMLField
+import settings
 
 class Country(models.Model):
     name = models.CharField(max_length=50)
@@ -20,9 +22,32 @@ class Country(models.Model):
 
 
 class Location(models.Model):
+    '''A location is not meant to be a pinpoint address but a general place such
+    as a town or village.'''
     name = models.CharField(max_length=50)
     county_state_province = models.CharField(max_length=30)
     country = models.ForeignKey(Country)
+    # If left blank, these fields will be set by geocoding when the model is
+    # saved.
+    longitude = models.FloatField(blank=True, null=True)
+    latitude = models.FloatField(blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not (self.longitude and self.latitude):
+            try:
+                geocoder = OpenCageGeocode(settings.OPENCAGE_API_KEY)
+                query = '{0}, {1}, {2}'.format(self.name,
+                                               self.county_state_province,
+                                               self.country.name)
+                result = geocoder.geocode(query)
+                geometry = result[0].get('geometry')
+                self.latitude = geometry.get('lat')
+                self.longitude = geometry.get('lng')
+            except e:
+                # If something goes wrong, there's not much we can do, just leave
+                # the coordinates blank.
+                print e
+        super(Location, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return '{0}, {1}'.format(self.name, self.county_state_province)

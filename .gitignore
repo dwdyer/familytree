@@ -1,3 +1,4 @@
 *.pyc
 *.swp
 media
+secret_settings.py

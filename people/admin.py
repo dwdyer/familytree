@@ -42,5 +42,5 @@ admin.site.register(Country, CountryAdmin)
 
 
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ['name', 'county_state_province', 'country']
+    list_display = ['name', 'county_state_province', 'country', 'longitude', 'latitude']
 admin.site.register(Location, LocationAdmin)

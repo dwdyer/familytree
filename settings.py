@@ -1,3 +1,4 @@
+from secret_settings import *
 import os.path
 
 # Django settings for familytree project.
@@ -34,9 +35,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media' if DEBUG else '/var/www/familytree-resources'
 
 SITE_ID = 1
-
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = 'cj!ui_e^=y5tfsr8ndp+jbxy42giqyj8(b=57l$n^kx3kj+g30'
 
 # Templates
 TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'), )
