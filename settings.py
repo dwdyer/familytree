@@ -42,6 +42,14 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
 )
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.template.context_processors.debug',
+    'django.template.context_processors.media',
+    'django.template.context_processors.static',
+    'django_settings_export.settings_export',
+)
+SETTINGS_EXPORT = ('MAPBOX_PROJECT_ID', 'MAPBOX_ACCESS_TOKEN')
 
 # URLs
 ROOT_URLCONF = 'urls'
