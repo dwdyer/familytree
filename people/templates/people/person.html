@@ -10,7 +10,7 @@
       <table class="table table-condensed">
         <tr>
           <td>Born:</td>
-          <td>{{ person.date_of_birth|date:"l j F Y" }}</td>
+          <td>{{ person.date_of_birth|default_if_none:"????" }}</td>
           <td class="text-right">
             {% if person.birth_location %}
               <img src="{% get_static_prefix %}people/images/flags/{{ person.birth_location.country.country_code }}.png"
@@ -22,7 +22,7 @@
         {% if person.deceased %}
           <tr>
             <td>Died:</td>
-            <td>{% if person.date_of_death %}{{ person.date_of_death|date:"l j F Y" }}{% else %}????{% endif %}</td>
+            <td>{{ person.date_of_death|default_if_none:"????" }}</td>
             <td class="text-right">{% if person.age %}(aged {{ person.age }} years){% endif %}</td>
           </tr>
         {% elif person.age %}

@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from opencage.geocoder import OpenCageGeocode
+from people.fields import UncertainDateField
 from people.relations import closest_common_ancestor, describe_relative
 from sets import Set
 from taggit.managers import TaggableManager
@@ -64,9 +65,9 @@ class Person(models.Model):
     surname = models.CharField(max_length=30)
     maiden_name = models.CharField(blank=True, max_length=30) # Maiden name is optional.
     gender = models.CharField(max_length=1, choices=(('M', 'Male'), ('F', 'Female')))
-    date_of_birth = models.DateField(blank=True, null=True)
+    date_of_birth = UncertainDateField(blank=True, null=True)
     birth_location = models.ForeignKey(Location, blank=True, null=True, related_name='natives')
-    date_of_death = models.DateField(blank=True, null=True)
+    date_of_death = UncertainDateField(blank=True, null=True)
     deceased = models.BooleanField(default=True)
     mother = models.ForeignKey('self', blank=True, null=True, limit_choices_to={'gender': 'F'}, related_name='children_of_mother')
     father = models.ForeignKey('self', blank=True, null=True, limit_choices_to={'gender': 'M'}, related_name='children_of_father')
