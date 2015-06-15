@@ -1,4 +1,5 @@
 from people.models import Country, Location, Person, Marriage, Photograph, Document
+from django import forms
 from django.contrib import admin
 
 class PersonAdmin(admin.ModelAdmin):
@@ -17,12 +18,32 @@ class PersonAdmin(admin.ModelAdmin):
 admin.site.register(Person, PersonAdmin)
 
 
+class PhotographAdminForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.base_fields['people'].widget = admin.widgets.FilteredSelectMultiple('people', False)
+        super(PhotographAdminForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = Photograph
+        fields = '__all__'
+
 class PhotographAdmin(admin.ModelAdmin):
+    form = PhotographAdminForm
     list_display = ['__unicode__', 'caption']
 admin.site.register(Photograph, PhotographAdmin)
 
 
+class DocumentAdminForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.base_fields['people'].widget = admin.widgets.FilteredSelectMultiple('people', False)
+        super(DocumentAdminForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = Document
+        fields = '__all__'
+
 class DocumentAdmin(admin.ModelAdmin):
+    form = DocumentAdminForm
     list_display = ['title']
 admin.site.register(Document, DocumentAdmin)
 
