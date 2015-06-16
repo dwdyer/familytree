@@ -8,6 +8,7 @@ from people.relations import closest_common_ancestor, describe_relative
 from sets import Set
 from taggit.managers import TaggableManager
 from tinymce.models import HTMLField
+import os
 import settings
 
 class Country(models.Model):
@@ -239,6 +240,10 @@ class Document(models.Model):
     file = models.FileField(upload_to='documents', blank=False, null=False)
     title = models.CharField(max_length=100)
     people = models.ManyToManyField(Person, related_name='documents')
+
+    def file_extension(self):
+        _, extension = os.path.splitext(self.file.name)
+        return extension[1:]
 
     def __unicode__(self):
         return self.title
