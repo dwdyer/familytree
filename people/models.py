@@ -207,15 +207,15 @@ class Person(models.Model):
         return self.name()
 
     class Meta:
-        ordering = ['surname', '-date_of_birth']
+        ordering = ['surname', 'forename', 'middle_names', '-date_of_birth']
 
 
 class Marriage(models.Model):
     '''The marriage record links spouses.'''
     husband = models.ForeignKey(Person, limit_choices_to={'gender': 'M'}, related_name='wife_of')
     wife = models.ForeignKey(Person, limit_choices_to={'gender': 'F'}, related_name='husband_of')
-    wedding_date = models.DateField(blank=True, null=True)
-    divorce_date = models.DateField(blank=True, null=True)
+    wedding_date = UncertainDateField(blank=True, null=True)
+    divorced = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.husband.name(False) + ' & ' + self.wife.name(False, True)

@@ -1,44 +1,74 @@
 {% extends "people/base.html" %}
 {% load static %}
 {% block title %}{{ title }}{% endblock %}
+{% block head %}
+  <style>
+    .headerSortUp:after {content: " \25bc"}
+    .headerSortDown:after {content: " \25b2"}
+  </style>
+  <script src="{% static 'people/js/jquery.tablesorter.min.js' %}"></script>
+  <script>
+    $.tablesorter.addParser(
+    {id: "names",
+     is: function(s){return false;},
+     format: function(s){
+        var regex = /([\w\s]+)(?:\s\(\w+\))?/g;
+        var names = regex.exec(s)[0].trim().split(" ");
+        names.splice(0, 0, names[names.length - 1]);
+        return names.slice(0, names.length - 1).join(" ");
+     },
+     type:'text'});
+    $(document).ready(function(){$(".table").tablesorter({sortList: [[0,0]], headers: {0: {sorter: "names"}, 3: {sorter: false}}});});
+  </script>
+{% endblock %}
 
 {% block content %}
   <h1 class="page-header">{{ title }}</h1>
   <table class="table">
-  {% for person in people %}
-    <tr{% if not person.deceased %} style="active"{% endif %}>
-      <td><a href="/people/{{ person.id }}/">{{ person.name }}</a></td>
-      <td>
-        {% if person.date_of_birth %}
-          {{ person.date_of_birth.year }} -
-          {% if person.deceased %}
-            {% if person.date_of_death %}{{ person.date_of_death.year }}{% else %}????{% endif %}
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Dates</th>
+        <th>Birthplace</th>
+        <th>&nbsp;</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for person in people %}
+      <tr{% if not person.deceased %} style="active"{% endif %}>
+        <td><a href="/people/{{ person.id }}/">{{ person.name }}</a></td>
+        <td>
+          {% if person.date_of_birth %}
+            {{ person.date_of_birth.year }} -
+            {% if person.deceased %}
+              {% if person.date_of_death %}{{ person.date_of_death.year }}{% else %}????{% endif %}
+            {% endif %}
           {% endif %}
-        {% endif %}
-      </td>
-      <td class="hidden-xs">
-        {% if person.birth_location %}
-          <img src="{% get_static_prefix %}people/images/flags/{{ person.birth_location.country.country_code }}.png"
-               alt="{{ person.birth_location.country }}" width="24" height="24" style="margin: -2px 5px;"/>
-          {{ person.birth_location }}
-        {% endif %}
-      </td>
-      <td class="text-right hidden-xs">
-        {% if person.notes %}&nbsp;<span class="glyphicon glyphicon-book" title="Has Notes"></span>{% endif %}
-        {% if person.documents.all %}
-          &nbsp;<span class="glyphicon glyphicon-paperclip"
-                      title="{{ person.documents.count }} Document{{ person.documents.count|pluralize }}"></span>
-        {% endif %}
-        {% if person.photos.all %}
-          &nbsp;<span class="glyphicon glyphicon-picture"
-                      title="{{ person.photos.count }} Photo{{ person.photos.cout|pluralize }}"></span>
-        {% endif %}
-        {% if person.tags.names %}
-          &nbsp;<span class="glyphicon glyphicon-tag"
-                      title="{{ person.tags.count }} Tag{{ person.tags.count|pluralize }}"></span>
-        {% endif %}
-      </td>
-    </tr>
-  {% endfor %}
+        </td>
+        <td class="hidden-xs">
+          {% if person.birth_location %}
+            <img src="{% get_static_prefix %}people/images/flags/{{ person.birth_location.country.country_code }}.png"
+                 alt="{{ person.birth_location.country }}" width="24" height="24" style="margin: -2px 5px;"/>
+            {{ person.birth_location }}
+          {% endif %}
+        </td>
+        <td class="text-right hidden-xs">
+          {% if person.notes %}&nbsp;<span class="glyphicon glyphicon-book" title="Has Notes"></span>{% endif %}
+          {% if person.documents.all %}
+            &nbsp;<span class="glyphicon glyphicon-paperclip"
+                        title="{{ person.documents.count }} Document{{ person.documents.count|pluralize }}"></span>
+          {% endif %}
+          {% if person.photos.all %}
+            &nbsp;<span class="glyphicon glyphicon-picture"
+                        title="{{ person.photos.count }} Photo{{ person.photos.cout|pluralize }}"></span>
+          {% endif %}
+          {% if person.tags.names %}
+            &nbsp;<span class="glyphicon glyphicon-tag"
+                        title="{{ person.tags.count }} Tag{{ person.tags.count|pluralize }}"></span>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
   </table>
 {% endblock %}

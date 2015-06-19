@@ -49,7 +49,7 @@ admin.site.register(Document, DocumentAdmin)
 
 
 class MarriageAdmin(admin.ModelAdmin):
-    list_display = ['husband', 'wife', 'wedding_date']
+    list_display = ['husband', 'wife', 'wedding_date', 'divorced']
 admin.site.register(Marriage, MarriageAdmin)
 
 
