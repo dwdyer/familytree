@@ -37,14 +37,7 @@
     {% for person in people %}
       <tr{% if not person.deceased %} style="active"{% endif %}>
         <td><a href="/people/{{ person.id }}/">{{ person.name }}</a></td>
-        <td>
-          {% if person.date_of_birth %}
-            {{ person.date_of_birth.year }} -
-            {% if person.deceased %}
-              {% if person.date_of_death %}{{ person.date_of_death.year }}{% else %}????{% endif %}
-            {% endif %}
-          {% endif %}
-        </td>
+        <td>{{ person.year_range }}</td>
         <td class="hidden-xs">
           {% if person.birth_location %}
             <img src="{% get_static_prefix %}people/images/flags/{{ person.birth_location.country.country_code }}.png"

@@ -93,6 +93,12 @@ class Person(models.Model):
             years -= 1
         return years
 
+    def year_range(self):
+        if self.date_of_birth:
+            return '{0}-{1}'.format(self.date_of_birth.year, self.date_of_death.year if self.date_of_death else '????')
+        else:
+            return ''
+
     def spouses(self):
         '''Return a list of anybody that this person is or was married to.'''
         if self.gender == 'F':

@@ -26,12 +26,15 @@ def index(request):
                   {'surnames': surnames,
                    'regions': regions[:10],
                    'locations': locations,
-                   'map_center' : center})
+                   'map_center' : center,
+                   'list': Person.objects.all()})
 
 
 def person(request, person_id):
     person = get_object_or_404(Person, id=person_id)
-    return render(request, 'people/person.html', {'person': person})
+    return render(request,
+                  'people/person.html',
+                  {'person': person, 'list': Person.objects.all()})
 
 
 def relatives(request, person_id):
@@ -39,7 +42,7 @@ def relatives(request, person_id):
     title = 'Blood Relatives of ' + person.name()
     return render(request,
                   'people/relatives.html',
-                  {'title': title, 'relatives': person.relatives()})
+                  {'title': title, 'relatives': person.relatives(), 'list': Person.objects.all()})
 
 
 def descendants(request, person_id):
@@ -47,7 +50,9 @@ def descendants(request, person_id):
     title = 'Descendants of ' + person.name()
     return render(request,
                   'people/relatives.html',
-                  {'title': title, 'relatives': person.annotated_descendants()})
+                  {'title': title,
+                   'relatives': person.annotated_descendants(),
+                   'list': Person.objects.all()})
 
 
 def ancestors(request, person_id):
@@ -55,28 +60,38 @@ def ancestors(request, person_id):
     title = 'Ancestors of ' + person.name()
     return render(request,
                   'people/relatives.html',
-                  {'title': title, 'relatives': person.annotated_ancestors()})
+                  {'title': title,
+                   'relatives': person.annotated_ancestors(),
+                   'list': Person.objects.all()})
 
 
 def location(request, location_id):
     location = get_object_or_404(Location, id=location_id)
     title = 'People born in ' + location.name
-    return render(request, 'people/people.html', {'title': title, 'people': location.natives.all()})
+    return render(request,
+                  'people/people.html',
+                  {'title': title, 'people': location.natives.all(), 'list': Person.objects.all()})
 
 
 def region(request, region_name):
     people = Person.objects.filter(birth_location__county_state_province=region_name)
     title = 'People born in ' + region_name
-    return render(request, 'people/people.html', {'title': title, 'people': people})
+    return render(request,
+                  'people/people.html',
+                  {'title': title, 'people': people, 'list': Person.objects.all()})
 
 
 def surname(request, surname):
     people = Person.objects.filter(Q(surname=surname) | Q(maiden_name=surname))
     title = 'People with the surname ' + surname
-    return render(request, 'people/people.html', {'title': title, 'people': people})
+    return render(request,
+                  'people/people.html',
+                  {'title': title, 'people': people, 'list': Person.objects.all()})
 
 
 def tag(request, slug):
     people = Person.objects.filter(tags__slug=slug)
     title = 'People tagged "{0}"'.format(slug)
-    return render(request, 'people/people.html', {'title': title, 'people': people})
+    return render(request,
+                  'people/people.html',
+                  {'title': title, 'people': people, 'list': Person.objects.all()})
