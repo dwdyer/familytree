@@ -1,5 +1,6 @@
 Django==1.8.2
 django-dbbackup==2.0.4
+django-mathfilters==0.3.0
 django-settings-export==1.0.3
 django-taggit==0.14.0
 django-tinymce==1.5.3

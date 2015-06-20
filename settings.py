@@ -75,6 +75,7 @@ INSTALLED_APPS = (
     'tinymce',
     'taggit',
     'easy_thumbnails',
+    'mathfilters',
     'dbbackup',
 )
 

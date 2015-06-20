@@ -9,19 +9,12 @@
     <tr{% if not relative.deceased %} class="active"{% endif %}>
       <td><a href="/people/{{ relative.id }}/">{{ relative.name }}</a></td>
       <td>{{ description }}</td>
-      <td>
-        {% if relative.date_of_birth %}
-          {{ relative.date_of_birth.year }} -
-          {% if relative.deceased %}
-            {% if relative.date_of_death %}{{ relative.date_of_death.year }}{% else %}????{% endif %}
-          {% endif %}
-        {% endif %}
-      </td>
+      <td>{{ person.year_range }}</td>
       <td class="hidden-xs">
         {% if relative.birth_location %}
           <img src="{% get_static_prefix %}people/images/flags/{{ relative.birth_location.country.country_code }}.png"
                alt="{{ relative.birth_location.country }}" width="24" height="24" style="margin: -2px 5px;"/>
-          {{ relative.birth_location }}
+          <a href="{% url 'location' relative.birth_location.id %}">{{ relative.birth_location }}</a>
         {% endif %}
       </td>
       <td class="text-right hidden-xs">

@@ -95,7 +95,8 @@ class Person(models.Model):
 
     def year_range(self):
         if self.date_of_birth:
-            return '{0}-{1}'.format(self.date_of_birth.year, self.date_of_death.year if self.date_of_death else '????')
+            return '{0}-{1}'.format(self.date_of_birth.year,
+                                    '' if not self.deceased else self.date_of_death.year if self.date_of_death else '????')
         else:
             return ''
 

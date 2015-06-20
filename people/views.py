@@ -1,5 +1,8 @@
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, render
+from itertools import groupby
+from math import pow
+from operator import itemgetter
 from people.models import Location, Person
 
 def index(request):
@@ -62,6 +65,21 @@ def ancestors(request, person_id):
                   'people/relatives.html',
                   {'title': title,
                    'relatives': person.annotated_ancestors(),
+                   'list': Person.objects.all()})
+
+
+def ancestors_report(request, person_id):
+    '''Count how many known ancestors the given person has in each previous
+    generation so that we know how many ancestors remain unknown.'''
+    person = get_object_or_404(Person, id=person_id)
+    ancestors = person.annotated_ancestors()
+    generation_counts = [(g, len(list(m)), int(pow(2, g)))
+                         for g, m in groupby(ancestors, itemgetter(2))]
+    title = 'Known Ancestors of ' + person.name()
+    return render(request,
+                  'people/report.html',
+                  {'generation_counts': generation_counts,
+                   'title': title,
                    'list': Person.objects.all()})
 
 

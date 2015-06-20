@@ -1,0 +1,23 @@
+{% extends "people/base.html" %}
+{% load static %}
+{% load mathfilters %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+  <h1 class="page-header">{{ title }}</h1>
+  <table class="table">
+  {% for generation, count, size in generation_counts %}
+    <tr>
+      <td class="col-xs-2">Generation {{ generation }}</td>
+      <td class="col-xs-9">
+        <div class="progress" style="margin-bottom: 0;">
+          <div class="progress-bar{% if count < size|div:2 %} progress-bar-warning{% elif count < size %} progress-bar-info{% endif %}"
+               style="width: {{ count|div:size|mul:100 }}%;"></div>
+        </div>
+      </td>
+      <td class="col-xs-1 text-right">{{ count }} of {{ size }}</td>
+    </tr>
+  {% endfor %}
+  </table>
+{% endblock %}
+
