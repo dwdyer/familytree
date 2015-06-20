@@ -1,15 +1,18 @@
 {% extends "people/base.html" %}
 {% load static %}
 {% block title %}{{ title }}{% endblock %}
+{% block head %}
+<style>.living {font-weight: bold;}</style>
+{% endblock %}
 
 {% block content %}
   <h1 class="page-header">{{ title }}</h1>
   <table class="table">
   {% for relative, description, distance in relatives %}
-    <tr{% if not relative.deceased %} class="active"{% endif %}>
-      <td><a href="/people/{{ relative.id }}/">{{ relative.name }}</a></td>
-      <td>{{ description }}</td>
-      <td>{{ person.year_range }}</td>
+    <tr>
+      <td{% if not relative.deceased %} class="living"{% endif %}><a href="/people/{{ relative.id }}/">{{ relative.name }}</a></td>
+      <td{% if not relative.deceased %} class="living"{% endif %}>{{ description }}</td>
+      <td{% if not relative.deceased %} class="living"{% endif %}>{{ relative.year_range }}</td>
       <td class="hidden-xs">
         {% if relative.birth_location %}
           <img src="{% get_static_prefix %}people/images/flags/{{ relative.birth_location.country.country_code }}.png"

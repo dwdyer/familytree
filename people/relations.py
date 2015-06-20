@@ -7,13 +7,15 @@ def describe_relative(person, relative):
         if distance == 1:
             return 'Mother' if relative.gender == 'F' else 'Father'
         else:
-            return ('Great-' * (distance - 2)) + ('Grandmother' if relative.gender == 'F' else 'Grandfather')
+            base = 'Grandmother' if relative.gender == 'F' else 'Grandfather'
+            return _describe_offset(base, distance)
     elif person in relative_ancestors:
         distance = relative_ancestors[person]
         if distance == 1:
             return 'Daughter' if relative.gender == 'F' else 'Son'
         else:
-            return ('Great-' * (distance - 2)) + ('Granddaughter' if relative.gender == 'F' else 'Grandson')
+            base = 'Granddaughter' if relative.gender == 'F' else 'Grandson'
+            return _describe_offset(base, distance)
 
     # Then check for shared ancestors.
     (ancestor, distance1, distance2) = closest_common_ancestor(person_ancestors, relative_ancestors)
@@ -21,9 +23,11 @@ def describe_relative(person, relative):
         if distance1 == 1 and distance2 == 1:
             return 'Sister' if relative.gender == 'F' else 'Brother'
         elif distance1 == 1:
-            return ('Great-' * (distance2 - 2)) + ('Niece' if relative.gender == 'F' else 'Nephew')
+            base = 'Niece' if relative.gender == 'F' else 'Nephew'
+            return _describe_offset(base, distance2)
         elif distance2 == 1:
-            return ('Great-' * (distance1 - 2)) + ('Aunt' if relative.gender == 'F' else 'Uncle')
+            base = 'Aunt' if relative.gender == 'F' else 'Uncle'
+            return _describe_offset(base, distance1)
         else:
             pos = min((distance1, distance2)) - 1
             removes = abs(distance1 - distance2)
@@ -32,6 +36,12 @@ def describe_relative(person, relative):
             else:
                 return ' {0} Cousin'.format(position(pos))
     return None
+
+def _describe_offset(base, distance):
+    if distance <= 2:
+        return base
+    else:
+        return ('Great-' if distance == 3 else 'Great(x{0})-'.format(distance - 2)) + base
 
 
 def closest_common_ancestor(person_ancestors, relative_ancestors):

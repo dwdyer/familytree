@@ -199,7 +199,7 @@ class Person(models.Model):
                 (_, d1, d2) = closest_common_ancestor(ancestor_distances, relative._ancestor_distances())
                 distance = max(d1, d2)
             annotated.append((relative, describe_relative(self, relative), distance))
-        annotated.sort(key=lambda (p, r, d): (p.deceased, d, r, p.surname))
+        annotated.sort(key=lambda (p, r, d): (d, r, p.surname))
         return annotated
 
     def photos(self):
