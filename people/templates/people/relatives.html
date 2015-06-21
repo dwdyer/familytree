@@ -6,11 +6,18 @@
 {% endblock %}
 
 {% block content %}
-  <h1 class="page-header">{{ title }}</h1>
+  <h1 class="page-header">
+    {{ title }}
+    {% if person %}
+      <a href="{% url 'report' person.id %}" class="pull-right btn btn-default">
+        <span class="glyphicon glyphicon-equalizer"></span> Report
+      </a>
+    {% endif %}
+  </h1>
   <table class="table">
   {% for relative, description, distance in relatives %}
     <tr>
-      <td{% if not relative.deceased %} class="living"{% endif %}><a href="/people/{{ relative.id }}/">{{ relative.name }}</a></td>
+      <td{% if not relative.deceased %} class="living"{% endif %}><a href="{% url 'person' relative.id %}">{{ relative.name }}</a></td>
       <td{% if not relative.deceased %} class="living"{% endif %}>{{ description }}</td>
       <td{% if not relative.deceased %} class="living"{% endif %}>{{ relative.year_range }}</td>
       <td class="hidden-xs">
@@ -21,19 +28,11 @@
         {% endif %}
       </td>
       <td class="text-right hidden-xs">
-        {% if relative.notes %}&nbsp;<span class="glyphicon glyphicon-book" title="Has Notes"></span>{% endif %}
-        {% if relative.documents.all %}
-          &nbsp;<span class="glyphicon glyphicon-paperclip"
-                      title="{{ relative.documents.count }} Document{{ relative.documents.count|pluralize }}"></span>
-        {% endif %}
         {% if relative.photos.all %}
-          &nbsp;<span class="glyphicon glyphicon-picture"
+          &nbsp;<span class="glyphicon glyphicon-camera"
                       title="{{ relative.photos.count }} Photo{{ relative.photos.cout|pluralize }}"></span>
         {% endif %}
-        {% if relative.tags.names %}
-          &nbsp;<span class="glyphicon glyphicon-tag"
-                      title="{{ relative.tags.count }} Tag{{ relative.tags.count|pluralize }}"></span>
-        {% endif %}
+        {% if relative.notes %}&nbsp;<span class="glyphicon glyphicon-pencil" title="Has Notes"></span>{% endif %}
       </td>
     </tr>
   {% endfor %}

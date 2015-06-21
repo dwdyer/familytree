@@ -36,7 +36,7 @@
     <tbody>
     {% for person in people %}
       <tr{% if not person.deceased %} style="active"{% endif %}>
-        <td><a href="/people/{{ person.id }}/">{{ person.name }}</a></td>
+        <td><a href="{% url 'person' person.id %}">{{ person.name }}</a></td>
         <td>{{ person.year_range }}</td>
         <td class="hidden-xs">
           {% if person.birth_location %}

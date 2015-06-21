@@ -22,5 +22,17 @@
     </tr>
   {% endfor %}
   </table>
+  <h3>Missing Ancestors</h3>
+  <table class="table">
+  {% for person, relationship, mother, father in missing_parents %}
+    <tr>
+      <td>
+        {% if mother and father %}Mother and father{% elif mother %}Mother{% else %}Father{% endif %}
+        of <a href="{% url 'person' person.id %}">{{ person.name }}</a>
+      </td>
+      <td>{{ relationship }}</td>
+    </tr>
+  {% endfor %}
+  </table>
 {% endblock %}
 

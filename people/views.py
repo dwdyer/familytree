@@ -45,7 +45,9 @@ def relatives(request, person_id):
     title = 'Blood Relatives of ' + person.name()
     return render(request,
                   'people/relatives.html',
-                  {'title': title, 'relatives': person.relatives(), 'list': Person.objects.all()})
+                  {'title': title,
+                   'relatives': person.relatives(),
+                   'list': Person.objects.all()})
 
 
 def descendants(request, person_id):
@@ -64,6 +66,7 @@ def ancestors(request, person_id):
     return render(request,
                   'people/relatives.html',
                   {'title': title,
+                   'person': person,
                    'relatives': person.annotated_ancestors(),
                    'list': Person.objects.all()})
 
@@ -75,11 +78,14 @@ def ancestors_report(request, person_id):
     ancestors = person.annotated_ancestors()
     generation_counts = [(g, len(list(m)), int(pow(2, g)))
                          for g, m in groupby(ancestors, itemgetter(2))]
+    missing_parents = [(p, r, p.mother is None, p.father is None)
+                       for p, r, d in ancestors if not (p.mother and p.father)]
     title = 'Known Ancestors of ' + person.name()
     return render(request,
                   'people/report.html',
-                  {'generation_counts': generation_counts,
-                   'title': title,
+                  {'title': title,
+                   'generation_counts': generation_counts,
+                   'missing_parents': missing_parents,
                    'list': Person.objects.all()})
 
 
