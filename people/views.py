@@ -19,6 +19,7 @@ def index(request):
     female_names = female_names.filter(forename__count__gte=2).order_by('-forename__count')
 
     locations = Location.objects.filter(latitude__isnull=False, longitude__isnull=False)
+    locations = locations.annotate(Count('natives')).filter(natives__count__gt=0)
     min_lat = min_lng = 90
     max_lat = max_lng = -90
     for location in locations:
