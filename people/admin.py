@@ -49,7 +49,9 @@ admin.site.register(Document, DocumentAdmin)
 
 
 class MarriageAdmin(admin.ModelAdmin):
-    list_display = ['husband', 'wife', 'wedding_date', 'divorced']
+    list_display = ['husband', 'wife', 'wedding_date', 'wedding_location', 'divorced']
+    list_display_links = ['husband', 'wife']
+    list_editable = ['wedding_date', 'wedding_location', 'divorced']
 admin.site.register(Marriage, MarriageAdmin)
 
 

@@ -103,9 +103,9 @@ class Person(models.Model):
     def spouses(self):
         '''Return a list of anybody that this person is or was married to.'''
         if self.gender == 'F':
-            return [m.husband for m in self.husband_of.all()]
+            return [(m.husband, m.wedding_date, m.wedding_location) for m in self.husband_of.all()]
         else:
-            return [m.wife for m in self.wife_of.all()]
+            return [(m.wife, m.wedding_date, m.wedding_location) for m in self.wife_of.all()]
 
     def siblings(self):
         '''Returns a list of this person's brothers and sisters, including
@@ -222,10 +222,14 @@ class Marriage(models.Model):
     husband = models.ForeignKey(Person, limit_choices_to={'gender': 'M'}, related_name='wife_of')
     wife = models.ForeignKey(Person, limit_choices_to={'gender': 'F'}, related_name='husband_of')
     wedding_date = UncertainDateField(blank=True, null=True)
+    wedding_location = models.ForeignKey(Location, blank=True, null=True, related_name='weddings')
     divorced = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.husband.name(False) + ' & ' + self.wife.name(False, True)
+
+    class Meta:
+        ordering = ['husband__surname', 'husband__forename', 'husband__middle_names', 'wedding_date']
 
 
 class Photograph(models.Model):
