@@ -12,6 +12,7 @@ urlpatterns = patterns(
     url(r'^location/(?P<location_id>\d+)/$', views.location, name='location'),
     url(r'^region/(?P<region_name>[\w\W]+)/$', views.region, name='region'),
     url(r'^surname/(?P<surname>[\w\W]+)/$', views.surname, name='surname'),
+    url(r'^forename/(?P<forename>[\w\W]+)/$', views.forename, name='forename'),
     url(r'^tag/(?P<slug>[\w-]+)/$', views.tag, name='tag'),
 )
 

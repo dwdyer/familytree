@@ -13,6 +13,10 @@ def index(request):
                                                           'county_state_province')
     surnames = Person.objects.values('surname').annotate(Count('surname'))
     surnames = surnames.filter(surname__count__gte=2).order_by('surname')
+    male_names = Person.objects.filter(gender='M').values('forename').annotate(Count('forename'))
+    male_names = male_names.filter(forename__count__gte=2).order_by('-forename__count')
+    female_names = Person.objects.filter(gender='F').values('forename').annotate(Count('forename'))
+    female_names = female_names.filter(forename__count__gte=2).order_by('-forename__count')
 
     locations = Location.objects.filter(latitude__isnull=False, longitude__isnull=False)
     min_lat = min_lng = 90
@@ -27,6 +31,8 @@ def index(request):
     return render(request,
                   'people/index.html',
                   {'surnames': surnames,
+                   'male_names': male_names[:10],
+                   'female_names': female_names[:10],
                    'regions': regions[:10],
                    'locations': locations,
                    'map_center' : center,
@@ -108,6 +114,14 @@ def region(request, region_name):
 def surname(request, surname):
     people = Person.objects.filter(Q(surname=surname) | Q(maiden_name=surname))
     title = 'People with the surname ' + surname
+    return render(request,
+                  'people/people.html',
+                  {'title': title, 'people': people, 'list': Person.objects.all()})
+
+
+def forename(request, forename):
+    people = Person.objects.filter(Q(forename=forename) | Q(middle_names__contains=forename))
+    title = 'People with the given name ' + forename
     return render(request,
                   'people/people.html',
                   {'title': title, 'people': people, 'list': Person.objects.all()})
