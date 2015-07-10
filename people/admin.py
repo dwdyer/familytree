@@ -15,6 +15,7 @@ class PersonAdmin(admin.ModelAdmin):
     list_display_links = ['name']
     list_editable = ['date_of_birth', 'birth_location']
     list_filter = ['blood_relative', 'gender', 'deceased', 'surname']
+    search_fields = ['surname', 'forename', 'middle_names', 'maiden_name']
 admin.site.register(Person, PersonAdmin)
 
 
@@ -52,6 +53,7 @@ class MarriageAdmin(admin.ModelAdmin):
     list_display = ['husband', 'wife', 'wedding_date', 'wedding_location', 'divorced']
     list_display_links = ['husband', 'wife']
     list_editable = ['wedding_date', 'wedding_location', 'divorced']
+    search_fields = ['husband__surname', 'husband__forename', 'wife__maiden_name', 'wife__forename']
 admin.site.register(Marriage, MarriageAdmin)
 
 
@@ -67,4 +69,5 @@ admin.site.register(Country, CountryAdmin)
 class LocationAdmin(admin.ModelAdmin):
     list_display = ['name', 'county_state_province', 'country', 'longitude', 'latitude']
     list_filter = ['country']
+    search_fields = ['name', 'county_state_province', 'country__name']
 admin.site.register(Location, LocationAdmin)

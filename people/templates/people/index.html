@@ -55,11 +55,11 @@
                 {% for region in regions %}
                   <tr>
                     <td>
-                      <img src="{% get_static_prefix %}people/images/flags/{{ region.country__country_code }}.png"
-                           alt="{{ region.country__country_name }}" width="24" height="24" style="margin: -2px 5px;"/>
-                      <a href="{% url 'region' region.county_state_province %}">{{ region.county_state_province }}</a>
+                      <img src="{% get_static_prefix %}people/images/flags/{{ region.country_code }}.png"
+                           alt="{{ region.country_name }}" width="24" height="24" style="margin: -2px 5px;"/>
+                      <a href="{% url 'region' region.name %}">{{ region.name }}</a>
                     </td>
-                    <td class="text-right">{{ region.natives__count }}</td>
+                    <td class="text-right">{{ region.natives_count }}</td>
                   </tr>
                 {% endfor %}
               </table>

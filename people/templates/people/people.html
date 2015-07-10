@@ -5,6 +5,8 @@
   <style>
     .headerSortUp:after {content: " \25bc"}
     .headerSortDown:after {content: " \25b2"}
+    .text-muted a {color: inherit;}
+    .unrelated {font-style: italic;}
   </style>
   <script src="{% static 'people/js/jquery.tablesorter.min.js' %}"></script>
   <script>
@@ -35,7 +37,7 @@
     </thead>
     <tbody>
     {% for person in people %}
-      <tr{% if not person.deceased %} style="active"{% endif %}>
+      <tr{% if not person.blood_relative %} class="text-muted unrelated"{% endif %}>
         <td><a href="{% url 'person' person.id %}">{{ person.name }}</a></td>
         <td>{{ person.year_range }}</td>
         <td class="hidden-xs">

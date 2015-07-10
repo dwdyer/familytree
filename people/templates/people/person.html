@@ -4,7 +4,14 @@
 {% block title %}{{ person.name }}{% endblock %}
 
 {% block content %}
-  <h1 class="page-header">{{ person.name }}</h1>
+  <h1 class="page-header">
+    {{ person.name }}
+    {% if user.is_staff %}
+      <a href="{% url 'admin:people_person_change' person.id %}" class="pull-right btn btn-default">
+        <span class="glyphicon glyphicon-pencil"></span> Edit
+      </a>
+    {% endif %}
+  </h1>
   <div class="row">
     <div class="col-md-8">
       <table class="table table-condensed">

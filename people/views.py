@@ -6,11 +6,13 @@ from operator import itemgetter
 from people.models import Location, Person
 
 def index(request):
-    regions = Location.objects.values('county_state_province',
-                                      'country__name',
-                                      'country__country_code')
-    regions = regions.annotate(Count('natives')).order_by('-natives__count',
-                                                          'county_state_province')
+    regions = Location.objects.raw('''SELECT l.id, l.county_state_province AS name, c.name AS country_name,
+                                      c.country_code AS country_code, count(1) AS natives_count
+                                      FROM people_location l, people_person p, people_country c
+                                      WHERE p.birth_location_id = l.id AND l.country_id = c.id AND p.blood_relative = 1
+                                      GROUP BY l.county_state_province, c.id
+                                      ORDER BY count(1) DESC, l.county_state_province LIMIT 10''')
+
     surnames = Person.objects.filter(blood_relative=True).values('surname').annotate(Count('surname'))
     surnames = surnames.filter(surname__count__gte=2).order_by('surname')
     males = Person.objects.filter(gender='M', blood_relative=True)
