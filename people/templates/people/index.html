@@ -32,7 +32,7 @@
                        accessToken: '{{ settings.MAPBOX_ACCESS_TOKEN }}'}).addTo(map);
           {% for location in locations %}
             var marker{{ forloop.counter }} = L.marker([{{ location.latitude }}, {{ location.longitude }}]).addTo(map);
-            marker{{ forloop.counter }}.bindPopup('<b>{{ location.name }}</b><br/><a href="{% url 'location' location.id %}">{{ location.natives.count }} {{ location.natives.count|pluralize:"person,people" }}</a> born here.');
+            marker{{ forloop.counter }}.bindPopup('<b>{{ location.name }}</b><br/><a href="{% url 'location' location.id %}">{{ location.natives_count }} {{ location.natives_count|pluralize:"person,people" }}</a> born here.');
           {% endfor %}
           $('#surname-cloud a').tagcloud({size: {start: 14, end: 32, unit: 'px'},
                                           color: {'start': '#9c9', end: '#93c54b'}});

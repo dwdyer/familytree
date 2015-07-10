@@ -70,6 +70,7 @@ class Person(models.Model):
     birth_location = models.ForeignKey(Location, blank=True, null=True, related_name='natives')
     date_of_death = UncertainDateField(blank=True, null=True)
     deceased = models.BooleanField(default=True)
+    blood_relative = models.BooleanField(default=True)
     mother = models.ForeignKey('self',
                                blank=True,
                                null=True,

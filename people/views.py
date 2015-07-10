@@ -11,15 +11,18 @@ def index(request):
                                       'country__country_code')
     regions = regions.annotate(Count('natives')).order_by('-natives__count',
                                                           'county_state_province')
-    surnames = Person.objects.values('surname').annotate(Count('surname'))
+    surnames = Person.objects.filter(blood_relative=True).values('surname').annotate(Count('surname'))
     surnames = surnames.filter(surname__count__gte=2).order_by('surname')
-    male_names = Person.objects.filter(gender='M').values('forename').annotate(Count('forename'))
-    male_names = male_names.filter(forename__count__gte=2).order_by('-forename__count')
-    female_names = Person.objects.filter(gender='F').values('forename').annotate(Count('forename'))
-    female_names = female_names.filter(forename__count__gte=2).order_by('-forename__count')
+    males = Person.objects.filter(gender='M', blood_relative=True)
+    male_names = males.values('forename').annotate(Count('forename')).order_by('-forename__count', 'forename')
+    females = Person.objects.filter(gender='F', blood_relative=True)
+    female_names = females.values('forename').annotate(Count('forename')).order_by('-forename__count', 'forename')
 
-    locations = Location.objects.filter(latitude__isnull=False, longitude__isnull=False)
-    locations = locations.annotate(Count('natives')).filter(natives__count__gt=0)
+    locations = Location.objects.raw('''SELECT l.id, l.name, l.latitude, l.longitude, COUNT(l.id) AS natives_count
+                                        FROM people_person p, people_location l
+                                        WHERE p.birth_location_id = l.id AND p.blood_relative
+                                        AND l.latitude IS NOT NULL AND l.longitude IS NOT NULL
+                                        GROUP BY l.id''')
     min_lat = min_lng = 90
     max_lat = max_lng = -90
     for location in locations:

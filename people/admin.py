@@ -5,7 +5,7 @@ from django.contrib import admin
 class PersonAdmin(admin.ModelAdmin):
     fieldsets = [(None, {'fields': [('forename', 'middle_names'),
                                     ('surname', 'maiden_name'),
-                                    'gender',
+                                    ('gender', 'blood_relative'),
                                     ('date_of_birth', 'birth_location'),
                                     ('deceased', 'date_of_death'),
                                     ('mother', 'father'),
@@ -14,7 +14,7 @@ class PersonAdmin(admin.ModelAdmin):
     list_display = ['surname', 'name', 'gender', 'date_of_birth', 'birth_location', 'deceased']
     list_display_links = ['name']
     list_editable = ['date_of_birth', 'birth_location']
-    list_filter = ['gender', 'deceased', 'surname']
+    list_filter = ['blood_relative', 'gender', 'deceased', 'surname']
 admin.site.register(Person, PersonAdmin)
 
 
@@ -66,4 +66,5 @@ admin.site.register(Country, CountryAdmin)
 
 class LocationAdmin(admin.ModelAdmin):
     list_display = ['name', 'county_state_province', 'country', 'longitude', 'latitude']
+    list_filter = ['country']
 admin.site.register(Location, LocationAdmin)
