@@ -70,8 +70,18 @@ class Person(models.Model):
     birth_location = models.ForeignKey(Location, blank=True, null=True, related_name='natives')
     date_of_death = UncertainDateField(blank=True, null=True)
     deceased = models.BooleanField(default=True)
-    mother = models.ForeignKey('self', blank=True, null=True, limit_choices_to={'gender': 'F'}, related_name='children_of_mother')
-    father = models.ForeignKey('self', blank=True, null=True, limit_choices_to={'gender': 'M'}, related_name='children_of_father')
+    mother = models.ForeignKey('self',
+                               blank=True,
+                               null=True,
+                               limit_choices_to={'gender': 'F'},
+                               related_name='children_of_mother',
+                               on_delete=models.SET_NULL)
+    father = models.ForeignKey('self',
+                               blank=True,
+                               null=True,
+                               limit_choices_to={'gender': 'M'},
+                               related_name='children_of_father',
+                               on_delete=models.SET_NULL)
     notes = HTMLField(blank=True)
     tags = TaggableManager(blank=True)
 
