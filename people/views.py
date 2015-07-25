@@ -39,7 +39,7 @@ def index(request):
                   {'surnames': surnames,
                    'male_names': male_names[:10],
                    'female_names': female_names[:10],
-                   'regions': regions[:10],
+                   'regions': regions,
                    'locations': locations,
                    'map_center' : center,
                    'list': Person.objects.all()})

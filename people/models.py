@@ -1,5 +1,6 @@
 from datetime import date
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
 from opencage.geocoder import OpenCageGeocode
@@ -220,6 +221,9 @@ class Person(models.Model):
     def clean(self):
         if self.date_of_death and not self.deceased:
             raise ValidationError('Cannot specify date of death for living person.')
+
+    def get_absolute_url(self):
+        return reverse('person', args=[self.id])
 
     def __unicode__(self):
         return self.name()

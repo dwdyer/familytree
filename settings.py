@@ -26,6 +26,7 @@ USE_L10N = True
 # Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = '/var/www/familytree-static'
+STATICFILES_DIRS = (os.path.join(os.path.dirname(__file__), 'static'), )
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
