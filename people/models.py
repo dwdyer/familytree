@@ -32,11 +32,11 @@ class Location(models.Model):
     country = models.ForeignKey(Country)
     # If left blank, these fields will be set by geocoding when the model is
     # saved.
-    longitude = models.FloatField(blank=True, null=True)
     latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        if not (self.longitude and self.latitude):
+        if not (self.latitude and self.longitude):
             try:
                 geocoder = OpenCageGeocode(settings.OPENCAGE_API_KEY)
                 query = '{0}, {1}, {2}'.format(self.name,
@@ -46,7 +46,7 @@ class Location(models.Model):
                 geometry = result[0].get('geometry')
                 self.latitude = geometry.get('lat')
                 self.longitude = geometry.get('lng')
-            except e:
+            except Exception as e:
                 # If something goes wrong, there's not much we can do, just leave
                 # the coordinates blank.
                 print e

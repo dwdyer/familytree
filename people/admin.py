@@ -67,7 +67,7 @@ admin.site.register(Country, CountryAdmin)
 
 
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ['name', 'county_state_province', 'country', 'longitude', 'latitude']
+    list_display = ['name', 'county_state_province', 'country', 'latitude', 'longitude']
     list_filter = ['country']
     search_fields = ['name', 'county_state_province', 'country__name']
 admin.site.register(Location, LocationAdmin)
