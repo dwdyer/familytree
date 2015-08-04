@@ -66,13 +66,13 @@ MIDDLEWARE_CLASSES = (
 if DEBUG: MIDDLEWARE_CLASSES += ('middleware.QueryCountDebugMiddleware',)
 
 INSTALLED_APPS = (
+    'people',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    'people',
     'tinymce',
     'taggit',
     'easy_thumbnails',
