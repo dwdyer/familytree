@@ -19,7 +19,7 @@ def describe_relative(person, relative):
 
     # Then check for shared ancestors.
     (ancestor, distance1, distance2) = closest_common_ancestor(person_ancestors, relative_ancestors)
-    if ancestor: 
+    if ancestor:
         if distance1 == 1 and distance2 == 1:
             return 'Sister' if relative.gender == 'F' else 'Brother'
         elif distance1 == 1:
@@ -76,5 +76,5 @@ def number_of_times(number):
     elif number == 3:
         return 'Thrice'
     else:
-        return str(number_of_times) + ' Times'
+        return str(number) + ' Times'
 
