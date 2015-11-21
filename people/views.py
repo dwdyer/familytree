@@ -96,8 +96,32 @@ def ancestors_report(request, person_id):
     return render(request,
                   'people/report.html',
                   {'title': title,
+                   'person': person,
                    'generation_counts': generation_counts,
                    'missing_parents': missing_parents,
+                   'list': Person.objects.all()})
+
+
+def ancestors_map(request, person_id):
+    person = get_object_or_404(Person, id=person_id)
+    ancestors = person.ancestors()
+    locations = []
+    min_lat = min_lng = 90
+    max_lat = max_lng = -90
+    for ancestor in ancestors:
+        location = ancestor.birth_location
+        if location and location.latitude and location.longitude:
+            locations.append(location)
+            min_lat = min(location.latitude, min_lat)
+            max_lat = max(location.latitude, max_lat)
+            min_lng = min(location.longitude, min_lng)
+            max_lng = max(location.longitude, max_lng)
+    center = ((min_lat + max_lat) / 2, (min_lng + max_lng) / 2)
+
+    return render(request,
+                  'people/map.html',
+                  {'locations': locations,
+                   'map_center' : center,
                    'list': Person.objects.all()})
 
 

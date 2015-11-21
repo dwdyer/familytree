@@ -9,6 +9,7 @@ urlpatterns = patterns(
     url(r'^(?P<person_id>\d+)/relatives/descendants/$', views.descendants, name='descendants'),
     url(r'^(?P<person_id>\d+)/relatives/ancestors/$', views.ancestors, name='ancestors'),
     url(r'^(?P<person_id>\d+)/relatives/ancestors/report$', views.ancestors_report, name='report'),
+    url(r'^(?P<person_id>\d+)/relatives/ancestors/map$', views.ancestors_map, name='map'),
     url(r'^location/(?P<location_id>\d+)/$', views.location, name='location'),
     url(r'^region/(?P<region_name>[\w\W]+)/$', views.region, name='region'),
     url(r'^surname/(?P<surname>[\w\W]+)/$', views.surname, name='surname'),

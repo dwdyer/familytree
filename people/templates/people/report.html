@@ -7,7 +7,14 @@
 {% endblock %}
 
 {% block content %}
-  <h1 class="page-header">{{ title }}</h1>
+  <h1 class="page-header">
+    {{ title }}
+    <div class="pull-right">
+      <a href="{% url 'map' person.id %}" class="btn btn-default">
+        <span class="glyphicon glyphicon-globe"></span> Map
+      </a>
+    </div>
+  </h1>
   <table class="table">
   {% for generation, count, size in generation_counts %}
     <tr>

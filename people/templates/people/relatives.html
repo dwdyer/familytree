@@ -9,9 +9,14 @@
   <h1 class="page-header">
     {{ title }}
     {% if person %}
-      <a href="{% url 'report' person.id %}" class="pull-right btn btn-default">
-        <span class="glyphicon glyphicon-equalizer"></span> Report
-      </a>
+      <div class="pull-right">
+        <a href="{% url 'report' person.id %}" class="btn btn-default">
+          <span class="glyphicon glyphicon-stats"></span> Report
+        </a>
+        <a href="{% url 'map' person.id %}" class="btn btn-default">
+          <span class="glyphicon glyphicon-globe"></span> Map
+        </a>
+      </div>
     {% endif %}
   </h1>
   <table class="table">
