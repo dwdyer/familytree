@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, render
 from itertools import groupby
@@ -59,31 +60,37 @@ def person(request, person_id):
 def relatives(request, person_id):
     person = get_object_or_404(Person, id=person_id)
     title = 'Blood Relatives of ' + person.name()
+    map_link = reverse('relatives_map', args=[person_id])
     return render(request,
                   'people/relatives.html',
                   {'title': title,
-                   'relatives': person.relatives(),
+                   'relatives': person.annotated_relatives(),
+                   'map_link': map_link,
                    'list': Person.objects.all()})
 
 
 def descendants(request, person_id):
     person = get_object_or_404(Person, id=person_id)
     title = 'Descendants of ' + person.name()
+    map_link = reverse('descendants_map', args=[person_id])
     return render(request,
                   'people/relatives.html',
                   {'title': title,
                    'relatives': person.annotated_descendants(),
+                   'map_link': map_link,
                    'list': Person.objects.all()})
 
 
 def ancestors(request, person_id):
     person = get_object_or_404(Person, id=person_id)
     title = 'Ancestors of ' + person.name()
+    map_link = reverse('ancestors_map', args=[person_id])
     return render(request,
                   'people/relatives.html',
                   {'title': title,
                    'person': person,
                    'relatives': person.annotated_ancestors(),
+                   'map_link': map_link,
                    'list': Person.objects.all()})
 
 
@@ -108,12 +115,28 @@ def ancestors_report(request, person_id):
 
 def ancestors_map(request, person_id):
     person = get_object_or_404(Person, id=person_id)
-    ancestors = person.ancestors()
+    title = 'Ancestors of ' + person.name() + ' - Map of Birth Places'
+    return _people_map(request, person.ancestors(), title)
+
+
+def descendants_map(request, person_id):
+    person = get_object_or_404(Person, id=person_id)
+    title = 'Descendants of ' + person.name() + ' - Map of Birth Places'
+    return _people_map(request, person.descendants(), title)
+
+
+def relatives_map(request, person_id):
+    person = get_object_or_404(Person, id=person_id)
+    title = 'Blood Relatives of ' + person.name() + ' - Map of Birth Places'
+    return _people_map(request, person.relatives(), title)
+
+
+def _people_map(request, people, title):
     locations = []
     min_lat = min_lng = 90
     max_lat = max_lng = -90
-    for ancestor in ancestors:
-        location = ancestor.birth_location
+    for person in people:
+        location = person.birth_location
         if location and location.latitude and location.longitude:
             locations.append(location)
             min_lat = min(location.latitude, min_lat)
@@ -121,10 +144,10 @@ def ancestors_map(request, person_id):
             min_lng = min(location.longitude, min_lng)
             max_lng = max(location.longitude, max_lng)
     center = ((min_lat + max_lat) / 2, (min_lng + max_lng) / 2)
-
     return render(request,
                   'people/map.html',
-                  {'locations': locations,
+                  {'title': title,
+                   'locations': locations,
                    'map_center' : center,
                    'list': Person.objects.all()})
 

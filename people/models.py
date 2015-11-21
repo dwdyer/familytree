@@ -180,8 +180,8 @@ class Person(models.Model):
 
     def annotated_ancestors(self):
         '''Returns a list of this person's ancestors annotated with the name of
-        the relationship to this person (so a list of (Person, relationship)
-        tuples.'''
+        the relationship to this person and the distance between them (so a list
+        of (Person, relationship, distance) tuples).'''
         distances = self._ancestor_distances()
         ancestors = []
         for ancestor in distances.keys():
@@ -190,25 +190,32 @@ class Person(models.Model):
         return ancestors
 
     def relatives(self):
-        '''Returns a list of all of this person's blood relatives. The first
-        item in each tuple is the person and the second is the relationship.'''
+        '''Returns a list of all of this person's blood relatives.'''
         # Two people are related by blood if they share a common ancestor.
-        ancestor_distances = self._ancestor_distances()
         # For efficiency, only consider root ancestors since their
         # descendants' blood relatives will be a subset of theirs and don't need
         # to be considered separately.
-        root_ancestors = [p for p in ancestor_distances.keys() if not (p.father and p.mother)] or [self]
+        root_ancestors = [p for p in self.ancestors() if not (p.father and p.mother)] or [self]
         relatives = Set(root_ancestors)
         for ancestor in root_ancestors:
             relatives.update(ancestor.descendants())
         relatives.remove(self) # This person can't be their own relative.
+        return relatives
+
+    def annotated_relatives(self):
+        '''Returns a list of all of this person's blood relatives. The first
+        item in each tuple is the person, the second is the relationship, and
+        the third is the distance between the two individuals.'''
+        relatives = self.relatives()
+        ancestor_distances = self._ancestor_distances()
         distances = ancestor_distances.copy()
         distances.update(self._descendant_distances())
         annotated = []
         for relative in relatives:
             distance = distances.get(relative, None)
             if not distance:
-                (_, d1, d2) = closest_common_ancestor(ancestor_distances, relative._ancestor_distances())
+                (_, d1, d2) = closest_common_ancestor(ancestor_distances,
+                                                      relative._ancestor_distances())
                 distance = max(d1, d2)
             annotated.append((relative, describe_relative(self, relative), distance))
         annotated.sort(key=lambda (p, r, d): (d, r, p.surname))

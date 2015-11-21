@@ -8,16 +8,16 @@
 {% block content %}
   <h1 class="page-header">
     {{ title }}
-    {% if person %}
-      <div class="pull-right">
+    <div class="pull-right">
+      {% if person %}
         <a href="{% url 'report' person.id %}" class="btn btn-default">
           <span class="glyphicon glyphicon-stats"></span> Report
         </a>
-        <a href="{% url 'map' person.id %}" class="btn btn-default">
-          <span class="glyphicon glyphicon-globe"></span> Map
-        </a>
-      </div>
-    {% endif %}
+      {% endif %}
+      <a href="{{ map_link }}" class="btn btn-default">
+        <span class="glyphicon glyphicon-globe"></span> Map
+      </a>
+    </div>
   </h1>
   <table class="table">
   {% for relative, description, distance in relatives %}
