@@ -1,28 +1,20 @@
-<ul class="nav nav-tabs">
-  <li class="active"><a href="#surnames" data-toggle="tab">Surnames</a></li>
-  <li><a href="#tags" data-toggle="tab">Tags</a></li>
-</ul>
-<div class="tab-content">
-  <div class="tab-pane active" id="surnames">
-    <div id="surname-cloud" class="text-center">
-      {% for surname in surnames %}
-        <a href="{% url 'surname' surname.surname %}" rel="{{ surname.surname__count }}">{{ surname.surname }}</a>
-      {% endfor %}
-    </div>
-  </div>
-  <div class="tab-pane" id="tags">
-    <div id="tag-cloud" class="text-center">
-      {% for tag in tags %}
-        <a href="{% url 'tag' tag.slug %}" rel="{{ tag.tag_count }}">{{ tag.name }}</a>
-      {% endfor %}
-    </div>
-  </div>
-</div>
+<p id="surname-cloud" class="text-center">
+  {% for surname in surnames %}
+    <a href="{% url 'surname' surname.surname %}" rel="{{ surname.surname__count }}">{{ surname.surname }}</a>
+  {% endfor %}
+</p>
 <script>
   $(document).ready(function(){
     $('#surname-cloud a').tagcloud({size: {start: 14, end: 32, unit: 'px'},
                                     color: {'start': '#9c9', end: '#93c54b'}});
-    $('#tag-cloud a').tagcloud({size: {start: 14, end: 32, unit: 'px'},
-                                color: {'start': '#9c9', end: '#93c54b'}});
   });
 </script>
+<p class="text-center">
+  {% for tag in tags %}
+    <span style="white-space: nowrap;">
+      <a href="{% url 'tag' tag.slug %}" class="label label-default"
+         style="display: inline-block; margin: 2px 2px 2px 5px; padding: 5px;">{{ tag.name }}</a>
+      <small>x{{ tag.tag_count }}</small>
+    </span>
+  {% endfor %}
+</p>

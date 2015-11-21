@@ -35,6 +35,8 @@ def index(request):
         max_lng = max(location.longitude, max_lng)
     center = ((min_lat + max_lat) / 2, (min_lng + max_lng) / 2)
 
+    tags = Tag.objects.annotate(tag_count=Count('taggit_taggeditem_items')).order_by('name')
+
     return render(request,
                   'people/index.html',
                   {'surnames': surnames,
@@ -42,7 +44,7 @@ def index(request):
                    'female_names': female_names[:10],
                    'regions': regions,
                    'locations': locations,
-                   'tags': Tag.objects.annotate(tag_count=Count('taggit_taggeditem_items')),
+                   'tags': tags,
                    'map_center' : center,
                    'list': Person.objects.all()})
 
