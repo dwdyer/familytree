@@ -1,5 +1,4 @@
 {% extends "people/base.html" %}
-{% load static %}
 {% load staticfiles %}
 {% load thumbnail %}
 {% block title %}Family Tree - Overview{% endblock %}
@@ -9,6 +8,7 @@
   <script src="{% static 'people/js/jquery.tagcloud.js' %}"></script>
   <style>
     .tab-pane tbody>tr:first-child>td {border-top: 0;}
+    #map {height: 400px;}
   </style>
 {% endblock %}
 
@@ -16,96 +16,12 @@
   <br/>
   <div class="row">
     <div class="col-md-8">
-      <div id="map" style="height: 400px;"></div>
-      <div id="surname-cloud" class="text-center">
-        {% for surname in surnames %}
-          <a href="{% url 'surname' surname.surname %}" rel="{{ surname.surname__count }}">{{ surname.surname }}</a>
-        {% endfor %}
-      </div>
-      <script>
-        $(document).ready(function(){
-          var map = L.map('map').setView([{{ map_center.0 }}, {{ map_center.1 }}], 6);
-          L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
-                      {attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://mapbox.com">Mapbox</a>',
-                       maxZoom: 18,
-                       id: '{{ settings.MAPBOX_PROJECT_ID }}',
-                       accessToken: '{{ settings.MAPBOX_ACCESS_TOKEN }}'}).addTo(map);
-          {% for location in locations %}
-            var marker{{ forloop.counter }} = L.marker([{{ location.latitude }}, {{ location.longitude }}]).addTo(map);
-            marker{{ forloop.counter }}.bindPopup('<b>{{ location.name }}</b><br/><a href="{% url 'location' location.id %}">{{ location.natives_count }} {{ location.natives_count|pluralize:"person,people" }}</a> born here.');
-          {% endfor %}
-          $('#surname-cloud a').tagcloud({size: {start: 14, end: 32, unit: 'px'},
-                                          color: {'start': '#9c9', end: '#93c54b'}});
-        });
-      </script>
+      {% include 'people/fragments/map.html' with zoom=6 %}
+      <br/>
+      {% include 'people/fragments/clouds.html' %}
     </div>
     <div class="col-md-4">
-      <div class="panel-group" id="accordion">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">
-              <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                Most Common Birthplaces
-              </a>
-            </h3>
-          </div>
-          <div id="collapseOne" class="panel-collapse collapse in">
-            <div class="panel-body">
-              <table class="table">
-                {% for region in regions %}
-                  <tr>
-                    <td>
-                      <img src="{% get_static_prefix %}people/images/flags/{{ region.country_code }}.png"
-                           alt="{{ region.country_name }}" width="24" height="24" style="margin: -2px 5px;"/>
-                      <a href="{% url 'region' region.name %}">{{ region.name }}</a>
-                    </td>
-                    <td class="text-right">{{ region.natives_count }}</td>
-                  </tr>
-                {% endfor %}
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">
-              <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                Most Popular Given Names
-              </a>
-            </h3>
-          </div>
-          <div id="collapseTwo" class="panel-collapse collapse">
-            <div class="panel-body">
-              <ul class="nav nav-tabs">
-                <li class="active"><a href="#male" data-toggle="tab">Male</a></li>
-                <li><a href="#female" data-toggle="tab">Female</a></li>
-              </ul>
-              <div class="tab-content">
-                <div class="tab-pane active" id="male">
-                  <table class="table">
-                    {% for name in male_names %}
-                      <tr>
-                        <td><a href="{% url 'forename' name.forename %}">{{ name.forename }}</a></td>
-                        <td class="text-right">{{ name.forename__count }}</td>
-                      </tr>
-                    {% endfor %}
-                  </table>
-                </div>
-                <div class="tab-pane" id="female">
-                  <table class="table" style="border-top: 0;">
-                    {% for name in female_names %}
-                      <tr>
-                        <td><a href="{% url 'forename' name.forename %}">{{ name.forename }}</a></td>
-                        <td class="text-right">{{ name.forename__count }}</td>
-                      </tr>
-                    {% endfor %}
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {% include 'people/fragments/accordion.html' %}
     </div>
   </div>
 {% endblock %}

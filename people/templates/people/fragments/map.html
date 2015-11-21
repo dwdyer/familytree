@@ -1,0 +1,26 @@
+<div id="map"></div>
+<script>
+  $(document).ready(function(){
+    var map = L.map('map').setView([{{ map_center.0 }}, {{ map_center.1 }}], {{ zoom }});
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
+                {attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,\
+                               <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,\
+                               Imagery &copy; <a href="http://mapbox.com">Mapbox</a>',
+                 minZoom: 3,
+                 maxZoom: 18,
+                 id: '{{ settings.MAPBOX_PROJECT_ID }}',
+                 accessToken: '{{ settings.MAPBOX_ACCESS_TOKEN }}'}).addTo(map);
+    {% for location in locations %}
+      var marker{{ forloop.counter }} = L.marker([{{ location.latitude }}, {{ location.longitude }}]).addTo(map);
+      marker{{ forloop.counter }}.bindPopup(
+        '<a href="{% url 'location' location.id %}">{{ location.name }}</a>\
+        <br/>{{ location.county_state_province }}\
+        {% if location.natives_count %}\
+          <br/>\
+          <small class="text-muted">\
+            {{ location.natives_count }} {{ location.natives_count|pluralize:"person,people" }} born here\
+          </small>\
+        {% endif %}');
+    {% endfor %}
+  });
+</script>

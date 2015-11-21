@@ -4,6 +4,7 @@ from itertools import groupby
 from math import pow
 from operator import itemgetter
 from people.models import Location, Person
+from taggit.models import Tag
 
 def index(request):
     regions = Location.objects.raw('''SELECT l.id, l.county_state_province AS name, c.name AS country_name,
@@ -41,6 +42,7 @@ def index(request):
                    'female_names': female_names[:10],
                    'regions': regions,
                    'locations': locations,
+                   'tags': Tag.objects.annotate(tag_count=Count('taggit_taggeditem_items')),
                    'map_center' : center,
                    'list': Person.objects.all()})
 

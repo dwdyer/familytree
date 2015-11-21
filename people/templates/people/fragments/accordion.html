@@ -1,0 +1,67 @@
+{% load static %}
+<div class="panel-group" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+          Most Common Birthplaces
+        </a>
+      </h3>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in">
+      <div class="panel-body">
+        <table class="table">
+          {% for region in regions %}
+            <tr>
+              <td>
+                <img src="{% get_static_prefix %}people/images/flags/{{ region.country_code }}.png"
+                     alt="{{ region.country_name }}" width="24" height="24" style="margin: -2px 5px;"/>
+                <a href="{% url 'region' region.name %}">{{ region.name }}</a>
+              </td>
+              <td class="text-right">{{ region.natives_count }}</td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+          Most Popular Given Names
+        </a>
+      </h3>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse">
+      <div class="panel-body">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#male" data-toggle="tab">Male</a></li>
+          <li><a href="#female" data-toggle="tab">Female</a></li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="male">
+            <table class="table">
+              {% for name in male_names %}
+                <tr>
+                  <td><a href="{% url 'forename' name.forename %}">{{ name.forename }}</a></td>
+                  <td class="text-right">{{ name.forename__count }}</td>
+                </tr>
+              {% endfor %}
+            </table>
+          </div>
+          <div class="tab-pane" id="female">
+            <table class="table" style="border-top: 0;">
+              {% for name in female_names %}
+                <tr>
+                  <td><a href="{% url 'forename' name.forename %}">{{ name.forename }}</a></td>
+                  <td class="text-right">{{ name.forename__count }}</td>
+                </tr>
+              {% endfor %}
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
