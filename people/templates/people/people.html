@@ -25,7 +25,7 @@
 {% endblock %}
 
 {% block content %}
-  <h1 class="page-header">{{ title }}</h1>
+  <h1 class="page-header">{{ title }} <small>{{ people|length }} {{people|pluralize:"person,people" }}</small></h1>
   <table class="table">
     <thead>
       <tr>

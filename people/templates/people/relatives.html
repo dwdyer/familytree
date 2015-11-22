@@ -8,6 +8,7 @@
 {% block content %}
   <h1 class="page-header">
     {{ title }}
+    <small>{{ relatives|length }} {{ relatives|pluralize:"person,people" }}</small>
     <div class="pull-right">
       {% if person %}
         <a href="{% url 'report' person.id %}" class="btn btn-default">

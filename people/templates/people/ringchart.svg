@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+{% load mathfilters %}
+{% with dimension=rings|length|mul:160 centre=rings|length|mul:160|div:2 %}
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     version="1.1"
+     baseProfile="full"
+     width="{{ dimension }}"
+     height="{{ dimension }}"
+     viewBox="0 0 {{ dimension }} {{ dimension }}"
+     onload="init(evt)">
+  <script type="text/javascript"><![CDATA[
+    function polarToCartesian(centerX, centerY, radius, angleInDegrees)
+    {
+      var angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
+      return {x: centerX + (radius * Math.cos(angleInRadians)),
+              y: centerY + (radius * Math.sin(angleInRadians))};
+    }
+
+    function describeArc(x, y, radius, startAngle, endAngle)
+    {
+        var start = polarToCartesian(x, y, radius, endAngle);
+        var end = polarToCartesian(x, y, radius, startAngle);
+        var arcSweep = endAngle - startAngle <= 180 ? "0" : "1";
+        return ["M", start.x, start.y,
+                "A", radius, radius, 0, arcSweep, 0, end.x, end.y].join(" ");
+    }
+
+    function describeSlice(x, y, radius, startAngle, endAngle)
+    {
+        var start = polarToCartesian(x, y, radius, endAngle);
+        var end = polarToCartesian(x, y, radius, startAngle);
+        var arcSweep = endAngle - startAngle <= 180 ? "0" : "1";
+        return ["M", x, y,
+                "L", end.x, end.y,
+                 "M", x, y,
+                 "L", start.x, start.y,
+                 "A", radius, radius, 0, arcSweep, 0, end.x, end.y].join(" ");
+    }
+
+    function init()
+    {
+      {% for ring in rings %}
+        {% with slices=ring|length %}
+          {% if slices > 1 %}
+            {% for person in ring %}
+              {% if person %}
+                radius = {{ forloop.parentloop.revcounter|mul:80 }}
+                start = {{ 360|div:slices|mul:forloop.counter0 }};
+                end = {{ 360|div:slices|mul:forloop.counter }};
+                document.getElementById("slice{{ forloop.parentloop.counter }}_{{ forloop.counter }}").setAttribute("d", describeSlice({{ centre }}, {{ centre }}, radius, start, end));
+                document.getElementById("arc{{ forloop.parentloop.counter }}_{{ forloop.counter }}").setAttribute("d", describeArc({{ centre }}, {{ centre }}, radius, start, end));
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      {% endfor %}
+    }
+  ]]></script>
+  <style>
+   .male {fill: #ddf; stroke: #aac;}
+   .female {fill: #fdd; stroke: #caa;}
+   .male, .female {stroke-width: 1px;}
+   text {text-anchor: middle; font-family: Helvetica, Arial, sans-serif;}
+   .inner {font-size: 24px;}
+   .middle {font-size: 18px;}
+   .outer {font-size: 15px;}
+  </style>
+  {% for ring in rings %}
+    {% for person in ring %}
+      {% if person %}
+        <path id="slice{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
+              class="{% if person.gender == 'M' %}male{% else %}female{% endif %}" />
+        <path id="arc{{ forloop.parentloop.counter }}_{{ forloop.counter }}" fill="none" stroke="none" />
+        {% if forloop.parentloop.revcounter0 <= 2 %}
+          <text dy="-15" class="inner">
+            <textPath xlink:href="#arc{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+              {{ person.given_names }} {{ person.birth_surname }}
+            </textPath>
+          </text>
+        {% elif forloop.parentloop.revcounter0 <= 4 %}
+          <text dy="-40" class="middle">
+            <textPath xlink:href="#arc{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+              {{ person.given_names }}
+            </textPath>
+          </text>
+          <text dy="-15" class="middle">
+            <textPath xlink:href="#arc{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+              {{ person.birth_surname }}
+            </textPath>
+          </text>
+        {% elif forloop.parentloop.revcounter0 <= 5 %}
+          <text dy="-35" class="outer">
+            <textPath xlink:href="#arc{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+              {{ person.given_names }}
+            </textPath>
+          </text>
+          <text dy="-15" class="outer">
+            <textPath xlink:href="#arc{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+              {{ person.birth_surname }}
+            </textPath>
+          </text>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+  <circle cx="{{ centre }}" cy="{{ centre }}" r="80" stroke="black" stroke-width="2" fill="white" />
+  {% with person=rings|last|last %}
+    {% if person.middle_names %}
+      <text x="{{ centre }}" y="{{ centre }}" dy="-20" class="inner">{{ person.forename }}</text>
+      <text x="{{ centre }}" y="{{ centre }}" dy="7.5" class="inner">{{ person.middle_names }}</text>
+      <text x="{{ centre }}" y="{{ centre }}" dy="35" class="inner">{{ person.surname }}</text>
+    {% else %}
+      <text x="{{ centre }}" y="{{ centre }}" dy="-5" class="inner">{{ person.forename }}</text>
+      <text x="{{ centre }}" y="{{ centre }}" dy="20" class="inner">{{ person.surname }}</text>
+    {% endif %}
+  {% endwith %}
+</svg>
+{% endwith %}

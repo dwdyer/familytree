@@ -95,6 +95,12 @@ class Person(models.Model):
         else:
             return name + " " + self.surname
 
+    def given_names(self):
+        return " ".join([self.forename, self.middle_names]) if self.middle_names else self.forename
+
+    def birth_surname(self):
+        return self.maiden_name if self.maiden_name else self.surname
+
     def age(self):
         '''Calculate the person's age in years.'''
         if not self.date_of_birth or (self.deceased and not self.date_of_death):

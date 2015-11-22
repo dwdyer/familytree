@@ -119,6 +119,39 @@ def ancestors_map(request, person_id):
     return _people_map(request, person.ancestors(), title)
 
 
+def ring_chart_svg(request, person_id):
+    person = get_object_or_404(Person, id=person_id)
+    rings = [[person]]
+    while True:
+        (ring, count) = _next_ring(rings[-1])
+        if (count > 0):
+            rings.append(ring)
+        else:
+            break
+    return render(request,
+                  'people/ringchart.svg',
+                  {'rings': list(reversed(rings))},
+                  content_type='image/svg+xml')
+
+
+def _next_ring(previous_ring):
+    '''Returns a full ring of ancestors, with None used as a placeholder for
+    those who are unknown. Also returns the count of how many non-None people
+    are in the ring.'''
+    ring = [] 
+    count = 0
+    for person in previous_ring:
+        if person is None:
+            ring.extend([None, None])
+        else:
+            ring.append(person.mother)
+            ring.append(person.father)
+            count += (1 if person.father else 0) + (1 if person.mother else 0)
+    # Make sure the list has an entry for evey position.
+    ring.extend([None] * ((len(previous_ring) * 2) - len (ring)))
+    return (ring, count)
+
+
 def descendants_map(request, person_id):
     person = get_object_or_404(Person, id=person_id)
     title = 'Descendants of ' + person.name() + ' - Map of Birth Places'
