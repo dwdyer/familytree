@@ -66,6 +66,10 @@
           {% endif %}
         {% endwith %}
       {% endfor %}
+      var svg = document.getElementsByTagName("svg")[0];
+      var bbox = svg.getBBox();
+      var viewBox = [bbox.x, bbox.y, bbox.width, bbox.height].join(" ");
+      svg.setAttribute("viewBox", viewBox);
     }
   ]]></script>
   <style>
@@ -89,16 +93,16 @@
       {% if person %}
         <path id="arc{{ forloop.parentloop.counter }}_{{ forloop.counter }}" fill="none" stroke="none" />
         <path id="spoke{{ forloop.parentloop.counter }}_{{ forloop.counter }}" fill="none" stroke="none" />
-        <a xlink:href="{% url 'person' person.id %}">
+        <a xlink:href="{% url 'person' person.id %}" target="_top">
           <path id="slice{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
                 class="{% if person.gender == 'M' %}male{% else %}female{% endif %}" />
-          {% if forloop.parentloop.revcounter0 <= 2 %}
+          {% if forloop.parentloop.revcounter0 == 1 or forloop.parentloop.revcounter0 ==  2 %}
             <text dy="-15" class="inner">
               <textPath xlink:href="#arc{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
                 {{ person.given_names }} {{ person.birth_surname }}
               </textPath>
             </text>
-          {% elif forloop.parentloop.revcounter0 <= 4 %}
+          {% elif forloop.parentloop.revcounter0 == 3 or forloop.parentloop.revcounter0 == 4 %}
             <text dy="-40" class="middle">
               <textPath xlink:href="#arc{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
                 {{ person.given_names }}

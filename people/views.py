@@ -119,6 +119,13 @@ def ancestors_map(request, person_id):
     return _people_map(request, person.ancestors(), title)
 
 
+def ring_chart(request, person_id):
+    person = get_object_or_404(Person, id=person_id)
+    return render(request,
+                  'people/ringchart.html',
+                  {'person': person, 'list': Person.objects.all()}) 
+
+
 def ring_chart_svg(request, person_id):
     person = get_object_or_404(Person, id=person_id)
     rings = [[person]]

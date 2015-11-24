@@ -10,6 +10,9 @@
   <h1 class="page-header">
     {{ title }}
     <div class="pull-right">
+      <a href="{% url 'ring_chart' person.id %}" class="btn btn-default">
+        <span class="glyphicon glyphicon-record"></span> Chart
+      </a>
       <a href="{% url 'ancestors_map' person.id %}" class="btn btn-default">
         <span class="glyphicon glyphicon-globe"></span> Map
       </a>

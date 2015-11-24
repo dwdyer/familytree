@@ -1,0 +1,30 @@
+{% extends "people/base.html" %}
+{% load static %}
+{% load staticfiles %}
+{% load thumbnail %}
+{% block title %}Known Ancestors of {{ person.name }} - Ring Chart{% endblock %}
+{% block head %}
+  <style>
+    body {margin-top: 60px;}
+    #chart {width: 100%; padding: 0; margin: 0;}
+  </style>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+      <div class="col-md-12">
+        <h1 class="page-header">
+          Known Ancestors of {{ person.name }}
+          <div class="pull-right">
+            <a href="{% url 'ancestors_map' person.id %}" class="btn btn-default">
+              <span class="glyphicon glyphicon-globe"></span> Map
+            </a>
+          </div>
+        </h1>
+        <object id="chart" type="image/svg+xml" data="{% url 'ring_chart_svg' person.id %}">
+          Ancestors chart for {{ person.name }}
+        </object>
+      </div>
+    </div>
+{% endblock %}
+

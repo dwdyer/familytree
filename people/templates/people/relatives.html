@@ -14,6 +14,9 @@
         <a href="{% url 'report' person.id %}" class="btn btn-default">
           <span class="glyphicon glyphicon-stats"></span> Report
         </a>
+        <a href="{% url 'ring_chart' person.id %}" class="btn btn-default">
+          <span class="glyphicon glyphicon-record"></span> Chart
+        </a>
       {% endif %}
       <a href="{{ map_link }}" class="btn btn-default">
         <span class="glyphicon glyphicon-globe"></span> Map
