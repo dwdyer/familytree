@@ -114,11 +114,24 @@
               </textPath>
             </text>
           {% elif forloop.parentloop.revcounter0 == 5 %}
-            <text dy="-35" class="outer">
-              <textPath xlink:href="#arc{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.given_names }}
-              </textPath>
-            </text>
+            {% if person.middle_names %}
+              <text dy="-55" class="outer">
+                <textPath xlink:href="#arc{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                  {{ person.forename }}
+                </textPath>
+              </text>
+              <text dy="-35" class="outer">
+                <textPath xlink:href="#arc{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                  {{ person.middle_names }}
+                </textPath>
+              </text>
+            {% else %}
+              <text dy="-35" class="outer">
+                <textPath xlink:href="#arc{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                  {{ person.given_names }}
+                </textPath>
+              </text>
+            {% endif %}
             <text dy="-15" class="outer">
               <textPath xlink:href="#arc{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
                 {{ person.birth_surname }}
