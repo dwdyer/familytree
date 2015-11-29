@@ -6,7 +6,7 @@ import settings
 
 urlpatterns = patterns(
     '',
-    (r'^$', RedirectView.as_view(pattern_name='people.index')),
+    (r'^$', RedirectView.as_view(pattern_name='people.index', permanent=False)),
     (r'^people/', include('people.urls')),
     (r'^admin/', include(admin.site.urls)),
     (r'^tinymce/', include('tinymce.urls')),
