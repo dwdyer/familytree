@@ -54,16 +54,20 @@ SETTINGS_EXPORT = ('MAPBOX_PROJECT_ID', 'MAPBOX_ACCESS_TOKEN')
 
 # URLs
 ROOT_URLCONF = 'urls'
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/people/'
+LOGOUT_URL = '/logout/'
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'middleware.LoginRequiredMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
-if DEBUG: MIDDLEWARE_CLASSES += ('middleware.QueryCountDebugMiddleware',)
+if DEBUG: MIDDLEWARE_CLASSES += ('middleware.QueryCountMiddleware',)
 
 INSTALLED_APPS = (
     'people',

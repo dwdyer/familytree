@@ -1,0 +1,51 @@
+{% extends "people/base.html" %}
+{% block title %}Family Tree - Login{% endblock %}
+{% block navbar %}{% endblock %}
+{% block content %}
+  {% if user.is_authenticated %}
+    <div class="alert alert-warning">
+      You are already signed in. If you wish to sign in as a different user,
+      please <a href="{% url 'logout' %}?next={% url 'login' %}" class="alert-link">sign out</a> first.
+    </div>
+  {% else %}
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h2 class="panel-title">Family Tree - Login</h2>
+          </div>
+          <div class="panel-body">
+            {% if form.errors %}
+              <div class="alert alert-danger">
+                Authentication failed. Please check your username and password and try again.
+              </div>
+            {% endif %}
+            <form class="form-horizontal" role="form" method="post" action="">
+              {% csrf_token %}
+              <fieldset>
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">{{ form.username.label }}:</label>
+                  <div class="col-sm-9">
+                    <input name="username" type="text" class="form-control"/>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">{{ form.password.label }}:</label>
+                  <div class="col-sm-9">
+                    <input name="password" type="password" class="form-control"/>
+                  </div>
+                </div>
+                <input type="hidden" name="next" value="{{ next }}" />
+                <div class="form-group">
+                  <div class="text-right col-sm-12">
+                    <button type="submit" class="btn btn-default">Login</button>
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
