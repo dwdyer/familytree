@@ -148,9 +148,9 @@ class Person(models.Model):
         of their children's descendents).'''
         descendants = []
         children = self.children()
-        descendants += children
+        descendants.extend(children)
         for child in children:
-            descendants += child.descendants()
+            descendants.extend(child.descendants())
         return descendants
 
     def annotated_descendants(self):
@@ -201,7 +201,7 @@ class Person(models.Model):
         # For efficiency, only consider root ancestors since their
         # descendants' blood relatives will be a subset of theirs and don't need
         # to be considered separately.
-        root_ancestors = [p for p in self.ancestors() if not (p.father and p.mother)] or [self]
+        root_ancestors = [p for p in self.ancestors() if not (p.father or p.mother)] or [self]
         relatives = Set(root_ancestors)
         for ancestor in root_ancestors:
             relatives.update(ancestor.descendants())

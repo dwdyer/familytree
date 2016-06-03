@@ -145,7 +145,7 @@ def _next_ring(previous_ring):
     '''Returns a full ring of ancestors, with None used as a placeholder for
     those who are unknown. Also returns the count of how many non-None people
     are in the ring.'''
-    ring = [] 
+    ring = []
     count = 0
     for person in previous_ring:
         if person is None:
