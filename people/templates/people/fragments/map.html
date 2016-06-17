@@ -1,7 +1,7 @@
 <div id="map"></div>
 <script>
   $(document).ready(function(){
-    var map = L.map('map', {fullscreenControl: true}).setView([{{ map_center.0 }}, {{ map_center.1 }}], {{ zoom }});
+    var map = L.map('map', {fullscreenControl: true}).fitBounds([[{{ map_area.0.0 }},{{ map_area.0.1 }}],[{{ map_area.1.0 }},{{ map_area.1.1}}]]);
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
                 {attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,\
                                <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,\
@@ -11,6 +11,7 @@
                  id: '{{ settings.MAPBOX_PROJECT_ID }}',
                  accessToken: '{{ settings.MAPBOX_ACCESS_TOKEN }}'}).addTo(map);
     var markers = L.markerClusterGroup({showCoverageOnHover: false,
+                                        singleMarkerMode: true,
                                         spiderfyOnMaxZoom: false,
                                         iconCreateFunction: function(cluster) {
                                             var children = cluster.getAllChildMarkers();
@@ -19,11 +20,19 @@
                                             {
                                                 count += children[i].people_count;
                                             }
-                                            var size = Math.floor(Math.log10(count));
-                                            var sizeClass = ['small', 'medium', 'large'][size];
-                                            return L.divIcon({html: '<div><span>' + count + '</span></div>',
-                                                             className: 'marker-cluster marker-cluster-' + sizeClass,
-                                                             iconSize: new L.Point(40, 40)});
+                                            var html;
+                                            var classes = 'marker-cluster';
+                                            if (cluster.getChildCount() > 1)
+                                            {
+                                                classes += ' marker-cluster-' + ['small', 'medium', 'large'][Math.floor(Math.log10(count))];
+                                                html = '<div><span><b>' + count + '</b></span></div>';
+                                            }
+                                            else
+                                            {
+                                                classes += ' marker-simple';
+                                                html = '<div><span><small>' + count + '</small></span></div>';
+                                            }
+                                            return L.divIcon({html: html, className: classes, iconSize: new L.Point(40, 40)});
                                         }});
     {% for location in locations %}
       var marker{{ forloop.counter }} = L.marker([{{ location.latitude }}, {{ location.longitude }}]);

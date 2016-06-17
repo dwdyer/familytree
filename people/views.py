@@ -34,7 +34,6 @@ def index(request):
         max_lat = max(location.latitude, max_lat)
         min_lng = min(location.longitude, min_lng)
         max_lng = max(location.longitude, max_lng)
-    center = ((min_lat + max_lat) / 2, (min_lng + max_lng) / 2)
 
     tags = Tag.objects.annotate(tag_count=Count('taggit_taggeditem_items')).order_by('name')
 
@@ -46,7 +45,7 @@ def index(request):
                    'regions': regions,
                    'locations': locations,
                    'tags': tags,
-                   'map_center' : center,
+                   'map_area' : ((min_lat, min_lng), (max_lat, max_lng)),
                    'list': Person.objects.all()})
 
 
@@ -172,23 +171,25 @@ def relatives_map(request, person_id):
 
 
 def _people_map(request, people, title):
-    locations = []
+    counts = {}
     min_lat = min_lng = 90
     max_lat = max_lng = -90
     for person in people:
         location = person.birth_location
         if location and location.latitude and location.longitude:
-            locations.append(location)
+            count = counts.get(location, 0)
+            counts[location] = count + 1
             min_lat = min(location.latitude, min_lat)
             max_lat = max(location.latitude, max_lat)
             min_lng = min(location.longitude, min_lng)
             max_lng = max(location.longitude, max_lng)
-    center = ((min_lat + max_lat) / 2, (min_lng + max_lng) / 2)
+    for location in counts.keys():
+        location.natives_count = counts.get(location)
     return render(request,
                   'people/map.html',
                   {'title': title,
-                   'locations': locations,
-                   'map_center' : center,
+                   'locations': counts.keys(),
+                   'map_area' : ((min_lat, min_lng), (max_lat, max_lng)),
                    'list': Person.objects.all()})
 
 

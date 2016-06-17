@@ -55,6 +55,15 @@ class Location(models.Model):
     def __unicode__(self):
         return '{0}, {1}'.format(self.name, self.county_state_province)
 
+    def __eq__(self, other):
+        if other:
+            return self.name == other.name and self.latitude == other.latitude and self.longitude == other.longitude
+        else:
+            return False
+
+    def __hash__(self):
+        return hash(self.name) + hash(self.latitude) + hash(self.longitude)
+
     class Meta:
         ordering = ['country', 'county_state_province', 'name']
 
