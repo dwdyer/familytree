@@ -1,31 +1,44 @@
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">Map of Birthplaces</h3>
-  </div>
-  <div id="map"></div>
-  <script>
-    $(document).ready(function(){
-      var map = L.map('map').setView([{{ map_center.0 }}, {{ map_center.1 }}], {{ zoom }});
-      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
-                  {attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,\
-                                 <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,\
-                                 Imagery &copy; <a href="http://mapbox.com">Mapbox</a>',
-                   minZoom: 3,
-                   maxZoom: 18,
-                   id: '{{ settings.MAPBOX_PROJECT_ID }}',
-                   accessToken: '{{ settings.MAPBOX_ACCESS_TOKEN }}'}).addTo(map);
-      {% for location in locations %}
-        var marker{{ forloop.counter }} = L.marker([{{ location.latitude }}, {{ location.longitude }}]).addTo(map);
-        marker{{ forloop.counter }}.bindPopup(
-          '<a href="{% url 'location' location.id %}">{{ location.name }}</a>\
-          <br/>{{ location.county_state_province }}\
-          {% if location.natives_count %}\
-            <br/>\
-            <small class="text-muted">\
-              {{ location.natives_count }} {{ location.natives_count|pluralize:"person,people" }} born here\
-            </small>\
-          {% endif %}');
-      {% endfor %}
-    });
-  </script>
-</div>
+<div id="map"></div>
+<script>
+  $(document).ready(function(){
+    var map = L.map('map').setView([{{ map_center.0 }}, {{ map_center.1 }}], {{ zoom }});
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
+                {attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,\
+                               <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,\
+                               Imagery &copy; <a href="http://mapbox.com">Mapbox</a>',
+                 minZoom: 3,
+                 maxZoom: 18,
+                 id: '{{ settings.MAPBOX_PROJECT_ID }}',
+                 accessToken: '{{ settings.MAPBOX_ACCESS_TOKEN }}'}).addTo(map);
+    var markers = L.markerClusterGroup({showCoverageOnHover: false,
+                                        spiderfyOnMaxZoom: false,
+                                        iconCreateFunction: function(cluster) {
+                                            var children = cluster.getAllChildMarkers();
+                                            var count = 0;
+                                            for (var i = 0; i < children.length; i++)
+                                            {
+                                                count += children[i].people_count;
+                                            }
+                                            var size = Math.floor(Math.log10(count));
+                                            var sizeClass = ['small', 'medium', 'large'][size];
+                                            return L.divIcon({html: '<div><span>' + count + '</span></div>',
+                                                             className: 'marker-cluster marker-cluster-' + sizeClass,
+                                                             iconSize: new L.Point(40, 40)});
+                                        }});
+    {% for location in locations %}
+      var marker{{ forloop.counter }} = L.marker([{{ location.latitude }}, {{ location.longitude }}]);
+      marker{{ forloop.counter }}.people_count = {{ location.natives_count|default:1 }};
+      marker{{ forloop.counter }}.bindPopup(
+        '<a href="{% url 'location' location.id %}">{{ location.name }}</a>\
+        <br/>{{ location.county_state_province }}\
+        {% if location.natives_count %}\
+          <br/>\
+          <small class="text-muted">\
+            {{ location.natives_count }} {{ location.natives_count|pluralize:"person,people" }} born here\
+          </small>\
+        {% endif %}');
+      markers.addLayer(marker{{ forloop.counter }});
+    {% endfor %}
+    map.addLayer(markers);
+  });
+</script>

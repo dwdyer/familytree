@@ -4,7 +4,10 @@
 {% block title %}Family Tree - Overview{% endblock %}
 {% block head %}
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.5.0/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.5.0/MarkerCluster.css" />
   <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.5.0/leaflet.markercluster.js"></script>
   <script src="{% static 'people/js/jquery.tagcloud.js' %}"></script>
   <style>
     .tab-pane tbody>tr:first-child>td {border-top: 0;}
@@ -18,7 +21,12 @@
     <div class="col-md-8">
       <div class="panel-group">
         {% include 'people/fragments/clouds.html' %}
-        {% include 'people/fragments/map.html' with zoom=6 %}
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Map of Birthplaces</h3>
+          </div>
+          {% include 'people/fragments/map.html' with zoom=6 %}
+        </div>
       </div>
     </div>
     <div class="col-md-4">
@@ -26,5 +34,3 @@
     </div>
   </div>
 {% endblock %}
-
-
