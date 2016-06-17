@@ -1,7 +1,7 @@
 <div id="map"></div>
 <script>
   $(document).ready(function(){
-    var map = L.map('map').setView([{{ map_center.0 }}, {{ map_center.1 }}], {{ zoom }});
+    var map = L.map('map', {fullscreenControl: true}).setView([{{ map_center.0 }}, {{ map_center.1 }}], {{ zoom }});
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
                 {attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,\
                                <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,\
