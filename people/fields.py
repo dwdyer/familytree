@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import dateformat
 import datetime
@@ -37,7 +38,7 @@ class UncertainDate(object):
             return dateformat.format(self.lower_bound, 'F Y')
         else:
             return dateformat.format(self.lower_bound, 'Y')
-            
+
 
 class UncertainDateField(models.Field):
     '''Stores a possibly incomplete date as a (partial) ISO format date
@@ -87,12 +88,13 @@ class UncertainDateField(models.Field):
 
 
 class UncertainDateFormField(forms.CharField):
-    
+
     def __init__(self, *args, **kwargs):
         super(UncertainDateFormField, self).__init__(max_length=10, min_length=4, *args, **kwargs)
 
+
     def prepare_value(self, value):
-        return None if value is None else repr(value)
+        return repr(value) if isinstance(value, UncertainDate) else value
 
 
 def _parse_date_string(string):
@@ -100,9 +102,12 @@ def _parse_date_string(string):
         return None
     else:
         fields = string.split('-')
-        if len(fields) == 3:
-            return UncertainDate(int(fields[0]), int(fields[1]), int(fields[2]))
-        elif len(fields) == 2:
-            return UncertainDate(int(fields[0]), int(fields[1]))
-        else:
-            return UncertainDate(int(fields[0]))
+        try:
+            if len(fields) == 3:
+                return UncertainDate(int(fields[0]), int(fields[1]), int(fields[2]))
+            elif len(fields) == 2:
+                return UncertainDate(int(fields[0]), int(fields[1]))
+            else:
+                return UncertainDate(int(fields[0]))
+        except ValueError:
+            raise ValidationError('Invalid date string.')
