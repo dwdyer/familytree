@@ -8,7 +8,7 @@
   <script src="{% static 'people/js/jquery.tagcloud.js' %}"></script>
   <style>
     .tab-pane tbody>tr:first-child>td {border-top: 0;}
-    #map {height: 400px;}
+    #map {height: 480px;}
   </style>
 {% endblock %}
 
@@ -16,8 +16,10 @@
   <br/>
   <div class="row">
     <div class="col-md-8">
-      {% include 'people/fragments/map.html' with zoom=6 %}
-      {% include 'people/fragments/clouds.html' %}
+      <div class="panel-group">
+        {% include 'people/fragments/clouds.html' %}
+        {% include 'people/fragments/map.html' with zoom=6 %}
+      </div>
     </div>
     <div class="col-md-4">
       {% include 'people/fragments/accordion.html' %}

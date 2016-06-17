@@ -178,7 +178,7 @@
             <td>Tags:</td>
             <td class="text-right">
               {% for tag in person.tags.all %}
-                <a href="{% url 'tag' tag.slug %}" class="label label-default">{{ tag.name }}</a>
+                <a href="{% url 'tag' tag.slug %}" class="label label-primary">{{ tag.name }}</a>
               {% endfor %}
             </td>
           </tr>

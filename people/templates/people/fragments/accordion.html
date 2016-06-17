@@ -64,4 +64,26 @@
       </div>
     </div>
   </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">Tags</a>
+      </h3>
+    </div>
+    <div id="collapseThree" class="panel-collapse collapse">
+      <div class="panel-body">
+        <p>
+        {% for tag in tags %}
+          <span>
+            <a href="{% url 'tag' tag.slug %}" class="label label-primary"
+               style="margin: 2px 0; display: inline-block;">
+              {{ tag.name }}
+              <span class="badge" style="background-color: #fff; color: #325d88; margin-left: 5px;">{{ tag.tag_count }}</span>
+            </a>
+          </span>
+        {% endfor %}
+        </p>
+      </div>
+    </div>
+  </div>
 </div>
