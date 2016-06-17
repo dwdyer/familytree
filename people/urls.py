@@ -1,8 +1,7 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from people import views
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^$', views.index, name='people.index'),
     url(r'^(?P<person_id>\d+)/$', views.person, name='person'),
     url(r'^(?P<person_id>\d+)/relatives/$', views.relatives, name='relatives'),
@@ -19,5 +18,5 @@ urlpatterns = patterns(
     url(r'^surname/(?P<surname>[\w\W]+)/$', views.surname, name='surname'),
     url(r'^forename/(?P<forename>[\w\W]+)/$', views.forename, name='forename'),
     url(r'^tag/(?P<slug>[\w-]+)/$', views.tag, name='tag'),
-)
+]
 

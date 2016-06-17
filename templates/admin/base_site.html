@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}" />
-    <link href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.4/sandstone/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.6/sandstone/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <style>body {margin-top: 70px;}</style>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.css" rel="stylesheet" />
@@ -30,16 +30,14 @@
     <style>
       ul li {list-style-type: none; padding: 0;}
       li {font-size: inherit; line-height: inherit;}
-      div.breadcrumbs {font-size: inherit; background: inherit; margin-top: 20px;}
       td, th {padding: 5px;}
-      .addlink, .changelink, .historylink, .viewsitelink {box-sizing: content-box; font-size: 11px;}
+      .submit-row a.deletelink {height: inherit;}
       .inline-group .tabular tr.has_original td {padding-top: 5px;}
       .original p {display: none;}
-      #changelist-filter h3 {font-weight: bold;}
-      #changelist-filter li {font-size: 12px;}
       #footer {padding: inherit;}
       input[type="file"] {display: inline-block;}
       .alert {margin-bottom: 0;}
+      div.breadcrumbs {margin-top: 20px; padding: 10px 20px;}
     </style>
     <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";</script>
     {% block extrahead %}{% endblock %}
@@ -59,7 +57,7 @@
             </div>
           {% endblock %}
         {% endif %}
-    
+
         {% block messages %}
           {% if messages %}
             {% for message in messages %}
@@ -67,7 +65,7 @@
             {% endfor %}
           {% endif %}
         {% endblock messages %}
-    
+
         <div class="row">
           <div class="col-md-12">
             {% block pretitle %}{% endblock %}
@@ -85,6 +83,6 @@
         </div>
       </div>
     </div>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
   </body>
 </html>

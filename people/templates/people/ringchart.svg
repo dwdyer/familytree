@@ -181,7 +181,7 @@
       {% endif %}
     {% endfor %}
   {% endfor %}
-  <circle cx="{{ centre }}" cy="{{ centre }}" r="80" stroke="black" stroke-width="2" fill="white" />
+  <circle cx="{{ centre }}" cy="{{ centre }}" r="80" stroke="black" stroke-width="1" fill="white" />
   {% with person=rings|last|last %}
     {% if person.middle_names %}
       <text x="{{ centre }}" y="{{ centre }}" dy="-30" class="centre">{{ person.forename }}</text>

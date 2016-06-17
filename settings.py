@@ -4,7 +4,6 @@ import os.path
 # Django settings for familytree project.
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -38,18 +37,22 @@ MEDIA_ROOT = 'media' if DEBUG else '/var/www/familytree-resources'
 SITE_ID = 1
 
 # Templates
-TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'), )
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django.template.context_processors.debug',
-    'django.template.context_processors.media',
-    'django.template.context_processors.static',
-    'django_settings_export.settings_export',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(os.path.dirname(__file__), 'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {'debug': DEBUG,
+                    'context_processors': [
+                        'django.contrib.auth.context_processors.auth',
+                        'django.template.context_processors.debug',
+                        'django.template.context_processors.media',
+                        'django.template.context_processors.static',
+                        'django_settings_export.settings_export',
+                    ]},
+    }
+]
+
 SETTINGS_EXPORT = ('MAPBOX_PROJECT_ID', 'MAPBOX_ACCESS_TOKEN')
 
 # URLs

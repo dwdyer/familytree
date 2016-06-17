@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import connection
 from django.http import HttpResponseRedirect
-from django.utils.log import getLogger
+from logging import getLogger
 
 logger = getLogger(__name__)
 
