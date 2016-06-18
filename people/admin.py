@@ -17,7 +17,7 @@ class PersonAdmin(admin.ModelAdmin):
                                     ('deceased', 'date_of_death'),
                                     ('mother', 'father'),
                                     'notes',
-                                    'tags']})]
+                                    ('tags', 'user')]})]
     list_display = ['surname', 'name', 'gender', 'date_of_birth', 'birth_location', 'deceased']
     list_display_links = ['name']
     list_editable = ['date_of_birth', 'birth_location']

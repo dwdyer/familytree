@@ -1,40 +1,41 @@
 def describe_relative(person, relative):
-    person_ancestors = person._ancestor_distances()
-    relative_ancestors = relative._ancestor_distances()
-    # First check for direct ancestors (i.e. parents, grandparents, great-grandparents, etc.)
-    if relative in person_ancestors:
-        distance = person_ancestors[relative]
-        if distance == 1:
-            return 'Mother' if relative.gender == 'F' else 'Father'
-        else:
-            base = 'Grandmother' if relative.gender == 'F' else 'Grandfather'
-            return _describe_offset(base, distance)
-    elif person in relative_ancestors:
-        distance = relative_ancestors[person]
-        if distance == 1:
-            return 'Daughter' if relative.gender == 'F' else 'Son'
-        else:
-            base = 'Granddaughter' if relative.gender == 'F' else 'Grandson'
-            return _describe_offset(base, distance)
-
-    # Then check for shared ancestors.
-    (ancestor, distance1, distance2) = closest_common_ancestor(person_ancestors, relative_ancestors)
-    if ancestor:
-        if distance1 == 1 and distance2 == 1:
-            return 'Sister' if relative.gender == 'F' else 'Brother'
-        elif distance1 == 1:
-            base = 'Niece' if relative.gender == 'F' else 'Nephew'
-            return _describe_offset(base, distance2)
-        elif distance2 == 1:
-            base = 'Aunt' if relative.gender == 'F' else 'Uncle'
-            return _describe_offset(base, distance1)
-        else:
-            pos = min((distance1, distance2)) - 1
-            removes = abs(distance1 - distance2)
-            if removes > 0:
-                return ' {0} Cousin {1} Removed'.format(position(pos), number_of_times(removes))
+    if person.id != relative.id:
+        person_ancestors = person._ancestor_distances()
+        relative_ancestors = relative._ancestor_distances()
+        # First check for direct ancestors (i.e. parents, grandparents, great-grandparents, etc.)
+        if relative in person_ancestors:
+            distance = person_ancestors[relative]
+            if distance == 1:
+                return 'Mother' if relative.gender == 'F' else 'Father'
             else:
-                return ' {0} Cousin'.format(position(pos))
+                base = 'Grandmother' if relative.gender == 'F' else 'Grandfather'
+                return _describe_offset(base, distance)
+        elif person in relative_ancestors:
+            distance = relative_ancestors[person]
+            if distance == 1:
+                return 'Daughter' if relative.gender == 'F' else 'Son'
+            else:
+                base = 'Granddaughter' if relative.gender == 'F' else 'Grandson'
+                return _describe_offset(base, distance)
+
+        # Then check for shared ancestors.
+        (ancestor, distance1, distance2) = closest_common_ancestor(person_ancestors, relative_ancestors)
+        if ancestor:
+            if distance1 == 1 and distance2 == 1:
+                return 'Sister' if relative.gender == 'F' else 'Brother'
+            elif distance1 == 1:
+                base = 'Niece' if relative.gender == 'F' else 'Nephew'
+                return _describe_offset(base, distance2)
+            elif distance2 == 1:
+                base = 'Aunt' if relative.gender == 'F' else 'Uncle'
+                return _describe_offset(base, distance1)
+            else:
+                pos = min((distance1, distance2)) - 1
+                removes = abs(distance1 - distance2)
+                if removes > 0:
+                    return ' {0} Cousin {1} Removed'.format(position(pos), number_of_times(removes))
+                else:
+                    return ' {0} Cousin'.format(position(pos))
     return None
 
 def _describe_offset(base, distance):

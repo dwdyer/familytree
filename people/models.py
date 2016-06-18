@@ -1,4 +1,5 @@
 from datetime import date
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -95,6 +96,9 @@ class Person(models.Model):
                                on_delete=models.SET_NULL)
     notes = HTMLField(blank=True)
     tags = TaggableManager(blank=True)
+    # A person can be linked to a user account. This allows a user to see
+    # information relevant to their own relationships.
+    user = models.OneToOneField(User, blank=True, null=True)
 
     def name(self, use_middle_names=True, use_maiden_name=False):
         '''Returns the full name of this person.'''

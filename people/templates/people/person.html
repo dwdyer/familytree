@@ -6,6 +6,11 @@
 {% block content %}
   <h1 class="page-header">
     {{ person.name }}
+    {% if relationship %}
+      <small>{{ relationship }}</small>
+    {% elif person == user.person %}
+      <small>You</small>
+    {% endif %}
     {% if user.is_staff %}
       <a href="{% url 'admin:people_person_change' person.id %}" class="pull-right btn btn-default">
         <span class="glyphicon glyphicon-pencil"></span> Edit

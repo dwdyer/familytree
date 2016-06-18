@@ -5,6 +5,7 @@ from itertools import groupby
 from math import pow
 from operator import itemgetter
 from people.models import Location, Person
+from people.relations import describe_relative
 from taggit.models import Tag
 
 def index(request):
@@ -51,9 +52,12 @@ def index(request):
 
 def person(request, person_id):
     person = get_object_or_404(Person, id=person_id)
+    relationship = describe_relative(request.user.person, person) if request.user.person else None
     return render(request,
                   'people/person.html',
-                  {'person': person, 'list': Person.objects.all()})
+                  {'person': person,
+                   'relationship': relationship,
+                   'list': Person.objects.all()})
 
 
 def relatives(request, person_id):

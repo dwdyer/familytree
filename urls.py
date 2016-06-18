@@ -9,7 +9,7 @@ import settings
 urlpatterns = [
     url(r'^$', RedirectView.as_view(pattern_name='people.index', permanent=False)),
     url(r'^people/', include('people.urls')),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     url(r'^tinymce/', include('tinymce.urls')),
     url(r'^login/$', django.contrib.auth.views.login, {'template_name': 'login.html'}, name='login'),
     url(r'^logout/$', django.contrib.auth.views.logout, {'next_page': '/login/'}, name='logout'),
