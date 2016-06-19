@@ -13,6 +13,7 @@
     var markers = L.markerClusterGroup({showCoverageOnHover: false,
                                         singleMarkerMode: true,
                                         spiderfyOnMaxZoom: false,
+                                        maxClusterRadius: 70,
                                         iconCreateFunction: function(cluster) {
                                             var children = cluster.getAllChildMarkers();
                                             var count = 0;

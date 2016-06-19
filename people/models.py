@@ -4,10 +4,10 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
+from itertools import chain
 from opencage.geocoder import OpenCageGeocode
 from people.fields import UncertainDateField
 from people.relations import closest_common_ancestor, describe_relative
-from sets import Set
 from taggit.managers import TaggableManager
 from tinymce.models import HTMLField
 import os
@@ -17,7 +17,7 @@ class Country(models.Model):
     name = models.CharField(max_length=50)
     country_code = models.CharField(max_length=3)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -50,10 +50,10 @@ class Location(models.Model):
             except Exception as e:
                 # If something goes wrong, there's not much we can do, just leave
                 # the coordinates blank.
-                print e
+                print (e)
         super(Location, self).save(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0}, {1}'.format(self.name, self.county_state_province)
 
     def __eq__(self, other):
@@ -120,8 +120,11 @@ class Person(models.Model):
             return None
         end = self.date_of_death if self.deceased else date.today()
         years = end.year - self.date_of_birth.year
-        if end.month < self.date_of_birth.month or (end.month == self.date_of_birth.month and end.day < self.date_of_birth.day):
-            years -= 1
+        if end.month and self.date_of_birth.month:
+            if end.month < self.date_of_birth.month \
+               or (end.month == self.date_of_birth.month \
+                   and end.day and self.date_of_birth.day and end.day < self.date_of_birth.day):
+                years -= 1
         return years
 
     def year_range(self):
@@ -159,12 +162,9 @@ class Person(models.Model):
     def descendants(self):
         '''Returns a list of this person's descendants (their children and all
         of their children's descendents).'''
-        descendants = []
-        children = self.children()
-        descendants.extend(children)
-        for child in children:
-            descendants.extend(child.descendants())
-        return descendants
+        for child in self.children():
+            yield child
+            yield from child.descendants()
 
     def annotated_descendants(self):
         '''Returns a list of this person's descendants annotated with the name
@@ -174,7 +174,7 @@ class Person(models.Model):
         descendants = []
         for descendant in distances.keys():
             descendants.append((descendant, describe_relative(self, descendant), distances[descendant]))
-        descendants.sort(key=lambda (p, r, d): (d, r, p.surname))
+        descendants.sort(key=lambda x: (x[2], x[1], x[0].surname))
         return descendants
 
     # Returns a dictionary of this person's ancestors.  The ancestors are the
@@ -195,7 +195,12 @@ class Person(models.Model):
     def ancestors(self):
         '''Returns a list of this person's ancestors (their parents and all of
         their parent's ancestors).'''
-        return self._ancestor_distances().keys()
+        if self.mother:
+            yield self.mother
+            yield from self.mother.ancestors()
+        if self.father:
+            yield self.father
+            yield from self.father.ancestors()
 
     def annotated_ancestors(self):
         '''Returns a list of this person's ancestors annotated with the name of
@@ -205,7 +210,7 @@ class Person(models.Model):
         ancestors = []
         for ancestor in distances.keys():
             ancestors.append((ancestor, describe_relative(self, ancestor), distances[ancestor]))
-        ancestors.sort(key=lambda (p, r, d): (d, r, p.surname))
+        ancestors.sort(key=lambda x: (x[2], x[1], x[0].surname))
         return ancestors
 
     def relatives(self):
@@ -214,30 +219,30 @@ class Person(models.Model):
         # For efficiency, only consider root ancestors since their
         # descendants' blood relatives will be a subset of theirs and don't need
         # to be considered separately.
-        root_ancestors = [p for p in self.ancestors() if not (p.father or p.mother)] or [self]
-        relatives = Set(root_ancestors)
-        for ancestor in root_ancestors:
-            relatives.update(ancestor.descendants())
-        relatives.remove(self) # This person can't be their own relative.
+        roots = (p for p in chain([self], self.ancestors()) if not (p.father or p.mother))
+        relatives = set()
+        for root in roots:
+            relatives.add(root)
+            relatives.update(root.descendants())
+        relatives.discard(self) # This person can't be their own relative.
         return relatives
 
     def annotated_relatives(self):
         '''Returns a list of all of this person's blood relatives. The first
         item in each tuple is the person, the second is the relationship, and
         the third is the distance between the two individuals.'''
-        relatives = self.relatives()
         ancestor_distances = self._ancestor_distances()
         distances = ancestor_distances.copy()
         distances.update(self._descendant_distances())
         annotated = []
-        for relative in relatives:
+        for relative in self.relatives():
             distance = distances.get(relative, None)
             if not distance:
                 (_, d1, d2) = closest_common_ancestor(ancestor_distances,
                                                       relative._ancestor_distances())
                 distance = max(d1, d2)
             annotated.append((relative, describe_relative(self, relative), distance))
-        annotated.sort(key=lambda (p, r, d): (d, r, p.surname))
+        annotated.sort(key=lambda x: (x[2], x[1], x[0].surname))
         return annotated
 
     def photos(self):
@@ -251,7 +256,7 @@ class Person(models.Model):
     def get_absolute_url(self):
         return reverse('person', args=[self.id])
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name()
 
     class Meta:
@@ -266,7 +271,7 @@ class Marriage(models.Model):
     wedding_location = models.ForeignKey(Location, blank=True, null=True, related_name='weddings')
     divorced = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.husband.name(False) + ' & ' + self.wife.name(False, True)
 
     class Meta:
@@ -281,7 +286,7 @@ class Photograph(models.Model):
     caption = models.TextField(blank=True)
     date = models.DateField(blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.image.url
 
     class Meta:
@@ -297,5 +302,5 @@ class Document(models.Model):
         _, extension = os.path.splitext(self.file.name)
         return extension[1:]
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title

@@ -8,7 +8,7 @@ import taggit.managers
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'people', '0001_initial'), (b'people', '0002_auto_20150601_0036'), (b'people', '0003_person_notes'), (b'people', '0004_auto_20150604_2157'), (b'people', '0005_auto_20150609_2052'), (b'people', '0006_auto_20150609_2100'), (b'people', '0007_auto_20150609_2101')]
+    replaces = [('people', '0001_initial'), ('people', '0002_auto_20150601_0036'), ('people', '0003_person_notes'), ('people', '0004_auto_20150604_2157'), ('people', '0005_auto_20150609_2052'), ('people', '0006_auto_20150609_2100'), ('people', '0007_auto_20150609_2101')]
 
     dependencies = [
         ('taggit', '0001_initial'),
@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
                 ('middle_names', models.CharField(max_length=50, blank=True)),
                 ('surname', models.CharField(max_length=30)),
                 ('maiden_name', models.CharField(max_length=30, blank=True)),
-                ('gender', models.CharField(max_length=1, choices=[(b'M', b'Male'), (b'F', b'Female')])),
+                ('gender', models.CharField(max_length=1, choices=[('M', 'Male'), ('F', 'Female')])),
                 ('date_of_birth', models.DateField(null=True, blank=True)),
                 ('date_of_death', models.DateField(null=True, blank=True)),
                 ('deceased', models.BooleanField()),
@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
             name='Photograph',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('image', models.ImageField(null=True, upload_to=b'uploads', blank=True)),
+                ('image', models.ImageField(null=True, upload_to='uploads', blank=True)),
                 ('caption', models.TextField(blank=True)),
                 ('date', models.DateField(null=True, blank=True)),
             ],
@@ -111,11 +111,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='photograph',
             name='people',
-            field=models.ManyToManyField(related_name='photos', to=b'people.Person'),
+            field=models.ManyToManyField(related_name='photos', to='people.Person'),
         ),
         migrations.AlterField(
             model_name='photograph',
             name='image',
-            field=models.ImageField(upload_to=b'uploads'),
+            field=models.ImageField(upload_to='uploads'),
         ),
     ]

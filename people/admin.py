@@ -36,7 +36,7 @@ class PhotographAdminForm(forms.ModelForm):
 
 class PhotographAdmin(admin.ModelAdmin):
     form = PhotographAdminForm
-    list_display = ['__unicode__', 'caption']
+    list_display = ['__str__', 'caption']
 
 
 class DocumentAdminForm(forms.ModelForm):
