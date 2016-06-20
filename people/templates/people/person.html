@@ -153,14 +153,14 @@
             {% if person.descendants %}
               <li>
                 <a href="{% url 'descendants' person.id %}">All Descendants</a>
-                <span class="badge">{{ person.descendants|length }}</span>
+                <span class="badge">{{ descendants }}</span>
                 <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'descendants_map' person.id %}">Map</a>
               </li>
             {% endif %}
             {% if person.ancestors %}
               <li>
                 <a href="{% url 'ancestors' person.id %}">All Ancestors</a>
-                <span class="badge">{{ person.ancestors|length }}</span>
+                <span class="badge">{{ ancestors }}</span>
                 <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'ancestors_map' person.id %}">Map</a>
                 <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'ring_chart' person.id %}">Chart</a>
                 <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'report' person.id %}">Report</a>

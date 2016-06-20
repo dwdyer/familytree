@@ -52,10 +52,15 @@ def index(request):
 
 def person(request, person_id):
     person = get_object_or_404(Person, id=person_id)
-    relationship = describe_relative(request.user.person, person) if request.user.person else None
+    relationship = describe_relative(request.user.person,
+                                     person,
+                                     request.user.person._ancestor_distances(),
+                                     person._ancestor_distances()) if request.user.person else None
     return render(request,
                   'people/person.html',
                   {'person': person,
+                   'descendants': len(list(person.descendants())),
+                   'ancestors': len(list(person.ancestors())),
                    'relationship': relationship,
                    'list': Person.objects.all()})
 

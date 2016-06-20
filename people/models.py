@@ -137,9 +137,9 @@ class Person(models.Model):
     def spouses(self):
         '''Return a list of anybody that this person is or was married to.'''
         if self.gender == 'F':
-            return [(m.husband, m.wedding_date, m.wedding_location) for m in self.husband_of.all()]
+            return ((m.husband, m.wedding_date, m.wedding_location) for m in self.husband_of.all())
         else:
-            return [(m.wife, m.wedding_date, m.wedding_location) for m in self.wife_of.all()]
+            return ((m.wife, m.wedding_date, m.wedding_location) for m in self.wife_of.all())
 
     def siblings(self):
         '''Returns a list of this person's brothers and sisters, including
@@ -173,7 +173,8 @@ class Person(models.Model):
         distances = self._descendant_distances()
         descendants = []
         for descendant in distances.keys():
-            descendants.append((descendant, describe_relative(self, descendant), distances[descendant]))
+            relationship = describe_relative(self, descendant, {}, descendant._ancestor_distances())
+            descendants.append((descendant, relationship, distances[descendant]))
         descendants.sort(key=lambda x: (x[2], x[1], x[0].surname))
         return descendants
 
@@ -209,7 +210,8 @@ class Person(models.Model):
         distances = self._ancestor_distances()
         ancestors = []
         for ancestor in distances.keys():
-            ancestors.append((ancestor, describe_relative(self, ancestor), distances[ancestor]))
+            relationship = describe_relative(self, ancestor, distances, {})
+            ancestors.append((ancestor, relationship, distances[ancestor]))
         ancestors.sort(key=lambda x: (x[2], x[1], x[0].surname))
         return ancestors
 
@@ -237,11 +239,12 @@ class Person(models.Model):
         annotated = []
         for relative in self.relatives():
             distance = distances.get(relative, None)
+            relative_distances = relative._ancestor_distances()
             if not distance:
-                (_, d1, d2) = closest_common_ancestor(ancestor_distances,
-                                                      relative._ancestor_distances())
+                (_, d1, d2) = closest_common_ancestor(ancestor_distances, relative_distances)
                 distance = max(d1, d2)
-            annotated.append((relative, describe_relative(self, relative), distance))
+            relationship = describe_relative(self, relative, ancestor_distances, relative_distances)
+            annotated.append((relative, relationship, distance))
         annotated.sort(key=lambda x: (x[2], x[1], x[0].surname))
         return annotated
 
