@@ -137,15 +137,16 @@ class Person(models.Model):
     def spouses(self):
         '''Return a list of anybody that this person is or was married to.'''
         if self.gender == 'F':
-            return ((m.husband, m.wedding_date, m.wedding_location) for m in self.husband_of.all())
+            return [(m.husband, m.wedding_date, m.wedding_location) for m in self.husband_of.all()]
         else:
-            return ((m.wife, m.wedding_date, m.wedding_location) for m in self.wife_of.all())
+            return [(m.wife, m.wedding_date, m.wedding_location) for m in self.wife_of.all()]
 
     def siblings(self):
         '''Returns a list of this person's brothers and sisters, including
         half-siblings.'''
         return Person.objects.filter(~Q(id=self.id),
-                                     Q(~Q(father=None), father=self.father) | Q(~Q(mother=None), mother=self.mother)).order_by('date_of_birth')
+                                     Q(~Q(father=None), father=self.father) | \
+                                     Q(~Q(mother=None), mother=self.mother)).order_by('date_of_birth')
 
     def children(self):
         '''Returns a list of this person's children.'''
@@ -161,7 +162,7 @@ class Person(models.Model):
 
     def descendants(self):
         '''Returns a list of this person's descendants (their children and all
-        of their children's descendents).'''
+        of their children's descendants).'''
         for child in self.children():
             yield child
             yield from child.descendants()
@@ -216,18 +217,24 @@ class Person(models.Model):
         return ancestors
 
     def relatives(self):
-        '''Returns a list of all of this person's blood relatives.'''
-        # Two people are related by blood if they share a common ancestor.
-        # For efficiency, only consider root ancestors since their
-        # descendants' blood relatives will be a subset of theirs and don't need
-        # to be considered separately.
-        roots = (p for p in chain([self], self.ancestors()) if not (p.father or p.mother))
-        relatives = set()
-        for root in roots:
-            relatives.add(root)
-            relatives.update(root.descendants())
+        relatives = self._build_relatives_set()
         relatives.discard(self) # This person can't be their own relative.
         return relatives
+
+    def _build_relatives_set(self, relatives_set=set()):
+        '''Adds all blood relatives of this person to the specified set. For
+        efficiency, if the set already contains one of this person's children,
+        we assume it also contains all of that child's decendants too.'''
+        relatives_set.add(self)
+        for child in self.children():
+            if child not in relatives_set:
+                relatives_set.add(child)
+                relatives_set.update(child.descendants())
+        if self.father:
+            self.father._build_relatives_set(relatives_set)
+        if self.mother:
+            self.mother._build_relatives_set(relatives_set)
+        return relatives_set
 
     def annotated_relatives(self):
         '''Returns a list of all of this person's blood relatives. The first
