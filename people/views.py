@@ -9,7 +9,7 @@ from people.relations import describe_relative
 from taggit.models import Tag
 
 def index(request):
-    regions = Location.objects.raw('''SELECT l.id, l.county_state_province AS name, c.name AS country_name,
+    regions = Location.objects.raw('''SELECT ANY_VALUE(l.id) AS id, l.county_state_province AS name, c.name AS country_name,
                                       c.country_code AS country_code, count(1) AS natives_count
                                       FROM people_location l, people_person p, people_country c
                                       WHERE p.birth_location_id = l.id AND l.country_id = c.id AND p.blood_relative = 1
