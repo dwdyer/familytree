@@ -31,7 +31,7 @@ class UncertainDate(object):
             return repr(self.year)
 
 
-    def __unicode__(self):
+    def __str__(self):
         if self.day:
             return dateformat.format(self.lower_bound, 'l jS F Y')
         elif self.month:
