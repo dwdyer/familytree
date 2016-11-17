@@ -1,4 +1,4 @@
-Django==1.9.7
+Django==1.10.3
 django-dbbackup==2.3.2
 django-mathfilters==0.3.0
 django-settings-export==1.0.3
