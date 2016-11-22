@@ -99,7 +99,10 @@ TINYMCE_DEFAULT_CONFIG = {'theme': 'advanced',
                           'theme_advanced_resizing': True,
                           'theme_advanced_buttons1': 'bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,|,bullist,numlist,|,outdent,indent,|,link,unlink,|,sub,sup,charmap,|,undo,redo,|,cleanup,code'}
 
-DBBACKUP_BACKUP_DIRECTORY = '/home/dan/Dropbox/Dan/Ancestry/Backup'
+# Back-up
+DBBACKUP_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
+DBBACKUP_CLEANUP_KEEP = 3
+DBBACKUP_CLEANUP_KEEP_MEDIA = 1
 
 # Send 500 errors to admins and log DB request counts in DEBUG mode.
 LOGGING = {
