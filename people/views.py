@@ -1,10 +1,11 @@
+from datetime import date
 from django.core.urlresolvers import reverse
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, render
 from itertools import groupby
 from math import pow
 from operator import itemgetter
-from people.models import Location, Person
+from people.models import Location, Person, Marriage
 from people.relations import describe_relative
 from taggit.models import Tag
 
@@ -38,6 +39,14 @@ def index(request):
 
     tags = Tag.objects.annotate(tag_count=Count('taggit_taggeditem_items')).order_by('name')
 
+    # On this day
+    today = date.today()
+    lookup = today.strftime('-%m-%d')
+    births = Person.objects.filter(date_of_birth__endswith=lookup)
+    deaths = Person.objects.filter(date_of_death__endswith=lookup)
+    marriages = Marriage.objects.filter(wedding_date__endswith=lookup)
+    on_this_day = (births, deaths, marriages) if births.count() + deaths.count() + marriages.count() > 0 else None
+
     return render(request,
                   'people/index.html',
                   {'surnames': surnames,
@@ -47,6 +56,8 @@ def index(request):
                    'locations': locations,
                    'tags': tags,
                    'map_area' : ((min_lat, min_lng), (max_lat, max_lng)),
+                   'today': today,
+                   'on_this_day': on_this_day,
                    'list': Person.objects.all()})
 
 
