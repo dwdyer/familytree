@@ -1,4 +1,4 @@
-from people.models import Country, Location, Person, Marriage, Photograph, Document, EventType, Event
+from people.models import Country, Location, Person, Marriage, Photograph, Document, Event
 from django import forms
 from django.contrib import admin
 
@@ -7,10 +7,6 @@ class FamilyTreeAdminSite(admin.AdminSite):
         context = super(FamilyTreeAdminSite, self).each_context(request)
         context['list'] = Person.objects.all()
         return context
-
-
-class EventTypeAdmin(admin.ModelAdmin):
-    list_display = ['name']
 
 
 class HasReferenceFilter(admin.SimpleListFilter):
@@ -136,7 +132,6 @@ class LocationAdmin(admin.ModelAdmin):
     search_fields = ['name', 'county_state_province', 'country__name']
 
 admin.site = FamilyTreeAdminSite()
-admin.site.register(EventType, EventTypeAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Photograph, PhotographAdmin)

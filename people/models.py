@@ -159,7 +159,8 @@ class Person(models.Model):
 
     def timeline(self):
         timeline = list(self.events.all()) + list(self.marriages())
-        return sorted(timeline, key=attrgetter('date'))
+        timeline.sort(key=attrgetter('date'))
+        return timeline
 
     def _descendant_distances(self, offset=0):
         descendants = {}
@@ -281,8 +282,54 @@ class Person(models.Model):
         ordering = ['surname', 'forename', 'middle_names', '-date_of_birth']
 
 
+class Event(models.Model):
+    '''Arbitrary event connected to a person.'''
+    BIRTH = 0
+    BAPTISM = 1
+    MARRIAGE = 2
+    DEATH = 3
+    BURIAL = 4
+    EVENT_TYPE = [(BIRTH, 'Birth'),
+                  (BAPTISM, 'Baptism'),
+                  (DEATH, 'Death'),
+                  (BURIAL, 'Burial')]
+
+    person = models.ForeignKey(Person, related_name='events')
+    event_type = models.PositiveSmallIntegerField(choices=EVENT_TYPE)
+    date = UncertainDateField()
+    location = models.ForeignKey(Location, blank=True, null=True, related_name='events')
+    reference = models.URLField(blank=True, null=True)
+
+    def short_date(self):
+        return self.date.short()
+
+    def verb(self):
+        if self.event_type == Event.BIRTH:
+            return 'born'
+        elif self.event_type == Event.BAPTISM:
+            return 'baptised'
+        elif self.event_type == Event.MARRIAGE:
+            return 'married'
+        elif self.event_type == Event.DEATH:
+            return 'died'
+        elif self.event_type == Event.BURIAL:
+            return 'buried'
+        else:
+            return None
+
+    def describe(self):
+        description = self.verb().title()
+        if self.location:
+            description += ' in {0}'.format(self.location)
+        return description
+
+    class Meta:
+        ordering = ['date']
+
+
 class Marriage(models.Model):
     '''The marriage record links spouses.'''
+    event_type = Event.MARRIAGE
     husband = models.ForeignKey(Person, limit_choices_to={'gender': 'M'}, related_name='husband_of')
     wife = models.ForeignKey(Person, limit_choices_to={'gender': 'F'}, related_name='wife_of')
     date = UncertainDateField(blank=True, null=True)
@@ -301,38 +348,6 @@ class Marriage(models.Model):
 
     class Meta:
         ordering = ['husband__surname', 'husband__forename', 'husband__middle_names', 'date']
-
-
-class EventType(models.Model):
-    name = models.CharField(max_length=30)
-    verb = models.CharField(max_length=30)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        ordering = ['name']
-
-
-class Event(models.Model):
-    '''Arbitrary event connected to a person.'''
-    person = models.ForeignKey(Person, related_name='events')
-    event_type = models.ForeignKey(EventType, related_name='events')
-    date = UncertainDateField()
-    location = models.ForeignKey(Location, blank=True, null=True, related_name='events')
-    reference = models.URLField(blank=True, null=True)
-
-    def short_date(self):
-        return self.date.short()
-
-    def describe(self):
-        description = self.event_type.verb.title()
-        if self.location:
-            description += ' in {0}'.format(self.location)
-        return description
-
-    class Meta:
-        ordering = ['date']
 
 
 class Photograph(models.Model):

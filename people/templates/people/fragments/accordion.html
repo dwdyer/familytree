@@ -28,24 +28,17 @@
               <td><a href="{% url 'person' death.id %}">{{ death.name }}</a> died</td>
             </tr>
           {% endfor %}
-          {% for marriage in on_this_day.2 %}
-            <tr>
-              <td class="text-right text-primary"><small>{{ marriage.date|date:"Y" }}</small></td>
-              <td>
-                <a href="{% url 'person' marriage.husband.id %}">{{ marriage.husband }}</a>
-                married
-                <a href="{% url 'person' marriage.wife.id %}">{{ marriage.wife.given_names }} {{ marriage.wife.birth_surname }}</a>
-                {% if marriage.location %}
-                  in {{ marriage.location }}
-                {% endif %}
-              </td>
-            </tr>
-          {% endfor %}
-          {% for event in on_this_day.3 %}
+          {% for event in on_this_day.2 %}
             <tr>
               <td class="text-right text-primary"><small>{{ event.date|date:"Y" }}</small></td>
               <td>
-                <a href="{% url 'person' event.person_id %}">{{ event.person.name }}</a> was {{ event.event_type.verb }}
+                {% if event.event_type == 2 %}
+                  <a href="{% url 'person' event.husband.id %}">{{ event.husband }}</a>
+                  married
+                  <a href="{% url 'person' event.wife.id %}">{{ event.wife.given_names }} {{ event.wife.birth_surname }}</a>
+                {% else %}
+                  <a href="{% url 'person' event.person_id %}">{{ event.person.name }}</a> was {{ event.verb }}
+                {% endif %}
                 {% if event.location %}
                   in {{ event.location }}
                 {% endif %}

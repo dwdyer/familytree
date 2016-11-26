@@ -2,9 +2,9 @@ from datetime import date
 from django.core.urlresolvers import reverse
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, render
-from itertools import groupby
+from itertools import chain, groupby
 from math import pow
-from operator import itemgetter
+from operator import attrgetter, itemgetter
 from people.models import Location, Person, Marriage, Event
 from people.relations import describe_relative
 from taggit.models import Tag
@@ -44,10 +44,11 @@ def index(request):
     lookup = today.strftime('-%m-%d')
     births = Person.objects.filter(date_of_birth__endswith=lookup)
     deaths = Person.objects.filter(date_of_death__endswith=lookup)
-    marriages = Marriage.objects.filter(date__endswith=lookup)
-    events = Event.objects.filter(date__endswith=lookup)
-    count = births.count() + deaths.count() + marriages.count() + events.count()
-    on_this_day = (births, deaths, marriages, events) if count > 0 else None
+    events = sorted(chain(Event.objects.filter(date__endswith=lookup),
+                          Marriage.objects.filter(date__endswith=lookup)),
+                    key=attrgetter('date'))
+    count = births.count() + deaths.count() + len(events)
+    on_this_day = (births, deaths, events) if count > 0 else None
 
     return render(request,
                   'people/index.html',
