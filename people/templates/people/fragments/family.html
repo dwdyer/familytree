@@ -15,16 +15,8 @@
           <td>
             {% for spouse, date, location in person.spouses %}
               <a href="{% url 'person' spouse.id %}">{{ spouse.name }}</a>
-              {% if date %}
-                <span class="glyphicon glyphicon-info-sign pull-right" style="cursor: help;"
-                      data-toggle="popover" data-placement="left" data-container="body"
-                      data-content="{{ date }}{% if location %} at {{ location }}{% endif %}"></span>
-              {% endif %}
               <br/>
             {% endfor %}
-            <script>
-              $(function(){$('[data-toggle="popover"]').popover({trigger: 'hover'})});
-            </script>
           </td>
         </tr>
       {% endif %}

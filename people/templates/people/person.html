@@ -41,12 +41,12 @@
         {% endif %}
       </table>
       <div class="row">
-        {% if person.events.all|length > 0 %}
+        {% if person.timeline|length > 0 %}
           <div class="col-md-5">
             {% include 'people/fragments/timeline.html' %}
           </div>
         {% endif %}
-        <div class="{% if person.events.all|length > 0 %}col-md-7{% else %}col-md-12{% endif %}">
+        <div class="{% if person.timeline|length > 0 %}col-md-7{% else %}col-md-12{% endif %}">
           <h4>Notes</h4>
           {{ person.notes|safe }}
         </div>

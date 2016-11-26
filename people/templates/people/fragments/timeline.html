@@ -1,7 +1,7 @@
 <div class="panel panel-default">
   <div class="panel-heading">Timeline</div>
   <table class="table table">
-    {% for event in person.events.all %}
+    {% for event in person.timeline %}
       <tr>
         <td class="text-right text-primary">
           <small>{{ event.date.short }}</small>
@@ -12,8 +12,7 @@
               <span class="glyphicon glyphicon-new-window"></span>
             </a>
           {% endif %}
-          {{ event.event_type.verb|title }}
-          {% if event.location %}in {{ event.location.name }}{% endif %}
+          {{ event.describe }}
         </td> 
       </tr>
     {% endfor %}

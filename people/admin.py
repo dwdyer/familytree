@@ -116,9 +116,9 @@ class DocumentAdmin(admin.ModelAdmin):
 
 
 class MarriageAdmin(admin.ModelAdmin):
-    list_display = ['husband', 'wife', 'wedding_date', 'wedding_location', 'divorced']
+    list_display = ['husband', 'wife', 'date', 'location', 'divorced']
     list_display_links = ['husband', 'wife']
-    list_editable = ['wedding_date', 'wedding_location', 'divorced']
+    list_editable = ['date', 'location', 'divorced']
     search_fields = ['husband__surname', 'husband__forename', 'wife__maiden_name', 'wife__forename']
 
 

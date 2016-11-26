@@ -6,6 +6,7 @@ from django.db import models
 from django.db.models import Q
 from itertools import chain
 from opencage.geocoder import OpenCageGeocode
+from operator import attrgetter
 from people.fields import UncertainDateField
 from people.relations import closest_common_ancestor, describe_relative
 from taggit.managers import TaggableManager
@@ -137,9 +138,9 @@ class Person(models.Model):
     def spouses(self):
         '''Return a list of anybody that this person is or was married to.'''
         if self.gender == 'F':
-            return [(m.husband, m.wedding_date, m.wedding_location) for m in self.husband_of.all()]
+            return [(m.husband, m.date, m.location) for m in self.wife_of.all()]
         else:
-            return [(m.wife, m.wedding_date, m.wedding_location) for m in self.wife_of.all()]
+            return [(m.wife, m.date, m.location) for m in self.husband_of.all()]
 
     def siblings(self):
         '''Returns a list of this person's brothers and sisters, including
@@ -152,6 +153,13 @@ class Person(models.Model):
         '''Returns a list of this person's children.'''
         offspring = self.children_of_mother if self.gender == 'F' else self.children_of_father
         return offspring.order_by('date_of_birth')
+
+    def marriages(self):
+        return self.husband_of.all() if self.gender == 'M' else self.wife_of.all()
+
+    def timeline(self):
+        timeline = list(self.events.all()) + list(self.marriages())
+        return sorted(timeline, key=attrgetter('date'))
 
     def _descendant_distances(self, offset=0):
         descendants = {}
@@ -275,17 +283,24 @@ class Person(models.Model):
 
 class Marriage(models.Model):
     '''The marriage record links spouses.'''
-    husband = models.ForeignKey(Person, limit_choices_to={'gender': 'M'}, related_name='wife_of')
-    wife = models.ForeignKey(Person, limit_choices_to={'gender': 'F'}, related_name='husband_of')
-    wedding_date = UncertainDateField(blank=True, null=True)
-    wedding_location = models.ForeignKey(Location, blank=True, null=True, related_name='weddings')
+    husband = models.ForeignKey(Person, limit_choices_to={'gender': 'M'}, related_name='husband_of')
+    wife = models.ForeignKey(Person, limit_choices_to={'gender': 'F'}, related_name='wife_of')
+    date = UncertainDateField(blank=True, null=True)
+    location = models.ForeignKey(Location, blank=True, null=True, related_name='weddings')
     divorced = models.BooleanField(default=False)
+    reference = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return self.husband.name(False) + ' & ' + self.wife.name(False, True)
 
+    def describe(self):
+        description = 'Married'
+        if self.location:
+            description += ' in {0}'.format(self.location)
+        return description
+
     class Meta:
-        ordering = ['husband__surname', 'husband__forename', 'husband__middle_names', 'wedding_date']
+        ordering = ['husband__surname', 'husband__forename', 'husband__middle_names', 'date']
 
 
 class EventType(models.Model):
@@ -309,6 +324,12 @@ class Event(models.Model):
 
     def short_date(self):
         return self.date.short()
+
+    def describe(self):
+        description = self.event_type.verb.title()
+        if self.location:
+            description += ' in {0}'.format(self.location)
+        return description
 
     class Meta:
         ordering = ['date']

@@ -40,6 +40,10 @@ class UncertainDate(object):
             return dateformat.format(self.lower_bound, 'Y')
 
 
+    def __lt__(self, other):
+        return self.lower_bound < other.lower_bound
+
+
     def short(self):
         if self.day:
             return dateformat.format(self.lower_bound, 'jS F Y')

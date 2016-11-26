@@ -44,7 +44,7 @@ def index(request):
     lookup = today.strftime('-%m-%d')
     births = Person.objects.filter(date_of_birth__endswith=lookup)
     deaths = Person.objects.filter(date_of_death__endswith=lookup)
-    marriages = Marriage.objects.filter(wedding_date__endswith=lookup)
+    marriages = Marriage.objects.filter(date__endswith=lookup)
     events = Event.objects.filter(date__endswith=lookup)
     count = births.count() + deaths.count() + marriages.count() + events.count()
     on_this_day = (births, deaths, marriages, events) if count > 0 else None
