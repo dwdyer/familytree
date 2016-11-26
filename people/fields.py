@@ -40,6 +40,15 @@ class UncertainDate(object):
             return dateformat.format(self.lower_bound, 'Y')
 
 
+    def short(self):
+        if self.day:
+            return dateformat.format(self.lower_bound, 'jS F Y')
+        elif self.month:
+            return dateformat.format(self.lower_bound, 'F Y')
+        else:
+            return dateformat.format(self.lower_bound, 'Y')
+
+
 class UncertainDateField(models.Field):
     '''Stores a possibly incomplete date as a (partial) ISO format date
     (i.e. YYYY-MM-DD, YYYY-MM or YYYY).'''

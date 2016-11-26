@@ -41,8 +41,37 @@
           <tr><td>Age:</td><td colspan="2">{{ person.age }} years</td></tr>
         {% endif %}
       </table>
-      <h3>Notes</h3>
-      {{ person.notes|safe }}
+      <div class="row">
+        {% if person.events.all|length > 0 %}
+          <div class="col-md-5">
+            <div class="panel panel-default">
+              <div class="panel-heading">Timeline</div>
+              <table class="table table">
+                {% for event in person.events.all %}
+                  <tr>
+                    <td class="text-right text-primary">
+                      <small>{{ event.date.short }}</small>
+                    </td>
+                    <td>
+                      {{ event.event_type.verb|title }}
+                      {% if event.location %}in {{ event.location.name }}{% endif %}
+                      {% if event.reference %}
+                        <a href="{{ event.reference }}" target="_blank" class="pull-right">
+                          <span class="glyphicon glyphicon-new-window"></span>
+                        </a>
+                      {% endif %}
+                    </td> 
+                  </tr>
+                {% endfor %}
+              </table>
+            </div>
+          </div>
+        {% endif %}
+        <div class="{% if person.events.all|length > 0 %}col-md-7{% else %}col-md-12{% endif %}">
+          <h4>Notes</h4>
+          {{ person.notes|safe }}
+        </div>
+      </div>
       {% if person.photos.count > 0 %}
         <br />
         <div class="row">
@@ -80,18 +109,20 @@
       {% endif %}
     </div>
     <div class="col-md-4">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Immediate Relatives</h3>
-        </div>
-        <div class="panel-body">
+      <div class="panel-group">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Immediate Relatives</h3>
+          </div>
           <table class="table">
             {% if person.spouses %}
               <tr>
-                <th>
-                  {% ifequal person.gender 'F' %}Husband{{ person.spouses|length|pluralize }}{% endifequal %}
-                  {% ifequal person.gender 'M' %}Wi{{ person.spouses|length|pluralize:"fe,ves"}}{% endifequal %}
-                </th>
+                <td class="text-right text-primary">
+                  <small>
+                    {% ifequal person.gender 'F' %}Husband{{ person.spouses|length|pluralize }}{% endifequal %}
+                    {% ifequal person.gender 'M' %}Wi{{ person.spouses|length|pluralize:"fe,ves"}}{% endifequal %}
+                  </small>
+                </td>
                 <td>
                   {% for spouse, date, location in person.spouses %}
                     <a href="{% url 'person' spouse.id %}">{{ spouse.name }}</a>
@@ -111,7 +142,7 @@
 
             {% if person.children %}
               <tr>
-                <th>Children</th>
+                <td class="text-right text-primary"><small>Children</small></td>
                 <td>
                   {% for child in person.children %}
                     <a href="{% url 'person' child.id %}">{{ child.name }}</a><br/>
@@ -122,7 +153,7 @@
 
             {% if person.mother or person.father %}
               <tr>
-                <th>Parents</th>
+                <td class="text-right text-primary"><small>Parents</small></td>
                 <td>
                   {% if person.mother %}<a href="{% url 'person' person.mother.id %}">{{ person.mother.name }}</a><br/>{% endif %}
                   {% if person.father %}<a href="{% url 'person' person.father.id %}">{{ person.father.name }}</a>{% endif %}
@@ -132,7 +163,7 @@
 
             {% if person.siblings %}
               <tr>
-                <th>Siblings</th>
+                <td class="text-right text-primary"><small>Siblings</small></td>
                 <td>
                   {% for sibling in person.siblings %}
                     <a href="{% url 'person' sibling.id %}">{{ sibling.name }}</a><br/>
@@ -142,35 +173,35 @@
             {% endif %}
           </table>
         </div>
-      </div>
 
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Extended Family</h3>
-        </div>
-        <div class="panel-body">
-          <ul>
-            {% if person.descendants %}
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Extended Family</h3>
+          </div>
+          <div class="panel-body">
+            <ul>
+              {% if person.descendants %}
+                <li>
+                  <a href="{% url 'descendants' person.id %}">All Descendants</a>
+                  <span class="badge">{{ descendants }}</span>
+                  <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'descendants_map' person.id %}">Map</a>
+                </li>
+              {% endif %}
+              {% if person.ancestors %}
+                <li>
+                  <a href="{% url 'ancestors' person.id %}">All Ancestors</a>
+                  <span class="badge">{{ ancestors }}</span>
+                  <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'ancestors_map' person.id %}">Map</a>
+                  <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'ring_chart' person.id %}">Chart</a>
+                  <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'report' person.id %}">Report</a>
+                </li>
+              {% endif %}
               <li>
-                <a href="{% url 'descendants' person.id %}">All Descendants</a>
-                <span class="badge">{{ descendants }}</span>
-                <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'descendants_map' person.id %}">Map</a>
+                <a href="{% url 'relatives' person.id %}">All Blood Relatives</a>
+                <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'relatives_map' person.id %}">Map</a>
               </li>
-            {% endif %}
-            {% if person.ancestors %}
-              <li>
-                <a href="{% url 'ancestors' person.id %}">All Ancestors</a>
-                <span class="badge">{{ ancestors }}</span>
-                <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'ancestors_map' person.id %}">Map</a>
-                <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'ring_chart' person.id %}">Chart</a>
-                <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'report' person.id %}">Report</a>
-              </li>
-            {% endif %}
-            <li>
-              <a href="{% url 'relatives' person.id %}">All Blood Relatives</a>
-              <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'relatives_map' person.id %}">Map</a>
-            </li>
-          </ul>
+            </ul>
+          </div>
         </div>
       </div>
     </div>

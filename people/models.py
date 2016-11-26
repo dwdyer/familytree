@@ -288,6 +288,32 @@ class Marriage(models.Model):
         ordering = ['husband__surname', 'husband__forename', 'husband__middle_names', 'wedding_date']
 
 
+class EventType(models.Model):
+    name = models.CharField(max_length=30)
+    verb = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+
+
+class Event(models.Model):
+    '''Arbitrary event connected to a person.'''
+    person = models.ForeignKey(Person, related_name='events')
+    event_type = models.ForeignKey(EventType, related_name='events')
+    date = UncertainDateField()
+    location = models.ForeignKey(Location, blank=True, null=True, related_name='events')
+    reference = models.URLField(blank=True, null=True)
+
+    def short_date(self):
+        return self.date.short()
+
+    class Meta:
+        ordering = ['date']
+
+
 class Photograph(models.Model):
     '''The photograph record combines an image with an optional caption and date
     and links it to one or more people.'''

@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, render
 from itertools import groupby
 from math import pow
 from operator import itemgetter
-from people.models import Location, Person, Marriage
+from people.models import Location, Person, Marriage, Event
 from people.relations import describe_relative
 from taggit.models import Tag
 
@@ -45,7 +45,9 @@ def index(request):
     births = Person.objects.filter(date_of_birth__endswith=lookup)
     deaths = Person.objects.filter(date_of_death__endswith=lookup)
     marriages = Marriage.objects.filter(wedding_date__endswith=lookup)
-    on_this_day = (births, deaths, marriages) if births.count() + deaths.count() + marriages.count() > 0 else None
+    events = Event.objects.filter(date__endswith=lookup)
+    count = births.count() + deaths.count() + marriages.count() + events.count()
+    on_this_day = (births, deaths, marriages, events) if count > 0 else None
 
     return render(request,
                   'people/index.html',

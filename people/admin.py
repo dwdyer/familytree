@@ -1,4 +1,4 @@
-from people.models import Country, Location, Person, Marriage, Photograph, Document
+from people.models import Country, Location, Person, Marriage, Photograph, Document, EventType, Event
 from django import forms
 from django.contrib import admin
 
@@ -8,6 +8,52 @@ class FamilyTreeAdminSite(admin.AdminSite):
         context['list'] = Person.objects.all()
         return context
 
+
+class EventTypeAdmin(admin.ModelAdmin):
+    list_display = ['name']
+
+
+class EventAdmin(admin.ModelAdmin):
+    list_display = ['short_date', 'event_type', 'person', 'location', 'reference']
+
+
+class EventInline(admin.TabularInline):
+    model = Event
+    extra = 1
+
+class BaptismFilter(admin.SimpleListFilter):
+    title = 'has baptism record'
+    parameter_name = 'baptism'
+
+    def lookups(self, request, model_admin):
+        return [('yes', 'Yes'),
+                ('no', 'No')]
+
+    def queryset(self, request, queryset):
+        filter_option = self.value()
+        if filter_option == 'yes':
+            return queryset.filter(events__event_type__name='Baptism')
+        elif filter_option == 'no':
+            return queryset.exclude(events__event_type__name='Baptism')
+        else:
+            return queryset
+
+class BurialFilter(admin.SimpleListFilter):
+    title = 'has burial record'
+    parameter_name = 'burial'
+
+    def lookups(self, request, model_admin):
+        return [('yes', 'Yes'),
+                ('no', 'No')]
+
+    def queryset(self, request, queryset):
+        filter_option = self.value()
+        if filter_option == 'yes':
+            return queryset.filter(events__event_type__name='Burial')
+        elif filter_option == 'no':
+            return queryset.exclude(events__event_type__name='Burial')
+        else:
+            return queryset
 
 class PersonAdmin(admin.ModelAdmin):
     fieldsets = [(None, {'fields': [('forename', 'middle_names'),
@@ -21,8 +67,9 @@ class PersonAdmin(admin.ModelAdmin):
     list_display = ['surname', 'name', 'gender', 'date_of_birth', 'birth_location', 'deceased']
     list_display_links = ['name']
     list_editable = ['date_of_birth', 'birth_location']
-    list_filter = ['blood_relative', 'gender', 'deceased', 'surname']
-    search_fields = ['surname', 'forename', 'middle_names', 'maiden_name']
+    list_filter = ['blood_relative', 'gender', 'deceased', BaptismFilter, BurialFilter, 'surname']
+    inlines = [EventInline]
+    search_fields = ['surname', 'forename', 'middle_names', 'maiden_name', 'notes']
 
 
 class PhotographAdminForm(forms.ModelForm):
@@ -74,6 +121,8 @@ class LocationAdmin(admin.ModelAdmin):
     search_fields = ['name', 'county_state_province', 'country__name']
 
 admin.site = FamilyTreeAdminSite()
+admin.site.register(EventType, EventTypeAdmin)
+admin.site.register(Event, EventAdmin)
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Photograph, PhotographAdmin)
 admin.site.register(Document, DocumentAdmin)
