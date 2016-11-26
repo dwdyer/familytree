@@ -1,0 +1,18 @@
+{% if person.documents.count > 0 %}
+  <br/>
+  <table class="table table-condensed">
+    <tr>
+      <th>Document</th>
+      <th class="text-right">Type</th>
+      <th class="text-right">Size</th>
+    </tr>
+    {% for document in person.documents.all %}
+      <tr>
+        <td><a href="{{ MEDIA_URL }}{{ document.file }}">{{ document.title }}</a></td>
+        <td class="text-right">{{ document.file_extension|upper }}</td>
+        <td class="text-right">{{ document.file.size|filesizeformat }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endif %}
+

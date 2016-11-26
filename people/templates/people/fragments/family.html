@@ -1,0 +1,96 @@
+<div class="panel-group">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Immediate Relatives</h3>
+    </div>
+    <table class="table">
+      {% if person.spouses %}
+        <tr>
+          <td class="text-right text-primary">
+            <small>
+              {% ifequal person.gender 'F' %}Husband{{ person.spouses|length|pluralize }}{% endifequal %}
+              {% ifequal person.gender 'M' %}Wi{{ person.spouses|length|pluralize:"fe,ves"}}{% endifequal %}
+            </small>
+          </td>
+          <td>
+            {% for spouse, date, location in person.spouses %}
+              <a href="{% url 'person' spouse.id %}">{{ spouse.name }}</a>
+              {% if date %}
+                <span class="glyphicon glyphicon-info-sign pull-right" style="cursor: help;"
+                      data-toggle="popover" data-placement="left" data-container="body"
+                      data-content="{{ date }}{% if location %} at {{ location }}{% endif %}"></span>
+              {% endif %}
+              <br/>
+            {% endfor %}
+            <script>
+              $(function(){$('[data-toggle="popover"]').popover({trigger: 'hover'})});
+            </script>
+          </td>
+        </tr>
+      {% endif %}
+
+      {% if person.children %}
+        <tr>
+          <td class="text-right text-primary"><small>Children</small></td>
+          <td>
+            {% for child in person.children %}
+              <a href="{% url 'person' child.id %}">{{ child.name }}</a><br/>
+            {% endfor %}
+          </td>
+        </tr>
+      {% endif %}
+
+      {% if person.mother or person.father %}
+        <tr>
+          <td class="text-right text-primary"><small>Parents</small></td>
+          <td>
+            {% if person.mother %}<a href="{% url 'person' person.mother.id %}">{{ person.mother.name }}</a><br/>{% endif %}
+            {% if person.father %}<a href="{% url 'person' person.father.id %}">{{ person.father.name }}</a>{% endif %}
+          </td>
+        </tr>
+      {% endif %}
+
+      {% if person.siblings %}
+        <tr>
+          <td class="text-right text-primary"><small>Siblings</small></td>
+          <td>
+            {% for sibling in person.siblings %}
+              <a href="{% url 'person' sibling.id %}">{{ sibling.name }}</a><br/>
+            {% endfor %}
+          </td>
+        </tr>
+      {% endif %}
+    </table>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Extended Family</h3>
+    </div>
+    <div class="panel-body">
+      <ul>
+        {% if person.descendants %}
+          <li>
+            <a href="{% url 'descendants' person.id %}">All Descendants</a>
+            <span class="badge">{{ descendants }}</span>
+            <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'descendants_map' person.id %}">Map</a>
+          </li>
+        {% endif %}
+        {% if person.ancestors %}
+          <li>
+            <a href="{% url 'ancestors' person.id %}">All Ancestors</a>
+            <span class="badge">{{ ancestors }}</span>
+            <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'ancestors_map' person.id %}">Map</a>
+            <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'ring_chart' person.id %}">Chart</a>
+            <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'report' person.id %}">Report</a>
+          </li>
+        {% endif %}
+        <li>
+          <a href="{% url 'relatives' person.id %}">All Blood Relatives</a>
+          <span class="text-muted">&nbsp;|&nbsp;</span> <a href="{% url 'relatives_map' person.id %}">Map</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+

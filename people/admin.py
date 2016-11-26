@@ -13,8 +13,25 @@ class EventTypeAdmin(admin.ModelAdmin):
     list_display = ['name']
 
 
+class HasReferenceFilter(admin.SimpleListFilter):
+    title = 'has reference'
+    parameter_name = 'has_url'
+
+    def lookups(self, request, model_admin):
+        return [('yes', 'Yes'), ('no', 'No')]
+
+    def queryset(self, request, queryset):
+        filter_option = self.value()
+        if filter_option == 'yes':
+            return queryset.filter(reference__isnull=False).exclude(reference='')
+        elif filter_option == 'no':
+            return queryset.filter(reference='')
+        else:
+            return queryset
+
 class EventAdmin(admin.ModelAdmin):
-    list_display = ['short_date', 'event_type', 'person', 'location', 'reference']
+    list_display = ['short_date', 'event_type', 'person', 'location']
+    list_filter = ['event_type', HasReferenceFilter]
 
 
 class EventInline(admin.TabularInline):
@@ -26,8 +43,7 @@ class BaptismFilter(admin.SimpleListFilter):
     parameter_name = 'baptism'
 
     def lookups(self, request, model_admin):
-        return [('yes', 'Yes'),
-                ('no', 'No')]
+        return [('yes', 'Yes'), ('no', 'No')]
 
     def queryset(self, request, queryset):
         filter_option = self.value()
@@ -43,8 +59,7 @@ class BurialFilter(admin.SimpleListFilter):
     parameter_name = 'burial'
 
     def lookups(self, request, model_admin):
-        return [('yes', 'Yes'),
-                ('no', 'No')]
+        return [('yes', 'Yes'), ('no', 'No')]
 
     def queryset(self, request, queryset):
         filter_option = self.value()

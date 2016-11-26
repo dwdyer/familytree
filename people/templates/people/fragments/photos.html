@@ -1,0 +1,20 @@
+{% load thumbnail %}
+{% if person.photos.count > 0 %}
+  <br />
+  <div class="row">
+    {% for photo in person.photos.all %}
+      <div class="col-md-3">
+        <a href="{{ MEDIA_URL }}{{ photo.image }}" class="thumbnail">
+          <img src="{% thumbnail photo.image 155x155 crop="scale" %}" alt="Thumbnail" />
+          <div class="caption text-center">
+            <small>
+              {{ photo.caption }}<br/>
+              <em class="text-muted">{{ photo.date|date:"F Y" }}</em>
+            </small>
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
