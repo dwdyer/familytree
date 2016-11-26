@@ -12,8 +12,8 @@ from taggit.models import Tag
 def index(request):
     regions = Location.objects.raw('''SELECT ANY_VALUE(l.id) AS id, l.county_state_province AS name, c.name AS country_name,
                                       c.country_code AS country_code, count(1) AS natives_count
-                                      FROM people_location l, people_person p, people_country c
-                                      WHERE p.birth_location_id = l.id AND l.country_id = c.id AND p.blood_relative = 1
+                                      FROM people_location l, people_person p, people_event e, people_country c
+                                      WHERE p.birth_id = e.id AND e.location_id = l.id AND l.country_id = c.id AND p.blood_relative = 1
                                       GROUP BY l.county_state_province, c.id
                                       ORDER BY count(1) DESC, l.county_state_province LIMIT 10''')
 
@@ -25,8 +25,8 @@ def index(request):
     female_names = females.values('forename').annotate(Count('forename')).order_by('-forename__count', 'forename')
 
     locations = Location.objects.raw('''SELECT l.id, l.name, l.latitude, l.longitude, COUNT(l.id) AS natives_count
-                                        FROM people_person p, people_location l
-                                        WHERE p.birth_location_id = l.id AND p.blood_relative
+                                        FROM people_person p, people_event e, people_location l
+                                        WHERE p.birth_id = e.id AND e.location_id = l.id AND p.blood_relative
                                         AND l.latitude IS NOT NULL AND l.longitude IS NOT NULL
                                         GROUP BY l.id''')
     min_lat = min_lng = 90
@@ -42,13 +42,9 @@ def index(request):
     # On this day
     today = date.today()
     lookup = today.strftime('-%m-%d')
-    births = Person.objects.filter(date_of_birth__endswith=lookup)
-    deaths = Person.objects.filter(date_of_death__endswith=lookup)
     events = sorted(chain(Event.objects.filter(date__endswith=lookup),
                           Marriage.objects.filter(date__endswith=lookup)),
                     key=attrgetter('date'))
-    count = births.count() + deaths.count() + len(events)
-    on_this_day = (births, deaths, events) if count > 0 else None
 
     return render(request,
                   'people/index.html',
@@ -60,8 +56,8 @@ def index(request):
                    'tags': tags,
                    'map_area' : ((min_lat, min_lng), (max_lat, max_lng)),
                    'today': today,
-                   'on_this_day': on_this_day,
-                   'list': Person.objects.all()})
+                   'on_this_day': events,
+                   'list': Person.objects.select_related('birth')})
 
 
 def person(request, person_id):
@@ -76,7 +72,7 @@ def person(request, person_id):
                    'descendants': len(list(person.descendants())),
                    'ancestors': len(list(person.ancestors())),
                    'relationship': relationship,
-                   'list': Person.objects.all()})
+                   'list': Person.objects.select_related('birth')})
 
 
 def relatives(request, person_id):
@@ -88,7 +84,7 @@ def relatives(request, person_id):
                   {'title': title,
                    'relatives': person.annotated_relatives(),
                    'map_link': map_link,
-                   'list': Person.objects.all()})
+                   'list': Person.objects.select_related('birth')})
 
 
 def descendants(request, person_id):
@@ -100,7 +96,7 @@ def descendants(request, person_id):
                   {'title': title,
                    'relatives': person.annotated_descendants(),
                    'map_link': map_link,
-                   'list': Person.objects.all()})
+                   'list': Person.objects.select_related('birth')})
 
 
 def ancestors(request, person_id):
@@ -113,7 +109,7 @@ def ancestors(request, person_id):
                    'person': person,
                    'relatives': person.annotated_ancestors(),
                    'map_link': map_link,
-                   'list': Person.objects.all()})
+                   'list': Person.objects.select_related('birth')})
 
 
 def ancestors_report(request, person_id):
@@ -132,7 +128,7 @@ def ancestors_report(request, person_id):
                    'person': person,
                    'generation_counts': generation_counts,
                    'missing_parents': missing_parents,
-                   'list': Person.objects.all()})
+                   'list': Person.objects.select_related('birth')})
 
 
 def ancestors_map(request, person_id):
@@ -145,7 +141,7 @@ def ring_chart(request, person_id):
     person = get_object_or_404(Person, id=person_id)
     return render(request,
                   'people/ringchart.html',
-                  {'person': person, 'list': Person.objects.all()}) 
+                  {'person': person, 'list': Person.objects.select_related('birth')}) 
 
 
 def ring_chart_svg(request, person_id):
@@ -198,7 +194,7 @@ def _people_map(request, people, title):
     min_lat = min_lng = 90
     max_lat = max_lng = -90
     for person in people:
-        location = person.birth_location
+        location = person.birth_location()
         if location and location.latitude and location.longitude:
             count = counts.get(location, 0)
             counts[location] = count + 1
@@ -213,23 +209,28 @@ def _people_map(request, people, title):
                   {'title': title,
                    'locations': counts.keys(),
                    'map_area' : ((min_lat, min_lng), (max_lat, max_lng)),
-                   'list': Person.objects.all()})
+                   'list': Person.objects.select_related('birth')})
 
 
 def location(request, location_id):
     location = get_object_or_404(Location, id=location_id)
     title = 'People born in ' + location.name
+    people = Person.objects.filter(birth__location=location)
     return render(request,
                   'people/people.html',
-                  {'title': title, 'people': location.natives.all(), 'list': Person.objects.all()})
+                  {'title': title,
+                   'people': people,
+                   'list': Person.objects.select_related('birth')})
 
 
 def region(request, region_name):
-    people = Person.objects.filter(birth_location__county_state_province=region_name)
+    people = Person.objects.filter(birth__location__county_state_province=region_name)
     title = 'People born in ' + region_name
     return render(request,
                   'people/people.html',
-                  {'title': title, 'people': people, 'list': Person.objects.all()})
+                  {'title': title,
+                   'people': people,
+                   'list': Person.objects.select_related('birth')})
 
 
 def surname(request, surname):
@@ -237,7 +238,9 @@ def surname(request, surname):
     title = 'People with the surname ' + surname
     return render(request,
                   'people/people.html',
-                  {'title': title, 'people': people, 'list': Person.objects.all()})
+                  {'title': title,
+                   'people': people,
+                   'list': Person.objects.select_related('birth')})
 
 
 def forename(request, forename):
@@ -245,7 +248,9 @@ def forename(request, forename):
     title = 'People with the given name ' + forename
     return render(request,
                   'people/people.html',
-                  {'title': title, 'people': people, 'list': Person.objects.all()})
+                  {'title': title,
+                   'people': people,
+                   'list': Person.objects.select_related('birth')})
 
 
 def tag(request, slug):
@@ -253,4 +258,6 @@ def tag(request, slug):
     title = 'People tagged "{0}"'.format(slug)
     return render(request,
                   'people/people.html',
-                  {'title': title, 'people': people, 'list': Person.objects.all()})
+                  {'title': title,
+                   'people': people,
+                   'list': Person.objects.select_related('birth')})

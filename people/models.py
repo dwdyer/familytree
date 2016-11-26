@@ -78,9 +78,8 @@ class Person(models.Model):
     surname = models.CharField(max_length=30)
     maiden_name = models.CharField(blank=True, max_length=30) # Maiden name is optional.
     gender = models.CharField(max_length=1, choices=(('M', 'Male'), ('F', 'Female')))
-    date_of_birth = UncertainDateField(blank=True, null=True)
-    birth_location = models.ForeignKey(Location, blank=True, null=True, related_name='natives')
-    date_of_death = UncertainDateField(blank=True, null=True)
+    birth = models.ForeignKey('Event', null=True, blank=True, related_name='+')
+    death = models.ForeignKey('Event', null=True, blank=True, related_name='+')
     deceased = models.BooleanField(default=True)
     blood_relative = models.BooleanField(default=True)
     mother = models.ForeignKey('self',
@@ -115,23 +114,32 @@ class Person(models.Model):
     def birth_surname(self):
         return self.maiden_name if self.maiden_name else self.surname
 
+    def date_of_birth(self):
+        return self.birth.date if self.birth else None
+
+    def birth_location(self):
+        return self.birth.location if self.birth else None
+
+    def date_of_death(self):
+        return self.death.date if self.death else None
+
     def age(self):
         '''Calculate the person's age in years.'''
-        if not self.date_of_birth or (self.deceased and not self.date_of_death):
+        if not self.date_of_birth() or (self.deceased and not self.date_of_death()):
             return None
-        end = self.date_of_death if self.deceased else date.today()
-        years = end.year - self.date_of_birth.year
-        if end.month and self.date_of_birth.month:
-            if end.month < self.date_of_birth.month \
-               or (end.month == self.date_of_birth.month \
-                   and end.day and self.date_of_birth.day and end.day < self.date_of_birth.day):
+        end = self.date_of_death() if self.deceased else date.today()
+        years = end.year - self.date_of_birth().year
+        if end.month and self.date_of_birth().month:
+            if end.month < self.date_of_birth().month \
+               or (end.month == self.date_of_birth().month \
+                   and end.day and self.date_of_birth().day and end.day < self.date_of_birth().day):
                 years -= 1
         return years
 
     def year_range(self):
-        if self.date_of_birth:
-            return '{0}-{1}'.format(self.date_of_birth.year,
-                                    '' if not self.deceased else self.date_of_death.year if self.date_of_death else '????')
+        if self.date_of_birth():
+            return '{0}-{1}'.format(self.date_of_birth().year,
+                                    '' if not self.deceased else self.date_of_death().year if self.date_of_death() else '????')
         else:
             return ''
 
@@ -147,12 +155,12 @@ class Person(models.Model):
         half-siblings.'''
         return Person.objects.filter(~Q(id=self.id),
                                      Q(~Q(father=None), father=self.father) | \
-                                     Q(~Q(mother=None), mother=self.mother)).order_by('date_of_birth')
+                                     Q(~Q(mother=None), mother=self.mother)).order_by('birth__date')
 
     def children(self):
         '''Returns a list of this person's children.'''
         offspring = self.children_of_mother if self.gender == 'F' else self.children_of_father
-        return offspring.order_by('date_of_birth')
+        return offspring.select_related('birth', 'death').order_by('birth__date')
 
     def marriages(self):
         return self.husband_of.all() if self.gender == 'M' else self.wife_of.all()
@@ -269,8 +277,12 @@ class Person(models.Model):
         return Photograph.objects.filter(person=self)
 
     def clean(self):
-        if self.date_of_death and not self.deceased:
+        if self.date_of_death() and not self.deceased:
             raise ValidationError('Cannot specify date of death for living person.')
+        if self.birth and self.birth.person.id != self.id:
+            raise ValidationError('Birth event must refer back to the same person.')
+        if self.death and self.death.person.id != self.id:
+            raise ValidationError('Death event must refer back to the same person.')
 
     def get_absolute_url(self):
         return reverse('person', args=[self.id])
@@ -279,7 +291,7 @@ class Person(models.Model):
         return self.name()
 
     class Meta:
-        ordering = ['surname', 'forename', 'middle_names', '-date_of_birth']
+        ordering = ['surname', 'forename', 'middle_names', '-birth__date']
 
 
 class Event(models.Model):
@@ -322,6 +334,18 @@ class Event(models.Model):
         if self.location:
             description += ' in {0}'.format(self.location)
         return description
+
+    def save(self, *args, **kwargs):
+        super(Event, self).save(*args, **kwargs)
+        # If this event is a birth or death event, the corresponding person
+        # record must point back to it for the database to be consistent, so
+        # update that here.
+        if self.event_type == Event.BIRTH:
+            self.person.birth = self
+            self.person.save()
+        elif self.event_type == Event.DEATH:
+            self.person.death = self
+            self.person.save()
 
     class Meta:
         ordering = ['date']

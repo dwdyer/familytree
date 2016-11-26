@@ -5,7 +5,7 @@ from django.contrib import admin
 class FamilyTreeAdminSite(admin.AdminSite):
     def each_context(self, request):
         context = super(FamilyTreeAdminSite, self).each_context(request)
-        context['list'] = Person.objects.all()
+        context['list'] = Person.objects.select_related('birth')
         return context
 
 
@@ -69,15 +69,12 @@ class BurialFilter(admin.SimpleListFilter):
 class PersonAdmin(admin.ModelAdmin):
     fieldsets = [(None, {'fields': [('forename', 'middle_names'),
                                     ('surname', 'maiden_name'),
-                                    ('gender', 'blood_relative'),
-                                    ('date_of_birth', 'birth_location'),
-                                    ('deceased', 'date_of_death'),
+                                    ('gender', 'blood_relative', 'deceased'),
                                     ('mother', 'father'),
                                     'notes',
                                     ('tags', 'user')]})]
-    list_display = ['surname', 'name', 'gender', 'date_of_birth', 'birth_location', 'deceased']
+    list_display = ['surname', 'name', 'gender', 'deceased']
     list_display_links = ['name']
-    list_editable = ['date_of_birth', 'birth_location']
     list_filter = ['blood_relative', 'gender', 'deceased', BaptismFilter, BurialFilter, 'surname']
     inlines = [EventInline]
     search_fields = ['surname', 'forename', 'middle_names', 'maiden_name', 'notes']
