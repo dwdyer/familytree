@@ -18,7 +18,7 @@
             {% for person in list %}
               <option value="{{ person.id }}">
                 {{ person.name }}
-                {% if person.date_of_birth %}|{{ person.date_of_birth.lower_bound|date:"Y" }}{% endif %}
+                {% if person.date_of_birth %}|{{ person.date_of_birth|date:"Y" }}{% endif %}
               </option>
             {% endfor %}
           </select>

@@ -312,9 +312,6 @@ class Event(models.Model):
     location = models.ForeignKey(Location, blank=True, null=True, related_name='events')
     reference = models.URLField(blank=True, null=True)
 
-    def short_date(self):
-        return self.date.short()
-
     def verb(self):
         if self.event_type == Event.BIRTH:
             return 'born'

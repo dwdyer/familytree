@@ -1,6 +1,7 @@
-from people.models import Country, Location, Person, Marriage, Photograph, Document, Event
 from django import forms
 from django.contrib import admin
+from people.filters import BirthFilter, BaptismFilter, DeathFilter, BurialFilter, HasReferenceFilter
+from people.models import Country, Location, Person, Marriage, Photograph, Document, Event
 
 class FamilyTreeAdminSite(admin.AdminSite):
     def each_context(self, request):
@@ -9,62 +10,18 @@ class FamilyTreeAdminSite(admin.AdminSite):
         return context
 
 
-class HasReferenceFilter(admin.SimpleListFilter):
-    title = 'has reference'
-    parameter_name = 'has_url'
-
-    def lookups(self, request, model_admin):
-        return [('yes', 'Yes'), ('no', 'No')]
-
-    def queryset(self, request, queryset):
-        filter_option = self.value()
-        if filter_option == 'yes':
-            return queryset.filter(reference__isnull=False).exclude(reference='')
-        elif filter_option == 'no':
-            return queryset.filter(reference='')
-        else:
-            return queryset
-
 class EventAdmin(admin.ModelAdmin):
-    list_display = ['short_date', 'event_type', 'person', 'location']
+    list_display = ['event_date', 'event_type', 'person', 'location']
     list_filter = ['event_type', HasReferenceFilter]
+
+    def event_date(self, obj):
+        return obj.date.short()
+    event_date.admin_order_field = 'date'
 
 
 class EventInline(admin.TabularInline):
     model = Event
     extra = 1
-
-class BaptismFilter(admin.SimpleListFilter):
-    title = 'has baptism record'
-    parameter_name = 'baptism'
-
-    def lookups(self, request, model_admin):
-        return [('yes', 'Yes'), ('no', 'No')]
-
-    def queryset(self, request, queryset):
-        filter_option = self.value()
-        if filter_option == 'yes':
-            return queryset.filter(events__event_type__name='Baptism')
-        elif filter_option == 'no':
-            return queryset.exclude(events__event_type__name='Baptism')
-        else:
-            return queryset
-
-class BurialFilter(admin.SimpleListFilter):
-    title = 'has burial record'
-    parameter_name = 'burial'
-
-    def lookups(self, request, model_admin):
-        return [('yes', 'Yes'), ('no', 'No')]
-
-    def queryset(self, request, queryset):
-        filter_option = self.value()
-        if filter_option == 'yes':
-            return queryset.filter(events__event_type__name='Burial')
-        elif filter_option == 'no':
-            return queryset.exclude(events__event_type__name='Burial')
-        else:
-            return queryset
 
 class PersonAdmin(admin.ModelAdmin):
     fieldsets = [(None, {'fields': [('forename', 'middle_names'),
@@ -73,11 +30,19 @@ class PersonAdmin(admin.ModelAdmin):
                                     ('mother', 'father'),
                                     'notes',
                                     ('tags', 'user')]})]
-    list_display = ['surname', 'name', 'gender', 'deceased']
-    list_display_links = ['name']
-    list_filter = ['blood_relative', 'gender', 'deceased', BaptismFilter, BurialFilter, 'surname']
+    list_display = ['full_name', 'gender', 'born', 'birth_location']
+    list_display_links = ['full_name']
+    list_filter = ['blood_relative', BirthFilter, BaptismFilter, DeathFilter, BurialFilter,
+                   'surname', 'gender', 'deceased']
     inlines = [EventInline]
-    search_fields = ['surname', 'forename', 'middle_names', 'maiden_name', 'notes']
+    search_fields = ['surname', 'forename', 'middle_names', 'maiden_name']
+
+    def born(self, obj):
+        return obj.date_of_birth().short() if obj.date_of_birth() else None
+
+    def full_name(self, obj):
+        return obj.name()
+    full_name.admin_order_field = 'surname'
 
 
 class PhotographAdminForm(forms.ModelForm):
