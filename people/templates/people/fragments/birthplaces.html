@@ -1,0 +1,26 @@
+{% load static %}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      <a data-toggle="collapse" data-parent="#accordion" href="#{{ id }}">
+        Most Common Birthplaces
+      </a>
+    </h3>
+  </div>
+  <div id="{{ id }}" class="panel-collapse collapse{% if not on_this_day %} in{% endif %}">
+    <table class="table">
+      {% for region in regions %}
+        <tr>
+          <td>
+            <span class="location">
+              <img src="{% get_static_prefix %}people/images/flags/small/{{ region.country_code }}.png"
+                   alt="{{ region.country_name }}" width="24" height="24" class=flag-small"/>
+              <a href="{% url 'region' region.name %}">{{ region.name }}</a>
+            </span>
+          </td>
+          <td class="text-right">{{ region.natives_count }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>

@@ -1,116 +1,21 @@
 {% load static %}
 <div class="panel-group" id="accordion">
-  {% if on_this_day %}
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-            On This Day - {{ today|date:"jS F" }}
-          </a>
-        </h3>
-      </div>
-      <div id="collapseOne" class="panel-collapse collapse in">
-        <table class="table">
-          {% for event in on_this_day %}
-            <tr>
-              <td class="text-right text-primary"><small>{{ event.date|date:"Y" }}</small></td>
-              <td>
-                {% if event.event_type == 2 %}
-                  <a href="{% url 'person' event.husband.id %}">{{ event.husband }}</a>
-                  married
-                  <a href="{% url 'person' event.wife.id %}">{{ event.wife.given_names }} {{ event.wife.birth_surname }}</a>
-                {% else %}
-                  <a href="{% url 'person' event.person_id %}">{{ event.person.name }}</a> was {{ event.verb }}
-                {% endif %}
-                {% if event.location %}
-                  in {{ event.location }}
-                {% endif %}
-              </td>
-            </tr>
-          {% endfor %}
-        </table>
-      </div>
-    </div>
-  {% endif %}
+  {% include 'people/fragments/onthisday.html' with id='collapse1' %}
+  {% include 'people/fragments/birthplaces.html' with id='collapse2' %}
+  {% include 'people/fragments/names.html' with id='collapse3' %}
   <div class="panel panel-default">
     <div class="panel-heading">
       <h3 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-          Most Common Birthplaces
-        </a>
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Tags</a>
       </h3>
     </div>
-    <div id="collapseTwo" class="panel-collapse collapse{% if not on_this_day %} in{% endif %}">
-      <table class="table">
-        {% for region in regions %}
-          <tr>
-            <td>
-              <span class="location">
-                <img src="{% get_static_prefix %}people/images/flags/small/{{ region.country_code }}.png"
-                     alt="{{ region.country_name }}" width="24" height="24" class=flag-small"/>
-                <a href="{% url 'region' region.name %}">{{ region.name }}</a>
-              </span>
-            </td>
-            <td class="text-right">{{ region.natives_count }}</td>
-          </tr>
-        {% endfor %}
-      </table>
-    </div>
-  </div>
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
-          Most Popular Given Names
-        </a>
-      </h3>
-    </div>
-    <div id="collapseThree" class="panel-collapse collapse">
-      <div class="panel-body">
-        <ul class="nav nav-tabs">
-          <li class="active"><a href="#male" data-toggle="tab">Male</a></li>
-          <li><a href="#female" data-toggle="tab">Female</a></li>
-        </ul>
-        <div class="tab-content">
-          <div class="tab-pane active" id="male">
-            <table class="table">
-              {% for name in male_names %}
-                <tr>
-                  <td><a href="{% url 'forename' name.forename %}">{{ name.forename }}</a></td>
-                  <td class="text-right">{{ name.forename__count }}</td>
-                </tr>
-              {% endfor %}
-            </table>
-          </div>
-          <div class="tab-pane" id="female">
-            <table class="table" style="border-top: 0;">
-              {% for name in female_names %}
-                <tr>
-                  <td><a href="{% url 'forename' name.forename %}">{{ name.forename }}</a></td>
-                  <td class="text-right">{{ name.forename__count }}</td>
-                </tr>
-              {% endfor %}
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour">Tags</a>
-      </h3>
-    </div>
-    <div id="collapseFour" class="panel-collapse collapse">
+    <div id="collapse4" class="panel-collapse collapse">
       <div class="panel-body">
         <p>
         {% for tag in tags %}
-          <span>
-            <a href="{% url 'tag' tag.slug %}" class="label label-primary"
-               style="margin: 2px 0; display: inline-block;">
-              {{ tag.name }}
-              <span class="badge" style="background-color: #fff; color: #325d88; margin-left: 5px;">{{ tag.tag_count }}</span>
+          <span class="tag">
+            <a href="{% url 'tag' tag.slug %}" class="label label-primary">
+              {{ tag.name }} <span class="badge">{{ tag.tag_count }}</span>
             </a>
           </span>
         {% endfor %}

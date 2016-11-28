@@ -1,0 +1,33 @@
+{% if on_this_day %}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+          On This Day - {{ today|date:"jS F" }}
+        </a>
+      </h3>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in">
+      <table class="table">
+        {% for event in on_this_day %}
+          <tr>
+            <td class="text-right text-primary"><small>{{ event.date|date:"Y" }}</small></td>
+            <td>
+              {% if event.event_type == 2 %}
+                <a href="{% url 'person' event.husband.id %}">{{ event.husband }}</a>
+                married
+                <a href="{% url 'person' event.wife.id %}">{{ event.wife.given_names }} {{ event.wife.birth_surname }}</a>
+              {% else %}
+                <a href="{% url 'person' event.person_id %}">{{ event.person.name }}</a> was {{ event.verb }}
+              {% endif %}
+              {% if event.location %}
+                in {% include 'people/fragments/location.html' with location=event.location %}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+{% endif %}
+
