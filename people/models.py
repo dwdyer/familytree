@@ -166,7 +166,7 @@ class Person(models.Model):
         return self.husband_of.all() if self.gender == 'M' else self.wife_of.all()
 
     def timeline(self):
-        timeline = list(self.events.all()) + list(self.marriages())
+        timeline = list(self.events.all()) + list(self.marriages().filter(date__isnull=False))
         timeline.sort(key=attrgetter('date'))
         return timeline
 

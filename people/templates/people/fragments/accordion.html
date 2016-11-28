@@ -11,24 +11,7 @@
       </div>
       <div id="collapseOne" class="panel-collapse collapse in">
         <table class="table">
-          {% for birth in on_this_day.0 %}
-            <tr>
-              <td class="text-right text-primary"><small>{{ birth.date_of_birth|date:"Y" }}</small></td>
-              <td>
-                <a href="{% url 'person' birth.id %}">{{ birth.name }}</a> was born
-                {% if birth.birth_location %}
-                  in {{ birth.birth_location }}
-                {% endif %}
-              </td>
-            </tr>
-          {% endfor %}
-          {% for death in on_this_day.1 %}
-            <tr>
-              <td class="text-right text-primary"><small>{{ death.date_of_death|date:"Y" }}</small></td>
-              <td><a href="{% url 'person' death.id %}">{{ death.name }}</a> died</td>
-            </tr>
-          {% endfor %}
-          {% for event in on_this_day.2 %}
+          {% for event in on_this_day %}
             <tr>
               <td class="text-right text-primary"><small>{{ event.date|date:"Y" }}</small></td>
               <td>
