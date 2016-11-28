@@ -45,9 +45,11 @@
         {% for region in regions %}
           <tr>
             <td>
-              <img src="{% get_static_prefix %}people/images/flags/{{ region.country_code }}.png"
-                   alt="{{ region.country_name }}" width="24" height="24" style="margin: -2px 5px;"/>
-              <a href="{% url 'region' region.name %}">{{ region.name }}</a>
+              <span class="location">
+                <img src="{% get_static_prefix %}people/images/flags/small/{{ region.country_code }}.png"
+                     alt="{{ region.country_name }}" width="24" height="24" class=flag-small"/>
+                <a href="{% url 'region' region.name %}">{{ region.name }}</a>
+              </span>
             </td>
             <td class="text-right">{{ region.natives_count }}</td>
           </tr>

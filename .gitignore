@@ -2,3 +2,4 @@
 *.swp
 media
 secret_settings.py
+.DS_Store

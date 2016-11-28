@@ -42,9 +42,7 @@
         <td>{{ person.year_range }}</td>
         <td class="hidden-xs">
           {% if person.birth_location %}
-            <img src="{% get_static_prefix %}people/images/flags/{{ person.birth_location.country.country_code }}.png"
-                 alt="{{ person.birth_location.country }}" width="24" height="24" style="margin: -2px 5px;"/>
-            <a href="{% url 'location' person.birth_location.id %}">{{ person.birth_location }}</a>
+            {% include 'people/fragments/location.html' with location=person.birth_location %}
           {% endif %}
         </td>
         <td class="text-right hidden-xs">

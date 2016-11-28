@@ -326,12 +326,6 @@ class Event(models.Model):
         else:
             return None
 
-    def describe(self):
-        description = self.verb().title()
-        if self.location:
-            description += ' in {0}'.format(self.location)
-        return description
-
     def save(self, *args, **kwargs):
         super(Event, self).save(*args, **kwargs)
         # If this event is a birth or death event, the corresponding person
@@ -361,11 +355,8 @@ class Marriage(models.Model):
     def __str__(self):
         return self.husband.name(False) + ' & ' + self.wife.name(False, True)
 
-    def describe(self):
-        description = 'Married'
-        if self.location:
-            description += ' in {0}'.format(self.location)
-        return description
+    def verb(self):
+        return 'married'
 
     class Meta:
         ordering = ['husband__surname', 'husband__forename', 'husband__middle_names', 'date']

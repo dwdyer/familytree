@@ -12,8 +12,11 @@
               <span class="glyphicon glyphicon-new-window"></span>
             </a>
           {% endif %}
-          {{ event.describe }}
-        </td> 
+          {{ event.verb|title }}
+          {% if event.location %}
+            in {% include 'people/fragments/location.html' with location=event.location %}
+          {% endif %}
+        </td>
       </tr>
     {% endfor %}
   </table>

@@ -31,9 +31,7 @@
       <td{% if not relative.deceased %} class="living"{% endif %}>{{ relative.year_range }}</td>
       <td class="hidden-xs">
         {% if relative.birth_location %}
-          <img src="{% get_static_prefix %}people/images/flags/{{ relative.birth_location.country.country_code }}.png"
-               alt="{{ relative.birth_location.country }}" width="24" height="24" style="margin: -2px 5px;"/>
-          <a href="{% url 'location' relative.birth_location.id %}">{{ relative.birth_location }}</a>
+          {% include 'people/fragments/location.html' with location=relative.birth_location %}
         {% endif %}
       </td>
       <td class="text-right hidden-xs">
