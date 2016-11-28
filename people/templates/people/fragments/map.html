@@ -4,7 +4,7 @@
     {% if map_area %}
       var map = L.map('map', {fullscreenControl: true}).fitBounds([[{{ map_area.0.0 }},{{ map_area.0.1 }}],[{{ map_area.1.0 }},{{ map_area.1.1}}]]);
     {% else %}
-      var map = L.map('map', {fullscreenControl: true}).setView([{{ location.latitude }},{{ location.longitude }}], {{ zoom|default_if_none:"7" }});
+      var map = L.map('map', {zoomControl: false}).setView([{{ location.latitude }},{{ location.longitude }}],{{ zoom|default_if_none:"7" }});
     {% endif %}
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
                 {attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,\

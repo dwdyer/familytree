@@ -1,0 +1,11 @@
+<link rel="stylesheet" href="//unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
+<script src="//unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+{% if clustering %}
+<script src="//unpkg.com/leaflet.markercluster@1.0.0/dist/leaflet.markercluster.js"></script>
+<link rel="stylesheet" href="//unpkg.com/leaflet.markercluster@1.0.0/dist/MarkerCluster.Default.css" />
+<link rel="stylesheet" href="//unpkg.com/leaflet.markercluster@1.0.0/dist/MarkerCluster.css" />
+{% endif %}
+{% if fullscreen %}
+<link rel="stylesheet" href="//api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css" />
+<script src="//api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js"></script>
+{% endif %}

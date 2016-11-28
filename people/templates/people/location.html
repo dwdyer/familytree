@@ -2,10 +2,7 @@
 {% load static %}
 {% block title %}{{ location }}{% endblock %}
 {% block head %}
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.2/Control.FullScreen.min.css" />
-  <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.2/Control.FullScreen.min.js"></script>
+  {% include 'people/fragments/mapresources.html' with clustering=False fullscreen=True %}
   <style>
     #map {height: 300px; padding: 0; margin-top: -10px;}
   </style>
