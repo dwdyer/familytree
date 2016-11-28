@@ -1,0 +1,40 @@
+{% extends "people/people.html" %}
+{% load static %}
+{% block title %}{{ location }}{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.2/Control.FullScreen.min.css" />
+  <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.2/Control.FullScreen.min.js"></script>
+  <style>
+    #map {height: 300px; padding: 0; margin-top: -10px;}
+  </style>
+{% endblock %}
+
+{% block header %}
+  {% include 'people/fragments/map.html' with zoom=14 %}
+{% endblock %}
+
+{% block content %}
+  <h1 class="page-header">
+    <img src="{% get_static_prefix %}people/images/flags/large/{{ location.country.country_code }}.png"
+         alt="{{ location.country }}" class="flag-large" />
+    {{ location.name }} <small>{{ location.county_state_province }}</small>
+  </h1>
+  <ul class="nav nav-tabs nav-justified">
+    <li class="active"><a href="#births" data-toggle="tab">Births <span class="badge">{{ births|length }}</span></a></li>
+    {% if deaths %}
+      <li><a href="#deaths" data-toggle="tab">Deaths <span class="badge">{{ deaths|length }}</span></a></li>
+    {% else %}
+      <li class="disabled"><a href="#deaths">Deaths</a></li>
+    {% endif %}
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="births">
+      {% include 'people/fragments/peoplelist.html' with people=births %}
+    </div>
+    <div class="tab-pane" id="deaths">
+      {% include 'people/fragments/peoplelist.html' with people=deaths %}
+    </div>
+  </div>
+{% endblock %}

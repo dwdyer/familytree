@@ -1,0 +1,30 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Dates</th>
+      <th>Birthplace</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for person in people %}
+    <tr{% if not person.blood_relative %} class="text-muted unrelated"{% endif %}>
+      <td><a href="{% url 'person' person.id %}">{{ person.name }}</a></td>
+      <td>{{ person.year_range }}</td>
+      <td class="hidden-xs">
+        {% if person.birth_location %}
+          {% include 'people/fragments/location.html' with location=person.birth_location %}
+        {% endif %}
+      </td>
+      <td class="text-right hidden-xs">
+        {% if person.photos.all %}
+          &nbsp;<span class="glyphicon glyphicon-picture"
+                      title="{{ person.photos.count }} Photo{{ person.photos.cout|pluralize }}"></span>
+        {% endif %}
+        {% if person.notes %}&nbsp;<span class="glyphicon glyphicon-pencil" title="Has Notes"></span>{% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>

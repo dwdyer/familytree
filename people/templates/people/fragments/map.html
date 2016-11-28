@@ -1,7 +1,11 @@
 <div id="map"></div>
 <script>
   $(document).ready(function(){
-    var map = L.map('map', {fullscreenControl: true}).fitBounds([[{{ map_area.0.0 }},{{ map_area.0.1 }}],[{{ map_area.1.0 }},{{ map_area.1.1}}]]);
+    {% if map_area %}
+      var map = L.map('map', {fullscreenControl: true}).fitBounds([[{{ map_area.0.0 }},{{ map_area.0.1 }}],[{{ map_area.1.0 }},{{ map_area.1.1}}]]);
+    {% else %}
+      var map = L.map('map', {fullscreenControl: true}).setView([{{ location.latitude }},{{ location.longitude }}], {{ zoom|default_if_none:"7" }});
+    {% endif %}
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
                 {attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,\
                                <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,\
@@ -10,45 +14,47 @@
                  maxZoom: 18,
                  id: '{{ settings.MAPBOX_PROJECT_ID }}',
                  accessToken: '{{ settings.MAPBOX_ACCESS_TOKEN }}'}).addTo(map);
-    var markers = L.markerClusterGroup({showCoverageOnHover: false,
-                                        singleMarkerMode: true,
-                                        spiderfyOnMaxZoom: false,
-                                        maxClusterRadius: 70,
-                                        iconCreateFunction: function(cluster) {
-                                            var children = cluster.getAllChildMarkers();
-                                            var count = 0;
-                                            for (var i = 0; i < children.length; i++)
-                                            {
-                                                count += children[i].people_count;
-                                            }
-                                            var html;
-                                            var classes = 'marker-cluster';
-                                            if (cluster.getChildCount() > 1)
-                                            {
-                                                classes += ' marker-cluster-' + ['small', 'medium', 'large'][Math.floor(Math.log10(count))];
-                                                html = '<div><span><b>' + count + '</b></span></div>';
-                                            }
-                                            else
-                                            {
-                                                classes += ' marker-simple';
-                                                html = '<div><span><small>' + count + '</small></span></div>';
-                                            }
-                                            return L.divIcon({html: html, className: classes, iconSize: new L.Point(40, 40)});
-                                        }});
-    {% for location in locations %}
-      var marker{{ forloop.counter }} = L.marker([{{ location.latitude }}, {{ location.longitude }}]);
-      marker{{ forloop.counter }}.people_count = {{ location.natives_count|default:1 }};
-      marker{{ forloop.counter }}.bindPopup(
-        '<a href="{% url 'location' location.id %}">{{ location.name }}</a>\
-        <br/>{{ location.county_state_province }}\
-        {% if location.natives_count %}\
-          <br/>\
-          <small class="text-muted">\
-            {{ location.natives_count }} {{ location.natives_count|pluralize:"person,people" }} born here\
-          </small>\
-        {% endif %}');
-      markers.addLayer(marker{{ forloop.counter }});
-    {% endfor %}
-    map.addLayer(markers);
+    {% if locations %}
+      var markers = L.markerClusterGroup({showCoverageOnHover: false,
+                                          singleMarkerMode: true,
+                                          spiderfyOnMaxZoom: false,
+                                          maxClusterRadius: 70,
+                                          iconCreateFunction: function(cluster) {
+                                              var children = cluster.getAllChildMarkers();
+                                              var count = 0;
+                                              for (var i = 0; i < children.length; i++)
+                                              {
+                                                  count += children[i].people_count;
+                                              }
+                                              var html;
+                                              var classes = 'marker-cluster';
+                                              if (cluster.getChildCount() > 1)
+                                              {
+                                                  classes += ' marker-cluster-' + ['small', 'medium', 'large'][Math.floor(Math.log10(count))];
+                                                  html = '<div><span><b>' + count + '</b></span></div>';
+                                              }
+                                              else
+                                              {
+                                                  classes += ' marker-simple';
+                                                  html = '<div><span><small>' + count + '</small></span></div>';
+                                              }
+                                              return L.divIcon({html: html, className: classes, iconSize: new L.Point(40, 40)});
+                                          }});
+      {% for location in locations %}
+        var marker{{ forloop.counter }} = L.marker([{{ location.latitude }}, {{ location.longitude }}]);
+        marker{{ forloop.counter }}.people_count = {{ location.natives_count|default:1 }};
+        marker{{ forloop.counter }}.bindPopup(
+          '<a href="{% url 'location' location.id %}">{{ location.name }}</a>\
+          <br/>{{ location.county_state_province }}\
+          {% if location.natives_count %}\
+            <br/>\
+            <small class="text-muted">\
+              {{ location.natives_count }} {{ location.natives_count|pluralize:"person,people" }} born here\
+            </small>\
+          {% endif %}');
+        markers.addLayer(marker{{ forloop.counter }});
+      {% endfor %}
+      map.addLayer(markers);
+    {% endif %}
   });
 </script>
