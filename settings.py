@@ -4,6 +4,7 @@ import os.path
 # Django settings for familytree project.
 
 DEBUG = True
+ALLOWED_HOSTS = ['*'] if DEBUG else []
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
