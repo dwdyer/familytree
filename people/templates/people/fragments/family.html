@@ -6,11 +6,9 @@
     <table class="table">
       {% if person.spouses %}
         <tr>
-          <td class="text-right text-primary">
-            <small>
-              {% ifequal person.gender 'F' %}Husband{{ person.spouses|length|pluralize }}{% endifequal %}
-              {% ifequal person.gender 'M' %}Wi{{ person.spouses|length|pluralize:"fe,ves"}}{% endifequal %}
-            </small>
+          <td class="text-right text-primary small">
+            {% ifequal person.gender 'F' %}Husband{{ person.spouses|length|pluralize }}{% endifequal %}
+            {% ifequal person.gender 'M' %}Wi{{ person.spouses|length|pluralize:"fe,ves"}}{% endifequal %}
           </td>
           <td>
             {% for spouse, date, location in person.spouses %}
@@ -23,7 +21,7 @@
 
       {% if person.children %}
         <tr>
-          <td class="text-right text-primary"><small>Children</small></td>
+          <td class="text-right text-primary small">Children</td>
           <td>
             {% for child in person.children %}
               <a href="{% url 'person' child.id %}">{{ child.name }}</a><br/>
@@ -34,7 +32,7 @@
 
       {% if person.mother or person.father %}
         <tr>
-          <td class="text-right text-primary"><small>Parents</small></td>
+          <td class="text-right text-primary small">Parents</td>
           <td>
             {% if person.mother %}<a href="{% url 'person' person.mother.id %}">{{ person.mother.name }}</a><br/>{% endif %}
             {% if person.father %}<a href="{% url 'person' person.father.id %}">{{ person.father.name }}</a>{% endif %}
@@ -44,7 +42,7 @@
 
       {% if person.siblings %}
         <tr>
-          <td class="text-right text-primary"><small>Siblings</small></td>
+          <td class="text-right text-primary small">Siblings</td>
           <td>
             {% for sibling in person.siblings %}
               <a href="{% url 'person' sibling.id %}">{{ sibling.name }}</a><br/>

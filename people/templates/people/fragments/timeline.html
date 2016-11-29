@@ -3,9 +3,7 @@
   <table class="table table">
     {% for event in person.timeline %}
       <tr>
-        <td class="text-right text-primary">
-          <small>{{ event.date.short }}</small>
-        </td>
+        <td class="text-right text-primary small">{{ event.date.short }}</td>
         <td>
           {% if event.reference %}
             <a href="{{ event.reference }}" target="_blank" class="pull-right">

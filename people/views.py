@@ -215,11 +215,13 @@ def _people_map(request, people, title):
 def location(request, location_id):
     location = get_object_or_404(Location, id=location_id)
     births = Person.objects.filter(birth__location=location)
+    marriages = Marriage.objects.filter(location=location)
     deaths = Person.objects.filter(death__location=location)
     return render(request,
                   'people/location.html',
                   {'location': location,
                    'births': births,
+                   'marriages': marriages,
                    'deaths': deaths,
                    'list': Person.objects.select_related('birth')})
 

@@ -11,7 +11,7 @@
       <table class="table">
         {% for event in on_this_day %}
           <tr>
-            <td class="text-right text-primary"><small>{{ event.date|date:"Y" }}</small></td>
+            <td class="text-right text-primary small">{{ event.date|date:"Y" }}</td>
             <td>
               {% if event.event_type == 2 %}
                 <a href="{% url 'person' event.husband.id %}">{{ event.husband }}</a>

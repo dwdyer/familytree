@@ -18,6 +18,11 @@
                                         headers: {1: {sorter: "names"}, 2: {sorter: "names"}, 3: {sorter: "names"}, 4: {sorter: false}},
                                         textExtraction: getSortValue});
       {% endif %}
+      {% if marriages %}
+        $("#marriages-table").tablesorter({sortList: [[0,0]],
+                                           headers: {1: {sorter: "names"}, 2: {sorter: "names"}},
+                                           textExtraction: getSortValue});
+      {% endif %}
       {% if deaths %}
         $("#deaths-table").tablesorter({sortList: [[0,0]],
                                         headers: {1: {sorter: "names"}, 4: {sorter: false}},
@@ -43,8 +48,15 @@
     {% else %}
       <li class="disabled"><a href="#births">Births</span></a></li>
     {% endif %}
+
+    {% if marriages %}
+      <li{% if not births %} class="active"{% endif %}><a href="#marriages" data-toggle="tab">Marriages <span class="badge">{{ marriages|length }}</span></a></li>
+    {% else %}
+      <li class="disabled"><a href="#marriages">Marriages</span></a></li>
+    {% endif %}
+
     {% if deaths %}
-      <li{% if not births %} class="active"{% endif %}><a href="#deaths" data-toggle="tab">Deaths <span class="badge">{{ deaths|length }}</span></a></li>
+      <li{% if not births and not marriages %} class="active"{% endif %}><a href="#deaths" data-toggle="tab">Deaths <span class="badge">{{ deaths|length }}</span></a></li>
     {% else %}
       <li class="disabled"><a href="#deaths">Deaths</a></li>
     {% endif %}
@@ -67,7 +79,7 @@
           <tr class="{% if not person.blood_relative %}text-muted small{% endif %}">
             <td data-sort-value="{{ person.date_of_birth.lower_bound|date:'Y-m-d' }}">{{ person.date_of_birth.short }}</td>
             <td>
-              <b><a href="{% url 'person' person.id %}">{{ person.name }}</a></b>
+              <a href="{% url 'person' person.id %}">{{ person.name }}</a>
             </td>
             <td class=hidden-xs">
               {% if person.mother %}<a href="{% url 'person' person.mother.id %}">{{ person.mother.name }}</a>{% endif %}
@@ -87,7 +99,33 @@
         </tbody>
       </table>
     </div>
-    <div class="tab-pane{% if deaths and not births %} active{% endif %}" id="deaths">
+
+    <div class="tab-pane{% if marriages and not births %} active{% endif %}" id="marriages">
+      <table class="table" id="marriages-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Husband</th>
+            <th>Wife</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for marriage in marriages %}
+          <tr>
+            <td data-sort-value="{{ marriage.date.lower_bound|date:'Y-m-d' }}">{{ marriage.date.short }}</td>
+            <td{% if not marriage.husband.blood_relative %} class="text-muted small"{% endif %}>
+              <a href="{% url 'person' marriage.husband.id %}">{{ marriage.husband.name }}</a>
+            </td>
+            <td{% if not marriage.wife.blood_relative %} class="text-muted small"{% endif %}>
+              <a href="{% url 'person' marriage.wife.id %}">{{ marriage.wife.given_names }} {{ marriage.wife.birth_surname }}</a>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tab-pane{% if deaths and not marriages and not births %} active{% endif %}" id="deaths">
       <table class="table" id="deaths-table">
         <thead>
           <tr>
@@ -102,7 +140,7 @@
         {% for person in deaths %}
           <tr{% if not person.blood_relative %} class="text-muted small"{% endif %}>
             <td data-sort-value="{{ person.date_of_death.lower_bound|date:'Y-m-d' }}">{{ person.date_of_death.short }}</td>
-            <td><b><a href="{% url 'person' person.id %}">{{ person.name }}</a></b></td>
+            <td><a href="{% url 'person' person.id %}">{{ person.name }}</a></td>
             <td class="hidden-xs">{{ person.age|default_if_none:"Unknown" }}</td>
             <td class="hidden-xs">
               {% if person.birth_location %}
