@@ -1,10 +1,9 @@
 <div class="panel panel-default">
-  <div class="panel-heading">Timeline</div>
-  <table class="table table">
+  <table class="table table-condensed">
     {% for event in person.timeline %}
       <tr>
-        <td class="text-right text-primary small">{{ event.date.short }}</td>
-        <td>
+        <td class="text-right text-primary small col-md-3 col-sm-4">{{ event.date }}</td>
+        <td class="col-md-10 col-sm-8">
           {% if event.reference %}
             <a href="{{ event.reference }}" target="_blank" class="pull-right">
               <span class="glyphicon glyphicon-new-window"></span>

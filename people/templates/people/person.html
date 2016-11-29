@@ -16,49 +16,40 @@
       </a>
     {% endif %}
   </h1>
+  <div class="row" style="margin-top: -10px; margin-bottom: 20px;">
+    <div class="col-md-6 col-sm-12">
+      {% if person.date_of_birth %}
+        <p class="pull-left">
+          <span class="text-primary">Born:</span> {{ person.date_of_birth.year }}
+          {% if person.deceased and person.date_of_death %}
+            <span class="text-muted" style="margin: 0 5px;">&middot;</span>
+            <span class="text-primary">Died:</span> {{ person.date_of_death.year }}
+          {% endif %}
+          {% if person.age %}
+            <span class="text-muted" style="margin: 0 5px;">&middot;</span>
+            <span class="text-primary">Age:</span> {{ person.age }} years
+          {% endif %}
+        </p>
+      {% endif %}
+    </div>
+    <div class="col-md-6 col-sm-12 text-right">
+      {% for tag in person.tags.all %}
+        <a href="{% url 'tag' tag.slug %}" class="label label-primary">{{ tag.name }}</a>
+      {% endfor %}
+    </div>
+  </div>
   <div class="row">
     <div class="col-md-8">
-      <table class="table table-condensed">
-        <tr>
-          <td>Born:</td>
-          <td>{{ person.date_of_birth|default_if_none:"????" }}</td>
-          <td class="text-right">
-            {% if person.birth_location %}
-              {% include 'people/fragments/location.html' with location=person.birth_location %}
-            {% endif %}
-          </td>
-        </tr>
-        {% if person.deceased %}
-          <tr>
-            <td>Died:</td>
-            <td>{{ person.date_of_death|default_if_none:"????" }}</td>
-            <td class="text-right">{% if person.age %}(aged {{ person.age }} years){% endif %}</td>
-          </tr>
-        {% elif person.age %}
-          <tr><td>Age:</td><td colspan="2">{{ person.age }} years</td></tr>
-        {% endif %}
-      </table>
-      <div class="row">
-        {% if person.timeline|length > 0 %}
-          <div class="col-md-5">
-            {% include 'people/fragments/timeline.html' %}
-          </div>
-        {% endif %}
-        <div class="{% if person.timeline|length > 0 %}col-md-7{% else %}col-md-12{% endif %}">
-          <h4>Notes</h4>
-          {{ person.notes|safe }}
-        </div>
-      </div>
+      {% if person.timeline|length > 0 %}
+        {% include 'people/fragments/timeline.html' %}
+      {% endif %}
+      <h4>Notes</h4>
+      {{ person.notes|safe }}
       {% include 'people/fragments/photos.html' %}
       {% include 'people/fragments/documents.html' %}
     </div>
     <div class="col-md-4">
       {% include 'people/fragments/family.html' %}
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      {% include 'people/fragments/tags.html' %}
     </div>
   </div>
 {% endblock %}
