@@ -10,6 +10,13 @@
             </a>
           {% endif %}
           {{ event.verb|title }}
+          {% if event.event_type == 2 %}
+            {% if person == event.husband %}
+              <a href="{% url 'person' event.wife.id %}">{{ event.wife.birth_name }}</a>
+            {% else %}
+              <a href="{% url 'person' event.husband.id %}">{{ event.husband.birth_name }}</a>
+            {% endif %}
+          {% endif %}
           {% if event.location %}
             in {% include 'people/fragments/location.html' with location=event.location %}
           {% endif %}

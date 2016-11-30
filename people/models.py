@@ -102,17 +102,20 @@ class Person(models.Model):
 
     def name(self, use_middle_names=True, use_maiden_name=False):
         '''Returns the full name of this person.'''
-        name = " ".join([self.forename, self.middle_names]) if use_middle_names and self.middle_names else self.forename
-        if self.maiden_name != "":
-            return name + " " + (self.maiden_name if use_maiden_name else self.surname + u" (n\xe9e " + self.maiden_name + ")")
+        name = ' '.join([self.forename, self.middle_names]) if use_middle_names and self.middle_names else self.forename
+        if self.maiden_name != '':
+            return name + ' ' + (self.maiden_name if use_maiden_name else self.surname + u' (n\xe9e ' + self.maiden_name + ')')
         else:
-            return name + " " + self.surname
+            return name + ' ' + self.surname
 
     def given_names(self):
         return " ".join([self.forename, self.middle_names]) if self.middle_names else self.forename
 
     def birth_surname(self):
         return self.maiden_name if self.maiden_name else self.surname
+
+    def birth_name(self):
+        return '{0} {1}'.format(self.given_names(), self.birth_surname())
 
     def date_of_birth(self):
         return self.birth.date if self.birth else None

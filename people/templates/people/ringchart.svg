@@ -99,7 +99,7 @@
           {% if forloop.parentloop.revcounter0 == 1 or forloop.parentloop.revcounter0 ==  2 %}
             <text dy="-15" class="inner">
               <textPath xlink:href="#arc{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.given_names }} {{ person.birth_surname }}
+                {{ person.birth_name }}
               </textPath>
             </text>
           {% elif forloop.parentloop.revcounter0 == 3 or forloop.parentloop.revcounter0 == 4 %}
@@ -173,7 +173,7 @@
           {% elif forloop.parentloop.revcounter0 == 9 %}
             <text class="outer spoke">
               <textPath xlink:href="#spoke{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.given_names }} {{ person.birth_surname }}
+                {{ person.birth_name }}
               </textPath>
             </text>
           {% endif %}

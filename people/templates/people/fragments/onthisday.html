@@ -14,9 +14,9 @@
             <td class="text-right text-primary small">{{ event.date|date:"Y" }}</td>
             <td>
               {% if event.event_type == 2 %}
-                <a href="{% url 'person' event.husband.id %}">{{ event.husband }}</a>
+                <a href="{% url 'person' event.husband.id %}">{{ event.husband.birth_name }}</a>
                 married
-                <a href="{% url 'person' event.wife.id %}">{{ event.wife.given_names }} {{ event.wife.birth_surname }}</a>
+                <a href="{% url 'person' event.wife.id %}">{{ event.wife.birth_name }}</a>
               {% else %}
                 <a href="{% url 'person' event.person_id %}">{{ event.person.name }}</a> was {{ event.verb }}
               {% endif %}

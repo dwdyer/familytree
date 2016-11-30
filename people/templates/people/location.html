@@ -114,10 +114,10 @@
           <tr>
             <td data-sort-value="{{ marriage.date.lower_bound|date:'Y-m-d' }}">{{ marriage.date.short }}</td>
             <td{% if not marriage.husband.blood_relative %} class="text-muted small"{% endif %}>
-              <a href="{% url 'person' marriage.husband.id %}">{{ marriage.husband.name }}</a>
+              <a href="{% url 'person' marriage.husband.id %}">{{ marriage.husband.birth_name }}</a>
             </td>
             <td{% if not marriage.wife.blood_relative %} class="text-muted small"{% endif %}>
-              <a href="{% url 'person' marriage.wife.id %}">{{ marriage.wife.given_names }} {{ marriage.wife.birth_surname }}</a>
+              <a href="{% url 'person' marriage.wife.id %}">{{ marriage.wife.birth_name }}</a>
             </td>
           </tr>
         {% endfor %}
