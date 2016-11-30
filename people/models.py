@@ -216,7 +216,7 @@ class Person(models.Model):
 
     def ancestors(self):
         '''Returns a list of this person's ancestors (their parents and all of
-        their parent's ancestors).'''
+        their parents' ancestors).'''
         if self.mother:
             yield self.mother
             yield from self.mother.ancestors()
@@ -237,24 +237,22 @@ class Person(models.Model):
         return ancestors
 
     def relatives(self):
-        relatives = self._build_relatives_set()
+        relatives = self._build_relatives_set(set())
         relatives.discard(self) # This person can't be their own relative.
         return relatives
 
-    def _build_relatives_set(self, relatives_set=set()):
-        '''Adds all blood relatives of this person to the specified set. For
-        efficiency, if the set already contains one of this person's children,
-        we assume it also contains all of that child's decendants too.'''
-        relatives_set.add(self)
-        for child in self.children():
-            if child not in relatives_set:
-                relatives_set.add(child)
-                relatives_set.update(child.descendants())
-        if self.father:
-            self.father._build_relatives_set(relatives_set)
-        if self.mother:
-            self.mother._build_relatives_set(relatives_set)
+    def _build_relatives_set(self, relatives_set):
+        '''Adds all blood relatives of this person to the specified set.'''
+        if not self.father and not self.mother:
+            relatives_set.add(self)
+            relatives_set.update(self.descendants())
+        else:
+            if self.father:
+                self.father._build_relatives_set(relatives_set)
+            if self.mother:
+                self.mother._build_relatives_set(relatives_set)
         return relatives_set
+
 
     def annotated_relatives(self):
         '''Returns a list of all of this person's blood relatives. The first

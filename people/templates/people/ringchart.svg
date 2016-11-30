@@ -140,7 +140,7 @@
           {% elif forloop.parentloop.revcounter0 == 6 %}
             <text dy="-7" class="inner spoke">
               <textPath xlink:href="#spoke{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.given_names }}
+                {{ person.forename }}
               </textPath>
             </text>
             <text dy="7" class="inner spoke">
@@ -151,7 +151,7 @@
           {% elif forloop.parentloop.revcounter0 == 7 %}
             <text dy="-5" class="middle spoke">
               <textPath xlink:href="#spoke{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.given_names }}
+                {{ person.forename }}
               </textPath>
             </text>
             <text dy="5" class="middle spoke">
@@ -162,7 +162,7 @@
           {% elif forloop.parentloop.revcounter0 == 8 %}
             <text dy="-3.5" class="outer spoke">
               <textPath xlink:href="#spoke{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.given_names }}
+                {{ person.forename }}
               </textPath>
             </text>
             <text dy="3.5" class="outer spoke">
