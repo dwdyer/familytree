@@ -243,14 +243,15 @@ class Person(models.Model):
 
     def _build_relatives_set(self, relatives_set):
         '''Adds all blood relatives of this person to the specified set.'''
-        if not self.father and not self.mother:
-            relatives_set.add(self)
-            relatives_set.update(self.descendants())
-        else:
-            if self.father:
-                self.father._build_relatives_set(relatives_set)
-            if self.mother:
-                self.mother._build_relatives_set(relatives_set)
+        relatives_set.add(self)
+        for child in self.children():
+            if child not in relatives_set:
+                relatives_set.add(child)
+                relatives_set.update(child.descendants())
+        if self.father:
+            self.father._build_relatives_set(relatives_set)
+        if self.mother:
+            self.mother._build_relatives_set(relatives_set)
         return relatives_set
 
 
