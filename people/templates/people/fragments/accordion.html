@@ -13,11 +13,7 @@
       <div class="panel-body">
         <p>
         {% for tag in tags %}
-          <span class="tag">
-            <a href="{% url 'tag' tag.slug %}" class="label label-primary">
-              {{ tag.name }} <span class="badge">{{ tag.tag_count }}</span>
-            </a>
-          </span>
+          <a href="{% url 'tag' tag.slug %}" class="label label-primary">{{ tag.name }}</a>
         {% endfor %}
         </p>
       </div>
