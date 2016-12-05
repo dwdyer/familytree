@@ -24,7 +24,7 @@ class EventInline(admin.TabularInline):
     extra = 1
 
 class PersonAdmin(admin.ModelAdmin):
-    fieldsets = [(None, {'fields': [('forename', 'middle_names'),
+    fieldsets = [(None, {'fields': [('forename', 'middle_names', 'known_as'),
                                     ('surname', 'maiden_name'),
                                     ('gender', 'blood_relative', 'deceased'),
                                     ('mother', 'father'),
@@ -35,7 +35,7 @@ class PersonAdmin(admin.ModelAdmin):
     list_filter = ['blood_relative', BirthFilter, BaptismFilter, DeathFilter, BurialFilter,
                    'surname', 'gender', 'deceased']
     inlines = [EventInline]
-    search_fields = ['surname', 'forename', 'middle_names', 'maiden_name']
+    search_fields = ['surname', 'forename', 'middle_names', 'known_as', 'maiden_name', 'notes']
 
     def born(self, obj):
         return obj.date_of_birth().short() if obj.date_of_birth() else None

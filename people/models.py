@@ -75,6 +75,7 @@ class Person(models.Model):
     record.'''
     forename = models.CharField(max_length=20)
     middle_names = models.CharField(blank=True, max_length=50)
+    known_as = models.CharField(blank=True, max_length=20)
     surname = models.CharField(max_length=30)
     maiden_name = models.CharField(blank=True, max_length=30) # Maiden name is optional.
     gender = models.CharField(max_length=1, choices=(('M', 'Male'), ('F', 'Female')))
@@ -103,10 +104,12 @@ class Person(models.Model):
     def name(self, use_middle_names=True, use_maiden_name=False):
         '''Returns the full name of this person.'''
         name = ' '.join([self.forename, self.middle_names]) if use_middle_names and self.middle_names else self.forename
+        if self.known_as:
+            name = name + ' "{0}"'.format(self.known_as)
         if self.maiden_name != '':
-            return name + ' ' + (self.maiden_name if use_maiden_name else self.surname + u' (n\xe9e ' + self.maiden_name + ')')
+            return name + ' ' + (self.maiden_name if use_maiden_name else self.surname.upper() + u' (n\xe9e ' + self.maiden_name + ')')
         else:
-            return name + ' ' + self.surname
+            return name + ' ' + self.surname.upper()
 
     def given_names(self):
         return " ".join([self.forename, self.middle_names]) if self.middle_names else self.forename
@@ -115,7 +118,7 @@ class Person(models.Model):
         return self.maiden_name if self.maiden_name else self.surname
 
     def birth_name(self):
-        return '{0} {1}'.format(self.given_names(), self.birth_surname())
+        return '{0} {1}'.format(self.given_names(), self.birth_surname().upper())
 
     def date_of_birth(self):
         return self.birth.date if self.birth else None
