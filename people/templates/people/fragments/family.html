@@ -11,8 +11,10 @@
             {% ifequal person.gender 'M' %}Wi{{ person.spouses|length|pluralize:"fe,ves"}}{% endifequal %}
           </td>
           <td>
-            {% for spouse, date, location in person.spouses %}
-              <a href="{% url 'person' spouse.id %}">{{ spouse.name }}</a>
+            {% for spouse, date, location, divorced in person.spouses %}
+              <span{% if divorced %} class="divorced"{% endif %}>
+                <a href="{% url 'person' spouse.id %}">{{ spouse.name }}</a>
+              </span>
               <br/>
             {% endfor %}
           </td>
