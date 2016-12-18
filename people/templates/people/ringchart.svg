@@ -167,7 +167,7 @@
           {% elif forloop.parentloop.revcounter0 == 9 %}
             <text class="outer spoke">
               <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.birth_name }}
+                {{ person.forename }} {{ person.birth_surname }}
               </textPath>
             </text>
           {% endif %}

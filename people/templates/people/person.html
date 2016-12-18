@@ -32,7 +32,7 @@
           {% endif %}
           {% if person.age %}
             <span class="text-muted" style="margin: 0 5px;">&middot;</span>
-            <span class="text-primary">Age:</span> {{ person.age }} years
+            <span class="text-primary">Age:</span> {{ person.age }} year{{ person.age|pluralize }}
           {% endif %}
         </p>
       {% endif %}
