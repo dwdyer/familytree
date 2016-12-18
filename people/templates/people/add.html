@@ -72,14 +72,28 @@
             <legend>Parents</legend>
             <div class="row">
               <div class="form-group col-md-6">
-                <label class="control-label">{{ form.mother.label }}</label>
+                <label class="control-label sr-only">{{ form.mother.label }}</label>
                 {{ form.mother }}
               </div>
               <div class="form-group col-md-6">
-                <label class="control-label">{{ form.father.label }}</label>
+                <label class="control-label sr-only">{{ form.father.label }}</label>
                 {{ form.father }}
               </div>
             </div>
+            <script>
+              $(document).ready(function(){
+                $('#id_mother').select2({templateResult: template,
+                                         templateSelection: template,
+                                         escapeMarkup: function(m){return m;},
+                                         placeholder: 'Mother',
+                                         theme: 'bootstrap'});
+                $('#id_father').select2({templateResult: template,
+                                         templateSelection: template,
+                                         escapeMarkup: function(m){return m;},
+                                         placeholder: 'Father',
+                                         theme: 'bootstrap'});
+              });
+            </script>
           </fieldset>
         </div>
         <div class="well">
