@@ -1,10 +1,11 @@
 from datetime import date
 from django.core.urlresolvers import reverse
 from django.db.models import Count, Q
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from itertools import chain, groupby
 from math import pow
 from operator import attrgetter, itemgetter
+from people.forms import AddPersonForm
 from people.models import Location, Person, Marriage, Event
 from people.relations import describe_relative
 from taggit.models import Tag
@@ -263,4 +264,19 @@ def tag(request, slug):
                   'people/people.html',
                   {'title': title,
                    'people': people,
+                   'list': Person.objects.select_related('birth')})
+
+
+def add_person(request):
+    if request.method == 'POST':
+        form = AddPersonForm(request.POST)
+        if form.is_valid():
+            person = form.save()
+            # TO DO:
+            return redirect(reverse('person', kwargs={'person_id': person.id}))
+    else:
+        form = AddPersonForm()
+    return render(request,
+                  'people/add.html',
+                  {'form': form,
                    'list': Person.objects.select_related('birth')})

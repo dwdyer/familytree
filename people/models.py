@@ -73,12 +73,15 @@ class Location(models.Model):
 class Person(models.Model):
     '''The main class of the model. Every individual is represented by a person
     record.'''
-    forename = models.CharField(max_length=20)
-    middle_names = models.CharField(blank=True, max_length=50)
-    known_as = models.CharField(blank=True, max_length=20)
-    surname = models.CharField(max_length=30)
-    maiden_name = models.CharField(blank=True, max_length=30) # Maiden name is optional.
-    gender = models.CharField(max_length=1, choices=(('M', 'Male'), ('F', 'Female')))
+    forename = models.CharField(max_length=20, help_text='Forename / given name')
+    middle_names = models.CharField(blank=True, max_length=50, help_text='Middle names(s)')
+    known_as = models.CharField(blank=True, max_length=20, help_text='Known as')
+    surname = models.CharField(max_length=30, help_text='Surname')
+    maiden_name = models.CharField(blank=True, max_length=30, help_text='Maiden name') # Maiden name is optional.
+    gender = models.CharField(max_length=1,
+                              choices=(('M', 'Male'), ('F', 'Female')),
+                              blank=False,
+                              default=None)
     birth = models.ForeignKey('Event', null=True, blank=True, related_name='+')
     death = models.ForeignKey('Event', null=True, blank=True, related_name='+')
     deceased = models.BooleanField(default=True)

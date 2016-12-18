@@ -18,5 +18,6 @@ urlpatterns = [
     url(r'^surname/(?P<surname>[\w\W]+)/$', views.surname, name='surname'),
     url(r'^forename/(?P<forename>[\w\W]+)/$', views.forename, name='forename'),
     url(r'^tag/(?P<slug>[\w-]+)/$', views.tag, name='tag'),
+    url(r'^add/$', views.add_person, name='add_person'),
 ]
 
