@@ -1,4 +1,5 @@
 from datetime import date
+from django.contrib.auth.decorators import user_passes_test
 from django.core.urlresolvers import reverse
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
@@ -266,13 +267,15 @@ def tag(request, slug):
                    'people': people,
                    'list': Person.objects.select_related('birth')})
 
+def _staff_only(user):
+    return user.is_staff
 
+@user_passes_test(_staff_only)
 def add_person(request):
     if request.method == 'POST':
         form = AddPersonForm(request.POST)
         if form.is_valid():
             person = form.save()
-            # TO DO:
             return redirect(reverse('person', kwargs={'person_id': person.id}))
     else:
         form = AddPersonForm()

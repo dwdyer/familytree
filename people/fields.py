@@ -21,7 +21,6 @@ class UncertainDate(object):
         self.month = month
         self.day = day
 
-
     def __repr__(self):
         if self.day:
             return '{0:04d}-{1:02d}-{2:02d}'.format(self.year, self.month, self.day)
@@ -29,7 +28,6 @@ class UncertainDate(object):
             return '{0:04d}-{1:02d}'.format(self.year, self.month)
         else:
             return repr(self.year)
-
 
     def __str__(self):
         if self.day:
@@ -39,10 +37,11 @@ class UncertainDate(object):
         else:
             return dateformat.format(self.lower_bound, 'Y')
 
-
     def __lt__(self, other):
         return self.lower_bound < other.lower_bound
 
+    def __len__(self):
+        return len(repr(self))
 
     def short(self):
         if self.day:
@@ -61,16 +60,13 @@ class UncertainDateField(models.Field):
         kwargs['max_length'] = 10
         super(UncertainDateField, self).__init__(*args, **kwargs)
 
-
     def deconstruct(self):
         name, path, args, kwargs = super(UncertainDateField, self).deconstruct()
         del kwargs['max_length']
         return name, path, args, kwargs
 
-
     def from_db_value(self, value, expression, connection, context):
        return _parse_date_string(value)
-
 
     def to_python(self, value):
         if isinstance(value, UncertainDate):
@@ -82,19 +78,16 @@ class UncertainDateField(models.Field):
     def get_db_prep_value(self, value, connection, prepared=False):
         return None if value in ('', None) else repr(value)
 
-
     def get_prep_lookup(self, lookup_type, value):
         if lookup_type in ('gt', 'gte', 'lt', 'lte'):
             return self.get_db_prep_value(value)
         else:
             raise TypeError('Lookup type %r not supported' % lookup_type)
 
-
     def formfield(self, **kwargs):
         defaults = {'form_class': UncertainDateFormField}
         defaults.update(kwargs)
         return super(UncertainDateField, self).formfield(**defaults)
-
 
     def get_internal_type(self):
         return 'CharField'
@@ -105,6 +98,11 @@ class UncertainDateFormField(forms.CharField):
     def __init__(self, *args, **kwargs):
         super(UncertainDateFormField, self).__init__(max_length=10, min_length=4, *args, **kwargs)
 
+    def to_python(self, value):
+        if isinstance(value, UncertainDate):
+            return value
+        else:
+            return _parse_date_string(value)
 
     def prepare_value(self, value):
         return repr(value) if isinstance(value, UncertainDate) else value

@@ -1,0 +1,14 @@
+body {margin-top: 70px; margin-bottom: 20px;}
+.select2-container .select2-selection--single {height: 46px; padding: 12px 24px 12px 12px;}
+.select2-container--bootstrap .select2-selection {border-color: #dfd7ca;}
+.select2-container--bootstrap .select2-selection--single .select2-selection__placeholder {color: #dfd7ca;}
+.select2-container--bootstrap.select2-container--disabled .select2-selection {background-color: inherit; border-color: #dfd7ca;}
+.location {white-space: nowrap; margin: 0 2px;}
+.flag-small {width: 24px; height: 24px; margin: -2px 0;}
+.flag-large {width: 48px; height: 48px; margin: -4px 0;}
+@media(min-width: 768px){
+  .nav.navbar-right li a {line-height: 20px; margin-left: -15px;}
+}
+@media(max-width: 767px){
+  .navbar-form {padding-left: 0; padding-right: 0;}
+}

@@ -18,6 +18,7 @@
       {% endif %}
       <form method="post" role="form">
         {% csrf_token %}
+
         <div class="well">
           <fieldset>
             <div class="row">
@@ -39,6 +40,7 @@
               </div>
             </div>
           </fieldset>
+
           <fieldset>
             <legend>Name</legend>
             <div class="row">
@@ -67,6 +69,57 @@
             </div>
           </fieldset>
         </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="well">
+              <fieldset>
+                <legend>Birth</legend>
+                <div class="row">
+                  <div class="form-group col-sm-4{% if form.date_of_birth.errors %} has-error{% endif %}">
+                    <label class="control-label sr-only">{{ form.date_of_birth.label }}</label>
+                    {{ form.date_of_birth }}
+                  </div>
+                  <div class="form-group col-sm-8">
+                    <label class="control-label sr-only">{{ form.birth_location.label }}</label>
+                    {{ form.birth_location }}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-sm-12{% if form.birth_reference.errors %} has-error{% endif %}">
+                    <label class="control-label sr-only">{{ form.birth_reference.label }}</label>
+                    {{ form.birth_reference }}
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="well">
+              <fieldset id="death">
+                <legend>Death</legend>
+                <div class="row">
+                  <div class="form-group col-sm-4{% if form.date_of_death.errors %} has-error{% endif %}">
+                    <label class="control-label sr-only">{{ form.date_of_death.label }}</label>
+                    {{ form.date_of_death }}
+                  </div>
+                  <div class="form-group col-sm-8">
+                    <label class="control-label sr-only">{{ form.death_location.label }}</label>
+                    {{ form.death_location }}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-sm-12{% if form.death_reference.errors %} has-error{% endif %}">
+                    <label class="control-label sr-only">{{ form.death_reference.label }}</label>
+                    {{ form.death_reference }}
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+          </div>
+        </div>
+
         <div class="well">
           <fieldset>
             <legend>Parents</legend>
@@ -80,35 +133,32 @@
                 {{ form.father }}
               </div>
             </div>
-            <script>
-              $(document).ready(function(){
-                $('#id_mother').select2({templateResult: template,
-                                         templateSelection: template,
-                                         escapeMarkup: function(m){return m;},
-                                         placeholder: 'Mother',
-                                         theme: 'bootstrap'});
-                $('#id_father').select2({templateResult: template,
-                                         templateSelection: template,
-                                         escapeMarkup: function(m){return m;},
-                                         placeholder: 'Father',
-                                         theme: 'bootstrap'});
-              });
-            </script>
           </fieldset>
         </div>
+
         <div class="well">
           <fieldset>
             <legend>Notes</legend>
             {{ form.notes }}
           </fieldset>
         </div>
+
         <div class="text-right">
-          <button type="reset" class="btn btn-default">Reset</button>
           <button type="submit" class="btn btn-primary">Add Person</button>
         </div>
       </form>
     </div>
   </div>
+  <script>
+    $(document).ready(function(){
+      $('#id_birth_location').select2({templateResult: placeTemplate, templateSelection: placeTemplate, placeholder: 'Birthplace'});
+      $('#id_death_location').select2({templateResult: placeTemplate, templateSelection: placeTemplate, placeholder: 'Location'});
+      $('#id_mother').select2({templateResult: nameTemplate, templateSelection: nameTemplate, placeholder: 'Mother'});
+      $('#id_father').select2({templateResult: nameTemplate, templateSelection: nameTemplate, placeholder: 'Father'});
+      $('#id_deceased').on('change', function(){$('#death').prop('disabled', !$(this).is(':checked'));
+                                                $('#id_death_location').prop('disabled', !$(this).is(':checked'));});
+      $('.radio-inline').on('change', function(){$('#id_maiden_name').prop('disabled', !$('#id_gender_1').prop('checked'));});
+      $('#id_maiden_name').prop('disabled', true);
+    });
+  </script>
 {% endblock %}
-
-
