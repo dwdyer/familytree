@@ -68,6 +68,7 @@ class Location(models.Model):
 
     class Meta:
         ordering = ['country', 'county_state_province', 'name']
+        unique_together = [('country', 'county_state_province', 'name')]
 
 
 class Person(models.Model):
