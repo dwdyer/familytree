@@ -2,7 +2,7 @@
   <div class="container">
     <div class="navbar-header">
       <a class="navbar-brand" href="{% url 'people.index' %}">Family Tree</a>
-      <p class="navbar-text hidden-xs">Database contains {{ list|length }} people</p>
+      <p class="navbar-text hidden-xs hidden-sm">Database contains {{ list|length }} people</p>
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
         <span class="sr-only">Toggle navigation</span>
         <span class="icon-bar"></span>
@@ -11,26 +11,45 @@
       </button>
     </div>
     <div class="collapse navbar-collapse navbar-ex1-collapse">
-      <ul class="nav navbar-nav navbar-right">
-        <li>
-          <a href="{% url 'add_person' %}" title="Add Person">
-            <span class="glyphicon glyphicon-plus"></span> <span class="hidden-sm hidden-md hidden-lg">Add Person</span>
-          </a>
-        </li>
-      </ul>
-      <form class="navbar-form navbar-right" style="margin: 7px 0;">
-        <div class="form-group">
-          <select name="person" id="person" class="form-control" style="width: 350px;" data-placeholder="Select person:">
-            <option></option>
-            {% for person in list %}
-              <option value="{{ person.id }}">
-                {{ person.name }}
-                {% if person.date_of_birth %}|{{ person.date_of_birth|date:"Y" }}{% endif %}
-              </option>
-            {% endfor %}
-          </select>
-        </div>
-      </form>
+      <div class="navbar-right">
+        <ul class="nav navbar-nav">
+          <li>
+            <form class="navbar-form">
+              <div class="form-group" style="min-width: 320px;">
+                <select name="person" id="person" class="form-control" style="width: 100%;" data-placeholder="Select person:">
+                  <option></option>
+                  {% for person in list %}
+                    <option value="{{ person.id }}">
+                      {{ person.name }}
+                      {% if person.date_of_birth %}|{{ person.date_of_birth|date:"Y" }}{% endif %}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <a href="{% url 'add_person' %}" title="Add Person" class="btn btn-primary">
+                <span class="glyphicon glyphicon-plus"></span> <span class="hidden-sm hidden-md hidden-lg">Add Person</span>
+              </a>
+              {% if user.is_staff %}
+                <a href="{% url 'admin:index' %}" title="Admin" class="btn btn-warning">
+                  <span class="glyphicon glyphicon-wrench"></span> <span class="hidden-sm hidden-md hidden-lg">Admin</span>
+                </a>
+              {% endif %}
+            </form>
+          </li>
+          {% if user.is_authenticated %}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.get_full_name }} <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                {% if user.person %}
+                  <li><a href="{% url 'ring_chart' user.person.id %}">My Ancestors</a></li>
+                  <li role="presentation" class="divider"></li>
+                {% endif %}
+                <li><a href="{% url 'logout' %}">Sign Out</a></li>
+              </ul>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
     </div>
   </div>
 </nav>
