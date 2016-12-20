@@ -74,12 +74,13 @@
     }
   ]]></script>
   <style>
-   .male {fill: #ddf; stroke: #aac;}
-   .male:hover {fill: #bbd;}
-   .female {fill: #fdd; stroke: #caa;}
-   .female:hover {fill: #dbb;}
+   @import url("https://fonts.googleapis.com/css?family=Roboto:400,500,700");
+   .male {fill: #d9edf7; stroke: rgba(0, 0, 0, 0.2);}
+   .male:hover {fill: #c4e3f3;}
+   .female {fill: #f2dede; stroke: rgba(0, 0, 0, 0.2);}
+   .female:hover {fill: #ebcccc;}
    .male, .female {stroke-width: 1px;}
-   text {text-anchor: middle; font-family: Helvetica, Arial, sans-serif;}
+   text {text-anchor: middle; font-family: Roboto, Helvetica Neue, Helvetica, Arial, sans-serif;}
    .centre {font-size: 24px; dominant-baseline: middle;}
    .inner {font-size: 24px;}
    .middle {font-size: 18px;}
@@ -99,7 +100,7 @@
           {% if forloop.parentloop.revcounter0 == 1 or forloop.parentloop.revcounter0 ==  2 %}
             <text dy="-15" class="inner">
               <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.birth_name }}
+                {{ person.given_names }} {{ person.birth_surname }}
               </textPath>
             </text>
           {% elif forloop.parentloop.revcounter0 == 3 or forloop.parentloop.revcounter0 == 4 %}
