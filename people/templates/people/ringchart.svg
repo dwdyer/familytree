@@ -92,6 +92,7 @@
    .centre {font-size: 24px; dominant-baseline: middle;}
    .inner {font-size: 24px;}
    .middle {font-size: 18px;}
+   .middle.extra {font-size: 12px;}
    .outer {font-size: 15px;}
    .spoke {dominant-baseline: middle;}
    .inner.spoke {font-size: 12px;}
@@ -107,30 +108,43 @@
             <path id="slice{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
                   class="{% if person.gender == 'M' %}male{% else %}female{% endif %}" />
             {% if forloop.parentloop.revcounter0 == 1 or forloop.parentloop.revcounter0 ==  2 %}
-              <text dy="-30" class="inner">
+              <text dy="{% if person.deceased %}-50{% else %}-30{% endif %}" class="inner">
                 <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
                   {{ person.given_names }} {{ person.birth_surname }}
                 </textPath>
               </text>
-              <text dy="-10" class="extra">
+              <text dy="{% if person.deceased %}-30{% else %}-10{% endif %}" class="extra">
                 <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                  {% if person.deceased %}
-                    {{ person.year_range }}
-                  {% elif person.birth %}
-                    Born {{ person.birth.date.short }}
-                    - {{ person.birth_location }}
-                  {% endif %}
+                  Born {{ person.birth.date.short }}
+                  {% if person.birth_location %}- {{ person.birth_location }}{% endif %}
                 </textPath>
               </text>
+              {% if person.deceased %}
+                <text dy="-10" class="extra">
+                  <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                    Died {{ person.death.date.short }}
+                  </textPath>
+                </text>
+              {% endif %}
             {% elif forloop.parentloop.revcounter0 == 3 or forloop.parentloop.revcounter0 == 4 %}
-              <text dy="-40" class="middle">
+              <text dy="-55" class="middle">
                 <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
                   {{ person.given_names }}
                 </textPath>
               </text>
-              <text dy="-15" class="middle">
+              <text dy="-30" class="middle">
                 <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
                   {{ person.birth_surname }}
+                </textPath>
+              </text>
+              <text dy="-10" class="middle extra">
+                <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                  {% if forloop.parentloop.revcounter0 == 3 %}
+                    {{ person.birth.date.short }}
+                    {% if person.death %} - {{ person.death.date.short }}{% endif %}
+                  {% else %}
+                    {{ person.year_range }}
+                  {% endif %}
                 </textPath>
               </text>
             {% elif forloop.parentloop.revcounter0 == 5 %}
