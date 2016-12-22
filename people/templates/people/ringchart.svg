@@ -59,7 +59,12 @@
                   {% if forloop.parentloop.revcounter0 <= 5 %}
                     textPath.setAttribute("d", arcPath({{ centre }}, {{ centre }}, {{ radius }}, {{ start }}, {{ end }}));
                   {% else %}
-                    textPath.setAttribute("d", spokePath({{ centre }}, {{ centre }}, {{ radius|sub:80 }}, {{ radius }}, ({{ end }} + {{ start }}) / 2));
+                    var invert = {% if forloop.counter > slices|div:2 %}true{% else %}false{% endif %};
+                    textPath.setAttribute("d",
+                                          spokePath({{ centre }}, {{ centre }},
+                                                    invert ? {{ radius }} : {{ radius|sub:80 }},
+                                                    invert ? {{ radius|sub:80 }} : {{ radius }},
+                                                    ({{ end }} + {{ start }}) / 2));
                   {% endif %}
                 {% endwith %}
               {% endif %}
@@ -75,12 +80,15 @@
   ]]></script>
   <style>
    @import url("https://fonts.googleapis.com/css?family=Roboto:400,500,700");
-   .male {fill: #d9edf7; stroke: rgba(0, 0, 0, 0.2);}
+   text {text-anchor: middle; font-family: Roboto, Helvetica Neue, Helvetica, Arial, sans-serif; fill: #444;}
+   text.extra {font-size: 15px;}
+   .male, .female {stroke: rgba(0, 0, 0, 0.2); stroke-width: 1px;}
+   .male {fill: #d9edf7;}
    .male:hover {fill: #c4e3f3;}
-   .female {fill: #f2dede; stroke: rgba(0, 0, 0, 0.2);}
+   .male .extra {fill: #325d88;}
+   .female {fill: #f2dede;}
    .female:hover {fill: #ebcccc;}
-   .male, .female {stroke-width: 1px;}
-   text {text-anchor: middle; font-family: Roboto, Helvetica Neue, Helvetica, Arial, sans-serif;}
+   .female .extra {fill: #d9534f;}
    .centre {font-size: 24px; dominant-baseline: middle;}
    .inner {font-size: 24px;}
    .middle {font-size: 18px;}
@@ -93,86 +101,98 @@
   {% for ring in rings %}
     {% for person in ring %}
       {% if person %}
-        <path id="text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" fill="none" stroke="none" />
-        <a xlink:href="{% url 'person' person.id %}" target="_top">
-          <path id="slice{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
-                class="{% if person.gender == 'M' %}male{% else %}female{% endif %}" />
-          {% if forloop.parentloop.revcounter0 == 1 or forloop.parentloop.revcounter0 ==  2 %}
-            <text dy="-15" class="inner">
-              <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.given_names }} {{ person.birth_surname }}
-              </textPath>
-            </text>
-          {% elif forloop.parentloop.revcounter0 == 3 or forloop.parentloop.revcounter0 == 4 %}
-            <text dy="-40" class="middle">
-              <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.given_names }}
-              </textPath>
-            </text>
-            <text dy="-15" class="middle">
-              <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.birth_surname }}
-              </textPath>
-            </text>
-          {% elif forloop.parentloop.revcounter0 == 5 %}
-            <text dy="{% if person.middle_names %}-55{% else %}-35{% endif %}" class="outer">
-              <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.forename }}
-              </textPath>
-            </text>
-            {% if person.middle_names %}
-              <text dy="-35" class="outer">
+        <g class="{% if person.gender == 'M' %}male{% else %}female{% endif %}">
+          <path id="text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" fill="none" stroke="none" />
+          <a xlink:href="{% url 'person' person.id %}" target="_top">
+            <path id="slice{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
+                  class="{% if person.gender == 'M' %}male{% else %}female{% endif %}" />
+            {% if forloop.parentloop.revcounter0 == 1 or forloop.parentloop.revcounter0 ==  2 %}
+              <text dy="-30" class="inner">
                 <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                  {{ person.middle_names }}
+                  {{ person.given_names }} {{ person.birth_surname }}
+                </textPath>
+              </text>
+              <text dy="-10" class="extra">
+                <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                  {% if person.deceased %}
+                    {{ person.year_range }}
+                  {% elif person.birth %}
+                    Born {{ person.birth.date.short }}
+                    - {{ person.birth_location }}
+                  {% endif %}
+                </textPath>
+              </text>
+            {% elif forloop.parentloop.revcounter0 == 3 or forloop.parentloop.revcounter0 == 4 %}
+              <text dy="-40" class="middle">
+                <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                  {{ person.given_names }}
+                </textPath>
+              </text>
+              <text dy="-15" class="middle">
+                <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                  {{ person.birth_surname }}
+                </textPath>
+              </text>
+            {% elif forloop.parentloop.revcounter0 == 5 %}
+              <text dy="{% if person.middle_names %}-55{% else %}-35{% endif %}" class="outer">
+                <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                  {{ person.forename }}
+                </textPath>
+              </text>
+              {% if person.middle_names %}
+                <text dy="-35" class="outer">
+                  <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                    {{ person.middle_names }}
+                  </textPath>
+                </text>
+              {% endif %}
+              <text dy="-15" class="outer">
+                <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                  {{ person.birth_surname }}
+                </textPath>
+              </text>
+            {% elif forloop.parentloop.revcounter0 == 6 %}
+              <text dy="-7" class="inner spoke">
+                <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                  {{ person.forename }}
+                </textPath>
+              </text>
+              <text dy="7" class="inner spoke">
+                <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                  {{ person.birth_surname }}
+                </textPath>
+              </text>
+            {% elif forloop.parentloop.revcounter0 == 7 %}
+              <text dy="-5" class="middle spoke">
+                <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                  {{ person.forename }}
+                </textPath>
+              </text>
+              <text dy="5" class="middle spoke">
+                <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                  {{ person.birth_surname }}
+                </textPath>
+              </text>
+            {% elif forloop.parentloop.revcounter0 == 8 %}
+              <text dy="-3.5" class="outer spoke">
+                <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                  {{ person.forename }}
+                </textPath>
+              </text>
+              <text dy="3.5" class="outer spoke">
+                <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                  {{ person.birth_surname }}
+                </textPath>
+              </text>
+            {% elif forloop.parentloop.revcounter0 == 9 %}
+              <text class="outer spoke">
+                <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                  {{ person.forename }} {{ person.birth_surname }}
                 </textPath>
               </text>
             {% endif %}
-            <text dy="-15" class="outer">
-              <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.birth_surname }}
-              </textPath>
-            </text>
-          {% elif forloop.parentloop.revcounter0 == 6 %}
-            <text dy="-7" class="inner spoke">
-              <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.forename }}
-              </textPath>
-            </text>
-            <text dy="7" class="inner spoke">
-              <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.birth_surname }}
-              </textPath>
-            </text>
-          {% elif forloop.parentloop.revcounter0 == 7 %}
-            <text dy="-5" class="middle spoke">
-              <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.forename }}
-              </textPath>
-            </text>
-            <text dy="5" class="middle spoke">
-              <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.birth_surname }}
-              </textPath>
-            </text>
-          {% elif forloop.parentloop.revcounter0 == 8 %}
-            <text dy="-3.5" class="outer spoke">
-              <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.forename }}
-              </textPath>
-            </text>
-            <text dy="3.5" class="outer spoke">
-              <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.birth_surname }}
-              </textPath>
-            </text>
-          {% elif forloop.parentloop.revcounter0 == 9 %}
-            <text class="outer spoke">
-              <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
-                {{ person.forename }} {{ person.birth_surname }}
-              </textPath>
-            </text>
-          {% endif %}
-        </a>
+          </a>
+        </g>
       {% endif %}
     {% endfor %}
   {% endfor %}
