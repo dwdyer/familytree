@@ -75,22 +75,8 @@
             <div class="well">
               <fieldset>
                 <legend>Birth</legend>
-                <div class="row">
-                  <div class="form-group col-sm-4{% if form.date_of_birth.errors %} has-error{% endif %}">
-                    <label class="control-label sr-only">{{ form.date_of_birth.label }}</label>
-                    {{ form.date_of_birth }}
-                  </div>
-                  <div class="form-group col-sm-8">
-                    <label class="control-label sr-only">{{ form.birth_location.label }}</label>
-                    {{ form.birth_location }}
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-sm-12{% if form.birth_reference.errors %} has-error{% endif %}">
-                    <label class="control-label sr-only">{{ form.birth_reference.label }}</label>
-                    {{ form.birth_reference }}
-                  </div>
-                </div>
+                {% include 'people/fragments/eventfields.html' with date=form.date_of_birth location=form.birth_location reference=form.birth_reference %}
+                {% include 'people/fragments/eventfields.html' with date=form.date_of_baptism location=form.baptism_location reference=form.baptism_reference %}
               </fieldset>
             </div>
           </div>
@@ -99,22 +85,8 @@
             <div class="well">
               <fieldset id="death">
                 <legend>Death</legend>
-                <div class="row">
-                  <div class="form-group col-sm-4{% if form.date_of_death.errors %} has-error{% endif %}">
-                    <label class="control-label sr-only">{{ form.date_of_death.label }}</label>
-                    {{ form.date_of_death }}
-                  </div>
-                  <div class="form-group col-sm-8">
-                    <label class="control-label sr-only">{{ form.death_location.label }}</label>
-                    {{ form.death_location }}
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-sm-12{% if form.death_reference.errors %} has-error{% endif %}">
-                    <label class="control-label sr-only">{{ form.death_reference.label }}</label>
-                    {{ form.death_reference }}
-                  </div>
-                </div>
+                {% include 'people/fragments/eventfields.html' with date=form.date_of_death location=form.death_location reference=form.death_reference %}
+                {% include 'people/fragments/eventfields.html' with date=form.date_of_burial location=form.burial_location reference=form.burial_reference %}
               </fieldset>
             </div>
           </div>
@@ -152,7 +124,9 @@
   <script>
     $(document).ready(function(){
       $('#id_birth_location').select2({templateResult: placeTemplate, templateSelection: placeTemplate, placeholder: 'Birthplace'});
+      $('#id_baptism_location').select2({templateResult: placeTemplate, templateSelection: placeTemplate, placeholder: 'Location'});
       $('#id_death_location').select2({templateResult: placeTemplate, templateSelection: placeTemplate, placeholder: 'Location'});
+      $('#id_burial_location').select2({templateResult: placeTemplate, templateSelection: placeTemplate, placeholder: 'Location'});
       $('#id_mother').select2({templateResult: nameTemplate, templateSelection: nameTemplate, placeholder: 'Mother'});
       $('#id_father').select2({templateResult: nameTemplate, templateSelection: nameTemplate, placeholder: 'Father'});
       $('#id_deceased').on('change', function(){$('#death').prop('disabled', !$(this).is(':checked'));

@@ -37,15 +37,23 @@ class AddPersonForm(BootstrapModelForm):
     birth_location = LocationChoiceField(label='Birthplace', queryset=Location.objects.all(), required=False)
     birth_reference = forms.URLField(label='Reference', help_text='Reference URL (optional)', required=False)
 
+    date_of_baptism = UncertainDateFormField(label='Baptism date', help_text='Baptism date', required=False)
+    baptism_location = LocationChoiceField(label='Location', queryset=Location.objects.all(), required=False)
+    baptism_reference = forms.URLField(label='Reference', help_text='Reference URL (optional)', required=False)
+
     date_of_death = UncertainDateFormField(label='Date of death', help_text='Date of death', required=False)
     death_location = LocationChoiceField(label='Location', queryset=Location.objects.all(), required=False)
     death_reference = forms.URLField(label='Reference', help_text='Reference URL (optional)', required=False)
+
+    date_of_burial = UncertainDateFormField(label='Burial date', help_text='Burial date', required=False)
+    burial_location = LocationChoiceField(label='Location', queryset=Location.objects.all(), required=False)
+    burial_reference = forms.URLField(label='Reference', help_text='Reference URL (optional)', required=False)
 
     def save(self, commit=True, *args, **kwargs):
         with transaction.atomic():
             person = super(AddPersonForm, self).save(commit=commit, *args, **kwargs)
 
-            if self.cleaned_data['date_of_birth'] or self.cleaned_data['birth_location']:
+            if self.cleaned_data['date_of_birth']:
                 birth = Event(person=person,
                               event_type=Event.BIRTH,
                               date=self.cleaned_data['date_of_birth'],
@@ -53,13 +61,29 @@ class AddPersonForm(BootstrapModelForm):
                               reference=self.cleaned_data['birth_reference'])
                 birth.save()
 
-            if self.cleaned_data['date_of_death'] or self.cleaned_data['death_location']:
+            if self.cleaned_data['date_of_baptism']:
+                baptism = Event(person=person,
+                                event_type=Event.BAPTISM,
+                                date=self.cleaned_data['date_of_baptism'],
+                                location=self.cleaned_data['baptism_location'],
+                                reference=self.cleaned_data['baptism_reference'])
+                baptism.save()
+
+            if self.cleaned_data['date_of_death']:
                 death = Event(person=person,
                               event_type=Event.DEATH,
                               date=self.cleaned_data['date_of_death'],
                               location=self.cleaned_data['death_location'],
                               reference=self.cleaned_data['death_reference'])
                 death.save()
+
+            if self.cleaned_data['date_of_burial']:
+                burial = Event(person=person,
+                               event_type=Event.BURIAL,
+                               date=self.cleaned_data['date_of_burial'],
+                               location=self.cleaned_data['burial_location'],
+                               reference=self.cleaned_data['burial_reference'])
+                burial.save()
             return person
 
     class Meta:
