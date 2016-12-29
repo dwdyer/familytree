@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-  <h1 class="page-header">Add Person</h1>
+  <h1 class="page-header">{% block heading %}Add Person{% endblock %}</h1>
   <div class="row">
     <div class="col-md-12">
       {% if form.non_field_errors %}
@@ -116,23 +116,23 @@
         </div>
 
         <div class="text-right">
-          <button type="submit" class="btn btn-primary">Add Person</button>
+          <button type="submit" class="btn btn-primary">{% block button_title %}Add Person{% endblock %}</button>
         </div>
       </form>
     </div>
   </div>
   <script>
     $(document).ready(function(){
+      $('#death, #id_death_location, #id_burial_location').prop('disabled', !$('#id_deceased').is(':checked'));
+      $('#id_maiden_name').prop('disabled', !$('#id_gender_1').prop('checked'));
       $('#id_birth_location').select2({templateResult: placeTemplate, templateSelection: placeTemplate, placeholder: 'Birthplace'});
       $('#id_baptism_location').select2({templateResult: placeTemplate, templateSelection: placeTemplate, placeholder: 'Location'});
       $('#id_death_location').select2({templateResult: placeTemplate, templateSelection: placeTemplate, placeholder: 'Location'});
       $('#id_burial_location').select2({templateResult: placeTemplate, templateSelection: placeTemplate, placeholder: 'Location'});
       $('#id_mother').select2({templateResult: nameTemplate, templateSelection: nameTemplate, placeholder: 'Mother'});
       $('#id_father').select2({templateResult: nameTemplate, templateSelection: nameTemplate, placeholder: 'Father'});
-      $('#id_deceased').on('change', function(){$('#death').prop('disabled', !$(this).is(':checked'));
-                                                $('#id_death_location').prop('disabled', !$(this).is(':checked'));});
+      $('#id_deceased').on('change', function(){$('#death, #id_death_location, #id_burial_location').prop('disabled', !$(this).is(':checked'));});
       $('.radio-inline').on('change', function(){$('#id_maiden_name').prop('disabled', !$('#id_gender_1').prop('checked'));});
-      $('#id_maiden_name').prop('disabled', true);
     });
   </script>
 {% endblock %}

@@ -16,7 +16,7 @@
           <li>
             <form class="navbar-form">
               <div class="form-group" style="min-width: 320px;">
-                <select name="person" id="person" class="form-control" style="width: 100%;" data-placeholder="Select person:">
+                <select name="person" id="person" class="form-control" style="width: 100%;" data-placeholder="Look-up person&hellip;">
                   <option></option>
                   {% for person in list %}
                     <option value="{{ person.id }}">
@@ -29,11 +29,6 @@
               <a href="{% url 'add_person' %}" title="Add Person" class="btn btn-primary">
                 <span class="glyphicon glyphicon-plus"></span> <span class="hidden-sm hidden-md hidden-lg">Add Person</span>
               </a>
-              {% if user.is_staff %}
-                <a href="{% url 'admin:index' %}" title="Admin" class="btn btn-warning">
-                  <span class="glyphicon glyphicon-wrench"></span> <span class="hidden-sm hidden-md hidden-lg">Admin</span>
-                </a>
-              {% endif %}
             </form>
           </li>
           {% if user.is_authenticated %}
@@ -43,6 +38,9 @@
                 {% if user.person %}
                   <li><a href="{% url 'ring_chart' user.person.id %}">My Ancestors</a></li>
                   <li role="presentation" class="divider"></li>
+                {% endif %}
+                {% if user.is_staff %}
+                  <li><a href="{% url 'admin:index' %}" title="Admin">Site Admin</a></li>
                 {% endif %}
                 <li><a href="{% url 'logout' %}">Sign Out</a></li>
               </ul>

@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from itertools import chain, groupby
 from math import pow
 from operator import attrgetter, itemgetter
-from people.forms import AddPersonForm
+from people.forms import AddPersonForm, EditPersonForm
 from people.models import Location, Person, Marriage, Event
 from people.relations import describe_relative
 from taggit.models import Tag
@@ -149,12 +149,9 @@ def ring_chart(request, person_id):
 def ring_chart_svg(request, person_id):
     person = get_object_or_404(Person, id=person_id)
     rings = [[person]]
-    while True:
+    while len(rings) < 10:
         (ring, count) = _next_ring(rings[-1])
-        if (count > 0):
-            rings.append(ring)
-        else:
-            break
+        rings.append(ring)
     return render(request,
                   'people/ringchart.svg',
                   {'rings': list(reversed(rings))},
@@ -281,5 +278,21 @@ def add_person(request):
         form = AddPersonForm()
     return render(request,
                   'people/add.html',
+                  {'form': form,
+                   'list': Person.objects.select_related('birth')})
+
+
+@user_passes_test(_staff_only)
+def edit_person(request, person_id):
+    person = get_object_or_404(Person, id=person_id)
+    if request.method == 'POST':
+        form = EditPersonForm(request.POST, instance=person)
+        if form.is_valid():
+            person = form.save()
+            return redirect(reverse('person', kwargs={'person_id': person.id}))
+    else:
+        form = EditPersonForm(instance=person)
+    return render(request,
+                  'people/edit.html',
                   {'form': form,
                    'list': Person.objects.select_related('birth')})

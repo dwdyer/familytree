@@ -16,8 +16,8 @@
       <small>You</small>
     {% endif %}
     {% if user.is_staff %}
-      <a href="{% url 'admin:people_person_change' person.id %}" class="pull-right btn btn-default">
-        <span class="glyphicon glyphicon-pencil"></span> Edit
+      <a href="{% url 'edit_person' person.id %}" class="pull-right btn btn-default" title="Edit">
+        <span class="glyphicon glyphicon-pencil"></span>
       </a>
     {% endif %}
   </h1>

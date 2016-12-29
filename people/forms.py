@@ -52,39 +52,28 @@ class AddPersonForm(BootstrapModelForm):
     def save(self, commit=True, *args, **kwargs):
         with transaction.atomic():
             person = super(AddPersonForm, self).save(commit=commit, *args, **kwargs)
-
-            if self.cleaned_data['date_of_birth']:
-                birth = Event(person=person,
-                              event_type=Event.BIRTH,
-                              date=self.cleaned_data['date_of_birth'],
-                              location=self.cleaned_data['birth_location'],
-                              reference=self.cleaned_data['birth_reference'])
-                birth.save()
-
-            if self.cleaned_data['date_of_baptism']:
-                baptism = Event(person=person,
-                                event_type=Event.BAPTISM,
-                                date=self.cleaned_data['date_of_baptism'],
-                                location=self.cleaned_data['baptism_location'],
-                                reference=self.cleaned_data['baptism_reference'])
-                baptism.save()
-
-            if self.cleaned_data['date_of_death']:
-                death = Event(person=person,
-                              event_type=Event.DEATH,
-                              date=self.cleaned_data['date_of_death'],
-                              location=self.cleaned_data['death_location'],
-                              reference=self.cleaned_data['death_reference'])
-                death.save()
-
-            if self.cleaned_data['date_of_burial']:
-                burial = Event(person=person,
-                               event_type=Event.BURIAL,
-                               date=self.cleaned_data['date_of_burial'],
-                               location=self.cleaned_data['burial_location'],
-                               reference=self.cleaned_data['burial_reference'])
-                burial.save()
+            self._update_event(person, Event.BIRTH, 'date_of_birth', 'birth_location', 'birth_reference')
+            self._update_event(person, Event.BAPTISM, 'date_of_baptism', 'baptism_location', 'baptism_reference')
+            self._update_event(person, Event.DEATH, 'date_of_death', 'death_location', 'death_reference')
+            self._update_event(person, Event.BURIAL, 'date_of_burial', 'burial_location', 'burial_reference')
             return person
+
+    def _update_event(self, person, event_type, date_field, location_field, reference_field):
+        event = person.events.filter(event_type=event_type).first()
+        if self.cleaned_data[date_field]:
+            if event:
+                event.date = self.cleaned_data[date_field]
+                event.location = self.cleaned_data[location_field]
+                event.reference = self.cleaned_data[reference_field]
+            else:
+                event = Event(person=person,
+                              event_type=event_type,
+                              date=self.cleaned_data[date_field],
+                              location=self.cleaned_data[location_field],
+                              reference=self.cleaned_data[reference_field])
+            event.save()
+        elif event:
+            event.delete()
 
     class Meta:
         model = Person
@@ -94,3 +83,28 @@ class AddPersonForm(BootstrapModelForm):
         field_classes = {'mother': PersonChoiceField,
                          'father': PersonChoiceField}
         widgets = {'gender': forms.RadioSelect}
+
+
+class EditPersonForm(AddPersonForm):
+
+    def __init__(self, *args, **kwargs):
+        super(EditPersonForm, self).__init__(*args, **kwargs)
+        instance = kwargs['instance']
+        if instance.birth:
+            self.fields['date_of_birth'].initial = instance.birth.date
+            self.fields['birth_location'].initial = instance.birth.location
+            self.fields['birth_reference'].initial = instance.birth.reference
+        if instance.death:
+            self.fields['date_of_death'].initial = instance.death.date
+            self.fields['death_location'].initial = instance.death.location
+            self.fields['death_reference'].initial = instance.death.reference
+        baptism = instance.events.filter(event_type=Event.BAPTISM).first()
+        if baptism:
+            self.fields['date_of_baptism'].initial = baptism.date
+            self.fields['baptism_location'].initial = baptism.location
+            self.fields['baptism_reference'].initial = baptism.reference
+        burial = instance.events.filter(event_type=Event.BURIAL).first()
+        if burial:
+            self.fields['date_of_burial'].initial = burial.date
+            self.fields['burial_location'].initial = burial.location
+            self.fields['burial_reference'].initial = burial.reference

@@ -4,6 +4,7 @@ from people import views
 urlpatterns = [
     url(r'^$', views.index, name='people.index'),
     url(r'^(?P<person_id>\d+)/$', views.person, name='person'),
+    url(r'^(?P<person_id>\d+)/edit/$', views.edit_person, name='edit_person'),
     url(r'^(?P<person_id>\d+)/relatives/$', views.relatives, name='relatives'),
     url(r'^(?P<person_id>\d+)/relatives/map/$', views.relatives_map, name='relatives_map'),
     url(r'^(?P<person_id>\d+)/descendants/$', views.descendants, name='descendants'),

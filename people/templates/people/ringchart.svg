@@ -52,9 +52,9 @@
         {% with slices=ring|length %}
           {% if slices > 1 %}
             {% for person in ring %}
-              {% if person %}
-                {% with id1=forloop.parentloop.counter id2=forloop.counter radius=forloop.parentloop.revcounter|mul:80 start=360|div:slices|mul:forloop.counter0 end=360|div:slices|mul:forloop.counter %}
-                  document.getElementById("slice{{ id1 }}_{{ id2 }}").setAttribute("d", slicePath({{ centre }}, {{ centre }}, {{ radius }}, {{ start }}, {{ end }}));
+              {% with id1=forloop.parentloop.counter id2=forloop.counter radius=forloop.parentloop.revcounter|mul:80 start=360|div:slices|mul:forloop.counter0 end=360|div:slices|mul:forloop.counter %}
+                document.getElementById("slice{{ id1 }}_{{ id2 }}").setAttribute("d", slicePath({{ centre }}, {{ centre }}, {{ radius }}, {{ start }}, {{ end }}));
+                {% if person %}
                   var textPath = document.getElementById("text{{ id1 }}_{{ id2 }}");
                   {% if forloop.parentloop.revcounter0 <= 5 %}
                     textPath.setAttribute("d", arcPath({{ centre }}, {{ centre }}, {{ radius }}, {{ start }}, {{ end }}));
@@ -66,8 +66,8 @@
                                                     invert ? {{ radius|sub:80 }} : {{ radius }},
                                                     ({{ end }} + {{ start }}) / 2));
                   {% endif %}
-                {% endwith %}
-              {% endif %}
+                {% endif %}
+              {% endwith %}
             {% endfor %}
           {% endif %}
         {% endwith %}
@@ -82,13 +82,14 @@
    @import url("https://fonts.googleapis.com/css?family=Roboto:400,500,700");
    text {text-anchor: middle; font-family: Roboto, Helvetica Neue, Helvetica, Arial, sans-serif; fill: #444;}
    text.extra {font-size: 15px;}
-   .male, .female {stroke: rgba(0, 0, 0, 0.2); stroke-width: 1px;}
+   .male, .female, .empty {stroke: rgba(0, 0, 0, 0.2); stroke-width: 1px;}
    .male {fill: #d9edf7;}
    .male:hover {fill: #c4e3f3;}
    .male .extra {fill: #325d88;}
    .female {fill: #f2dede;}
    .female:hover {fill: #ebcccc;}
    .female .extra {fill: #d9534f;}
+   .empty {fill: #fff; stroke-dasharray: 1 3;}
    .centre {font-size: 24px; dominant-baseline: middle;}
    .inner {font-size: 24px;}
    .middle {font-size: 18px;}
@@ -207,6 +208,8 @@
             {% endif %}
           </a>
         </g>
+      {% else %}
+        <path id="slice{{ forloop.parentloop.counter }}_{{ forloop.counter }}" class="empty" />
       {% endif %}
     {% endfor %}
   {% endfor %}
