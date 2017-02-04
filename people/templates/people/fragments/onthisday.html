@@ -18,7 +18,8 @@
                 married
                 <a href="{% url 'person' event.wife.id %}">{{ event.wife.birth_name }}</a>
               {% else %}
-                <a href="{% url 'person' event.person_id %}">{{ event.person.name }}</a> was {{ event.verb }}
+                <a href="{% url 'person' event.person_id %}">{{ event.person.name }}</a>
+                {% if event.event_type != 3 %}was {% endif %}{{ event.verb }}
               {% endif %}
               {% if event.location %}
                 in {% include 'people/fragments/location.html' with location=event.location %}
