@@ -1,0 +1,42 @@
+{% extends "people/base.html" %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+  <h1 class="page-header">Surnames</small></h1>
+  <p>
+    This page lists all common surnames (two or more people) in the database, along with associated
+    locations (places with two or more births or deaths for people with that surname).
+    It does not include surnames or places that relate only to living individuals.
+  <p>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Surname</th>
+        <th>Places</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for surname, locations in surnames %}
+      <tr>
+        <td><a href="{% url 'surname' surname %}">{{ surname }}</a></td>
+        <td class="hidden-xs">
+          {% for location in locations %}
+            {% ifchanged location.county_state_province %}
+              {% if forloop.counter0 != 0 %}<br/>{% endif %}
+              <span class="location">
+                <img src="{% get_static_prefix %}people/images/flags/small/{{ location.country.country_code }}.png"
+                     alt="{{ location.country }}" class="flag-small"/>
+                {{ location.county_state_province }}
+              </span> - 
+            {% else %}
+              {% if forloop.counter0 != 0 %}&middot;{% endif %}
+            {% endifchanged %}
+            <a href="{% url 'location' location.id %}">{{ location.name }}</a>
+          {% endfor %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

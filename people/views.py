@@ -1,6 +1,7 @@
 from datetime import date
 from django.contrib.auth.decorators import user_passes_test
 from django.core.urlresolvers import reverse
+from django.db import connection
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from itertools import chain, groupby
@@ -296,3 +297,29 @@ def edit_person(request, person_id):
                   'people/edit.html',
                   {'form': form,
                    'list': Person.objects.select_related('birth')})
+
+
+def surnames(request):
+    with connection.cursor() as cursor:
+        # List all surnames for non-living blood relatives, where at least two people share that name.
+        cursor.execute('''SELECT s AS surname FROM
+                          (SELECT IF(maiden_name != '' AND maiden_name IS NOT NULL, maiden_name, surname) AS s, COUNT(1) AS n
+                           FROM people_person WHERE deceased = 1 AND blood_relative = 1 GROUP BY s)
+                          AS surnames WHERE n >= 2''')
+        surnames = [(s[0], _locations_for_surname(s[0])) for s in cursor.fetchall()]
+    return render(request,
+                  'people/surnames.html',
+                  {'surnames': surnames,
+                   'list': Person.objects.select_related('birth')})
+
+def _locations_for_surname(surname):
+    surname_filter = Q(events__person__maiden_name=surname) | (Q(events__person__maiden_name='') & Q(events__person__surname=surname))
+    locations = Location.objects.filter(surname_filter,
+                                        events__event_type__in=[0, 3],
+                                        events__person__blood_relative=True,
+                                        events__person__deceased=True)
+    # Exclude places that only relate to a single individual, unless that place is the
+    # only one we know for anybody with that surname.
+    if locations.count() > 1:
+        locations = locations.annotate(Count('id')).filter(id__count__gte=2)
+    return locations.distinct()
