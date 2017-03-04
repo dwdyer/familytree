@@ -23,5 +23,5 @@ $(document).ready(function(){
   $.fn.select2.defaults.set('theme', 'bootstrap');
   $.fn.select2.defaults.set('escapeMarkup', function(m){return m;});
   $('#person').select2({templateResult: nameTemplate,
-                        templateSelection: nameTemplate}).on('change', function(){window.location = '/people/' + this.value;});
+                        templateSelection: nameTemplate}).on('change', function(){window.location = '/person/' + this.value;});
 });
