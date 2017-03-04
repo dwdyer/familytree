@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib import admin
+from django.contrib.auth.models import Group, User
+from django.contrib.auth.admin import GroupAdmin, UserAdmin
 from people.filters import BirthFilter, BaptismFilter, DeathFilter, BurialFilter, HasReferenceFilter
 from people.models import Country, Location, Person, Marriage, Photograph, Document, Event
 
@@ -94,6 +96,10 @@ class LocationAdmin(admin.ModelAdmin):
     search_fields = ['name', 'county_state_province', 'country__name']
 
 admin.site = FamilyTreeAdminSite()
+
+admin.site.register(Group, GroupAdmin)
+admin.site.register(User, UserAdmin)
+
 admin.site.register(Event, EventAdmin)
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Photograph, PhotographAdmin)

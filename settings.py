@@ -1,20 +1,18 @@
 from secret_settings import *
 import os.path
+import socket
 
 # Django settings for familytree project.
 
-DEBUG = True
-ALLOWED_HOSTS = ['*'] if DEBUG else []
+DEBUG = socket.gethostname() != HOST
+ALLOWED_HOSTS = ['*'] if DEBUG else [DOMAIN]
 
-ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
-)
 MANAGERS = ADMINS
 
 DATABASES = {'default': {'ENGINE': 'django.db.backends.mysql',
                          'NAME': 'familytree',
                          'USER': 'familytree',
-                         'PASSWORD': 'familytree'}}
+                         'PASSWORD': DATABASE_PASSWORD}}
 CONN_MAX_AGE = 0 if DEBUG else 21600 # 6-hour keep-alive (must be <= MySQL's default of 8 hours)
 
 # Locale/iternationalisation
@@ -26,14 +24,13 @@ USE_L10N = True
 # Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = '/var/www/familytree-static'
-STATICFILES_DIRS = (os.path.join(os.path.dirname(__file__), 'static'), )
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = 'media' if DEBUG else '/var/www/familytree-resources'
+MEDIA_ROOT = 'media' if DEBUG else '/var/www/familytree-media'
 
 SITE_ID = 1
 
@@ -74,13 +71,13 @@ MIDDLEWARE_CLASSES = (
 if DEBUG: MIDDLEWARE_CLASSES += ('middleware.QueryCountMiddleware',)
 
 INSTALLED_APPS = (
-    'people',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'people',
     'tinymce',
     'taggit',
     'easy_thumbnails',

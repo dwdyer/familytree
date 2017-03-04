@@ -35,8 +35,8 @@ pip install -r ~/familytree/requirements.txt
 
 ```
 CREATE DATABASE familytree CHARACTER SET utf8 COLLATE utf8_general_ci;
-GRANT ALL PRIVILEGES ON familytree.* TO 'familytree'@'familytree' \
-    IDENTIFIED BY 'familytree';
+GRANT ALL PRIVILEGES ON familytree.* TO 'familytree'@'localhost' \
+    IDENTIFIED BY '<db_password>';
 ```
 
 ##Django Settings
