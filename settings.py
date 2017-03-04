@@ -56,7 +56,7 @@ SETTINGS_EXPORT = ('MAPBOX_PROJECT_ID', 'MAPBOX_ACCESS_TOKEN')
 # URLs
 ROOT_URLCONF = 'urls'
 LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/people/'
+LOGIN_REDIRECT_URL = '/'
 LOGOUT_URL = '/logout/'
 
 MIDDLEWARE_CLASSES = (
@@ -77,12 +77,13 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    'people',
     'tinymce',
     'taggit',
     'easy_thumbnails',
     'mathfilters',
     'dbbackup',
+    'django_cron',
+    'people',
 )
 
 # TinyMCE configuration
@@ -116,3 +117,9 @@ LOGGING = {
         'middleware': {'handlers': ['console'], 'level': 'DEBUG'},
     }
 }
+
+# Cron
+CRON_CLASSES = [
+    'cron.BackupsJob',
+]
+DJANGO_CRON_DELETE_LOGS_OLDER_THAN = 3 # Keep cron logs for 72 hours.

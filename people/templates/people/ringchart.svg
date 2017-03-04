@@ -80,7 +80,7 @@
   ]]></script>
   <style>
    @import url("https://fonts.googleapis.com/css?family=Roboto:400,500,700");
-   text {text-anchor: middle; font-family: Roboto, Helvetica Neue, Helvetica, Arial, sans-serif; fill: #444;}
+   text {text-anchor: middle; font-family: Roboto, Helvetica Neue, Helvetica, Arial, sans-serif; fill: #444; stroke: none;}
    text.extra {font-size: 15px;}
    .male, .female, .empty {stroke: rgba(0, 0, 0, 0.2); stroke-width: 1px;}
    .male {fill: #d9edf7;}
