@@ -7,6 +7,7 @@ import socket
 DEBUG = socket.gethostname() != HOST
 ALLOWED_HOSTS = ['*'] if DEBUG else [DOMAIN]
 
+ADMINS = ((ADMIN_NAME, ADMIN_EMAIL),)
 MANAGERS = ADMINS
 
 DATABASES = {'default': {'ENGINE': 'django.db.backends.mysql',
@@ -51,7 +52,7 @@ TEMPLATES = [
     }
 ]
 
-SETTINGS_EXPORT = ('MAPBOX_PROJECT_ID', 'MAPBOX_ACCESS_TOKEN')
+SETTINGS_EXPORT = ('MAPBOX_PROJECT_ID', 'MAPBOX_ACCESS_TOKEN', 'ADMIN_NAME', 'ADMIN_EMAIL')
 
 # URLs
 ROOT_URLCONF = 'urls'
@@ -63,7 +64,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'middleware.LoginRequiredMiddleware',
+    'stronghold.middleware.LoginRequiredMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -83,6 +84,7 @@ INSTALLED_APPS = (
     'mathfilters',
     'dbbackup',
     'django_cron',
+    'stronghold',
     'people',
 )
 

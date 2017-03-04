@@ -21,14 +21,3 @@ class QueryCountMiddleware:
 
             logger.debug('%s queries run, total %s seconds' % (len(connection.queries), total_time))
         return response
-
-
-class LoginRequiredMiddleware:
-    '''Require the user to be logged in to access any page other than the login
-    page. This is better than having to annotate each view method separately.'''
-    def process_response(self, request, response):
-        path = request.path_info.strip('/')
-        if path != settings.LOGIN_URL.strip('/'):
-            if hasattr(request, 'user') and not request.user.is_authenticated():
-                return HttpResponseRedirect(settings.LOGIN_URL)
-        return response

@@ -13,25 +13,25 @@
     <div class="collapse navbar-collapse navbar-ex1-collapse">
       <div class="navbar-right">
         <ul class="nav navbar-nav">
-          <li>
-            <form class="navbar-form">
-              <div class="form-group" style="min-width: 320px;">
-                <select name="person" id="person" class="form-control" style="width: 100%;" data-placeholder="Look-up person&hellip;">
-                  <option></option>
-                  {% for person in list %}
-                    <option value="{{ person.id }}">
-                      {{ person.name }}
-                      {% if person.date_of_birth %}|{{ person.date_of_birth|date:"Y" }}{% endif %}
-                    </option>
-                  {% endfor %}
-                </select>
-              </div>
-              <a href="{% url 'add_person' %}" title="Add Person" class="btn btn-primary">
-                <span class="glyphicon glyphicon-plus"></span> <span class="hidden-sm hidden-md hidden-lg">Add Person</span>
-              </a>
-            </form>
-          </li>
           {% if user.is_authenticated %}
+            <li>
+              <form class="navbar-form">
+                <div class="form-group" style="min-width: 320px;">
+                  <select name="person" id="person" class="form-control" style="width: 100%;" data-placeholder="Look-up person&hellip;">
+                    <option></option>
+                    {% for person in list %}
+                      <option value="{{ person.id }}">
+                        {{ person.name }}
+                        {% if person.date_of_birth %}|{{ person.date_of_birth|date:"Y" }}{% endif %}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <a href="{% url 'add_person' %}" title="Add Person" class="btn btn-primary">
+                  <span class="glyphicon glyphicon-plus"></span> <span class="hidden-sm hidden-md hidden-lg">Add Person</span>
+                </a>
+              </form>
+            </li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.get_full_name }} <b class="caret"></b></a>
               <ul class="dropdown-menu">
@@ -45,6 +45,8 @@
                 <li><a href="{% url 'logout' %}">Sign Out</a></li>
               </ul>
             </li>
+          {% else %}
+            <li><a href="{% url 'login' %}">Sign In</a></li>
           {% endif %}
         </ul>
       </div>

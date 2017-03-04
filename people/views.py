@@ -10,9 +10,14 @@ from operator import attrgetter, itemgetter
 from people.forms import AddPersonForm, EditPersonForm
 from people.models import Location, Person, Marriage, Event
 from people.relations import describe_relative
+from stronghold.decorators import public
 from taggit.models import Tag
 
+@public
 def index(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse('surnames'))
+
     regions = Location.objects.raw('''SELECT ANY_VALUE(l.id) AS id, l.county_state_province AS name, c.name AS country_name,
                                       c.country_code AS country_code, count(1) AS natives_count
                                       FROM people_location l, people_person p, people_event e, people_country c
@@ -299,13 +304,20 @@ def edit_person(request, person_id):
                    'list': Person.objects.select_related('birth')})
 
 
+@public
 def surnames(request):
     with connection.cursor() as cursor:
-        # List all surnames for non-living blood relatives, where at least two people share that name.
+        # List all surnames for non-living blood relatives born over 100 years ago, where at least
+        # two people share that name.
+        today = date.today()
+        hundred_years_ago = date(today.year - 100, today.month, today.day)
         cursor.execute('''SELECT s AS surname FROM
                           (SELECT IF(maiden_name != '' AND maiden_name IS NOT NULL, maiden_name, surname) AS s, COUNT(1) AS n
-                           FROM people_person WHERE deceased = 1 AND blood_relative = 1 GROUP BY s)
-                          AS surnames WHERE n >= 2''')
+                           FROM people_person p LEFT JOIN people_event e
+                           ON (e.person_id = p.id AND e.event_type = 0)
+                           WHERE deceased = 1 AND blood_relative = 1
+                           AND (date = '' OR date IS NULL OR date < '{0}') GROUP BY s)
+                          AS surnames WHERE n >= 2'''.format(hundred_years_ago))
         surnames = [(s[0], _locations_for_surname(s[0])) for s in cursor.fetchall()]
     return render(request,
                   'people/surnames.html',
