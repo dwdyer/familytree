@@ -32,7 +32,7 @@
     {% for surname, locations in surnames %}
       <tr>
         <td><a href="{% url 'surname' surname %}">{{ surname }}</a></td>
-        <td class="hidden-xs">
+        <td>
           {% for location in locations %}
             {% ifchanged location.county_state_province %}
               {% if forloop.counter0 != 0 %}<br/>{% endif %}
