@@ -304,6 +304,28 @@ def edit_person(request, person_id):
                    'list': Person.objects.select_related('birth')})
 
 
+def undead(request):
+    people = Person.objects.filter(deceased=True, blood_relative=True, death=None)
+    title = 'Deceased people with unknown death details'
+    return render(request,
+                  'people/people.html',
+                  {'title': title,
+                   'people': people,
+                   'list': Person.objects.select_related('birth')})
+
+
+def unknown_maiden_names(request):
+    people = Person.objects.filter(Q(maiden_name='') | Q(maiden_name=None),
+                                   blood_relative=True,
+                                   gender='F').exclude(wife_of=None).exclude(wife_of__divorced=True)
+    title = 'Married women with unknown maiden names'
+    return render(request,
+                  'people/people.html',
+                  {'title': title,
+                   'people': people,
+                   'list': Person.objects.select_related('birth')})
+
+
 @public
 def surnames(request):
     with connection.cursor() as cursor:
