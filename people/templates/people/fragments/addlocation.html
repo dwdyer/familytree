@@ -1,0 +1,62 @@
+<div class="modal fade" id="add_location" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form id="add_location_form" action="{% url 'add_location' %}" method="POST">
+        {% csrf_token %}
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+          <h4 class="modal-title">Add Location</h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="form-group col-sm-4">
+              <label class="control-label sr-only">{{ location_form.name.label }}</label>
+              {{ location_form.name }}
+            </div>
+            <div class="form-group col-sm-4">
+              <label class="control-label sr-only">{{ location_form.county_state_province.label }}</label>
+              {{ location_form.county_state_province }}
+            </div>
+            <div class="form-group col-sm-4">
+              <label class="control-label sr-only">{{ location_form.country.label }}</label>
+              {{ location_form.country }}
+            </div>
+          </div>
+          <div id="add_location_error" class="alert alert-danger hidden"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Add Location</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  function ajaxSuccess(data) {
+    var id = data.substring(0, data.indexOf('|'));
+    var item = data.substring(data.indexOf('|') + 1);
+    $('.location-field select').each(function(){
+      $(this).append(new Option(item, id, false, location_field_id === $(this).attr('id')));
+    });
+    $('#add_location').modal('hide');
+  }
+
+  function ajaxError(data) {
+    if (data.responseJSON.__all__)
+    {
+      $('#add_location_error').removeClass('hidden').html(data.responseJSON.__all__);
+    }
+  }
+
+  $(document).ready(function(){
+    $('#id_country').select2({templateResult: placeTemplate, templateSelection: placeTemplate, placeholder: 'Country', dropdownParent: $('#add_location')});
+    $('#add_location').on('show.bs.modal', function(event) {
+      location_field_id = 'id_' + $(event.relatedTarget).data('event') + '_location';
+    });
+    $('#add_location_form').submit(function(event){
+      $('#add_location_error').addClass('hidden').html('');
+      $.ajax({type: 'POST', url: $(this).attr('action'), data: $(this).serialize(), success: ajaxSuccess, error: ajaxError});
+      event.preventDefault();
+    });
+  });
+</script>

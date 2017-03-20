@@ -1,17 +1,21 @@
 from datetime import date
 from django.contrib.auth.decorators import user_passes_test
+from django.core.serializers import serialize
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.db.models import Count, Q
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 from itertools import chain, groupby
 from math import pow
 from operator import attrgetter, itemgetter
-from people.forms import AddPersonForm, EditPersonForm
+from people.forms import AddLocationForm, AddPersonForm, EditPersonForm
 from people.models import Location, Person, Marriage, Event
 from people.relations import describe_relative
 from stronghold.decorators import public
 from taggit.models import Tag
+import json
 
 @public
 def index(request):
@@ -285,6 +289,7 @@ def add_person(request):
     return render(request,
                   'people/add.html',
                   {'form': form,
+                   'location_form': AddLocationForm(),
                    'list': Person.objects.select_related('birth')})
 
 
@@ -302,6 +307,16 @@ def edit_person(request, person_id):
                   'people/edit.html',
                   {'form': form,
                    'list': Person.objects.select_related('birth')})
+
+
+@user_passes_test(_staff_only)
+@require_POST
+def add_location(request):
+    form = AddLocationForm(request.POST)
+    if form.is_valid():
+        location = form.save()
+        return HttpResponse('{0}|{1}|{2}'.format(location.id, str(location), location.country.country_code)) # 200 OK
+    return HttpResponse(json.dumps(form.errors), content_type='application/json', status=422)
 
 
 def undead(request):

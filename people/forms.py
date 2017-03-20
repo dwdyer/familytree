@@ -32,6 +32,13 @@ class LocationChoiceField(forms.ModelChoiceField):
         return '{0}|{1}'.format(str(obj), obj.country.country_code)
 
 
+class CountryChoiceField(forms.ModelChoiceField):
+    '''Custom version of the choice field that formats a country in a way that
+    can be interpreted by the client-side JavaScript.'''
+    def label_from_instance(self, obj):
+        return '{0}|{1}'.format(obj.name, obj.country_code)
+
+
 class AddPersonForm(BootstrapModelForm):
     date_of_birth = UncertainDateFormField(label='Date of birth', help_text='Date of birth', required=False)
     birth_location = LocationChoiceField(label='Birthplace', queryset=Location.objects.all(), required=False)
@@ -108,3 +115,11 @@ class EditPersonForm(AddPersonForm):
             self.fields['date_of_burial'].initial = burial.date
             self.fields['burial_location'].initial = burial.location
             self.fields['burial_reference'].initial = burial.reference
+
+
+class AddLocationForm(BootstrapModelForm):
+
+    class Meta:
+        model = Location
+        fields = ['name', 'county_state_province', 'country']
+        field_classes = {'country': CountryChoiceField}

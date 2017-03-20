@@ -29,9 +29,11 @@ class Country(models.Model):
 class Location(models.Model):
     '''A location is not meant to be a pinpoint address but a general place such
     as a town or village.'''
-    name = models.CharField(max_length=50)
-    county_state_province = models.CharField(max_length=30)
-    country = models.ForeignKey(Country)
+    name = models.CharField(max_length=50, help_text='Place name')
+    county_state_province = models.CharField(max_length=30,
+                                             verbose_name='county/state/province',
+                                             help_text='County / state / province')
+    country = models.ForeignKey(Country, help_text='Country')
     # If left blank, these fields will be set by geocoding when the model is
     # saved.
     latitude = models.FloatField(blank=True, null=True)

@@ -3,9 +3,11 @@
 {% block title %}Add Person{% endblock %}
 {% block head %}
   {{ form.media }}
+  <style>.select2-container {width: 100% !important;}</style>
 {% endblock %}
 
 {% block content %}
+  {% include 'people/fragments/addlocation.html' %}
   <h1 class="page-header">{% block heading %}Add Person{% endblock %}</h1>
   <div class="row">
     <div class="col-md-12">
@@ -75,8 +77,8 @@
             <div class="well">
               <fieldset>
                 <legend>Birth</legend>
-                {% include 'people/fragments/eventfields.html' with date=form.date_of_birth location=form.birth_location reference=form.birth_reference %}
-                {% include 'people/fragments/eventfields.html' with date=form.date_of_baptism location=form.baptism_location reference=form.baptism_reference %}
+                {% include 'people/fragments/eventfields.html' with event='birth' date=form.date_of_birth location=form.birth_location reference=form.birth_reference %}
+                {% include 'people/fragments/eventfields.html' with event='baptism' date=form.date_of_baptism location=form.baptism_location reference=form.baptism_reference %}
               </fieldset>
             </div>
           </div>
@@ -85,8 +87,8 @@
             <div class="well">
               <fieldset id="death">
                 <legend>Death</legend>
-                {% include 'people/fragments/eventfields.html' with date=form.date_of_death location=form.death_location reference=form.death_reference %}
-                {% include 'people/fragments/eventfields.html' with date=form.date_of_burial location=form.burial_location reference=form.burial_reference %}
+                {% include 'people/fragments/eventfields.html' with event='death' date=form.date_of_death location=form.death_location reference=form.death_reference %}
+                {% include 'people/fragments/eventfields.html' with event='burial' date=form.date_of_burial location=form.burial_location reference=form.burial_reference %}
               </fieldset>
             </div>
           </div>

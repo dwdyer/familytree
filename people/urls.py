@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^forename/(?P<forename>[\w\W]+)/$', views.forename, name='forename'),
     url(r'^tag/(?P<slug>[\w-]+)/$', views.tag, name='tag'),
     url(r'^person/add/$', views.add_person, name='add_person'),
+    url(r'^location/add/$', views.add_location, name='add_location'),
 
     url(r'^public/surnames/$', views.surnames, name='surnames'),
 
