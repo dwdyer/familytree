@@ -306,6 +306,7 @@ def edit_person(request, person_id):
     return render(request,
                   'people/edit.html',
                   {'form': form,
+                   'location_form': AddLocationForm(),
                    'list': Person.objects.select_related('birth')})
 
 
