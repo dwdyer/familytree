@@ -180,6 +180,7 @@ class Person(models.Model):
     def timeline(self):
         timeline = list(self.events.all()) + list(self.marriages().filter(date__isnull=False))
         timeline.sort(key=attrgetter('date'))
+        timeline.sort(key=attrgetter('event_type'))
         return timeline
 
     def _descendant_distances(self, offset=0):
