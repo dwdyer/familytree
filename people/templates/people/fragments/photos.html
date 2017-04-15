@@ -1,8 +1,8 @@
 {% load thumbnail %}
 {% if person.photos.count > 0 %}
   <br />
-  <div class="row">
-    {% for photo in person.photos.all %}
+  {% for photo in person.photos.all %}
+    {% if forloop.counter0|divisibleby:"4" %}<div class="row">{% endif %}
       <div class="col-md-3">
         <a href="{{ MEDIA_URL }}{{ photo.image }}" class="thumbnail">
           <img src="{% thumbnail photo.image 155x155 crop="scale" %}" alt="Thumbnail" />
@@ -12,7 +12,7 @@
           </div>
         </a>
       </div>
-    {% endfor %}
-  </div>
+    {% if forloop.counter|divisibleby:"4" or forloop.last %}</div>{% endif %}
+  {% endfor %}
 {% endif %}
 
