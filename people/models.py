@@ -380,7 +380,8 @@ class Photograph(models.Model):
     image = models.ImageField(upload_to='photos', blank=False, null=False)
     people = models.ManyToManyField(Person, related_name='photos')
     caption = models.TextField(blank=True)
-    date = models.DateField(blank=True, null=True)
+    date = UncertainDateField(blank=True, null=True)
+    location = models.ForeignKey(Location, blank=True, null=True, related_name='photos')
 
     def __str__(self):
         return self.image.url
