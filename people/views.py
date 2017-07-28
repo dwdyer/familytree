@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import date
 from django.contrib.auth.decorators import user_passes_test
 from django.core.serializers import serialize
@@ -219,6 +220,26 @@ def _people_map(request, people, title):
                    'locations': counts.keys(),
                    'map_area' : ((min_lat, min_lng), (max_lat, max_lng)),
                    'list': Person.objects.select_related('birth')})
+
+
+def descendants_tree(request, person_id):
+    person = get_object_or_404(Person, id=person_id)
+    return render(request,
+                  'people/tree.html',
+                  {'person': person, 'list': Person.objects.select_related('birth')})
+
+
+def descendants_tree_svg(request, person_id):
+    person = get_object_or_404(Person, id=person_id)
+    generations = defaultdict(list)
+    for (gen, column, person) in _generations(person, 0, 0):
+        generations[gen].append((column, person))
+    return render(request, 'people/tree.svg', {'person': person, 'generations': generations.values()})
+
+def _generations(person, gen, column):
+    yield (gen, column, person)
+    for col, child in enumerate(person.children()):
+        yield from _generations(child, gen + 1, column + col)
 
 
 def location(request, location_id):

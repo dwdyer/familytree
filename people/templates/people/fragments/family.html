@@ -15,6 +15,9 @@
               <span{% if divorced %} class="divorced"{% endif %}>
                 <a href="{% url 'person' spouse.id %}">{{ spouse.name }}</a>
               </span>
+              {% if spouse.date_of_birth %}
+                <small class="text-muted pull-right">b.{{ spouse.date_of_birth|date:"Y" }}</small>
+              {% endif %}
               <br/>
             {% endfor %}
           </td>
@@ -26,7 +29,11 @@
           <td class="text-right text-primary small">Children</td>
           <td>
             {% for child in person.children %}
-              <a href="{% url 'person' child.id %}">{{ child.name }}</a><br/>
+              <a href="{% url 'person' child.id %}">{{ child.name }}</a>
+              {% if child.date_of_birth %}
+                <small class="text-muted pull-right">b.{{ child.date_of_birth|date:"Y" }}</small>
+              {% endif %}
+              <br/>
             {% endfor %}
           </td>
         </tr>
@@ -36,8 +43,19 @@
         <tr>
           <td class="text-right text-primary small">Parents</td>
           <td>
-            {% if person.mother %}<a href="{% url 'person' person.mother.id %}">{{ person.mother.name }}</a><br/>{% endif %}
-            {% if person.father %}<a href="{% url 'person' person.father.id %}">{{ person.father.name }}</a>{% endif %}
+            {% if person.mother %}
+              <a href="{% url 'person' person.mother.id %}">{{ person.mother.name }}</a>
+              {% if person.mother.date_of_birth %}
+                <small class="text-muted pull-right">b.{{ person.mother.date_of_birth|date:"Y" }}</small>
+              {% endif %}
+              <br/>
+            {% endif %}
+            {% if person.father %}
+              <a href="{% url 'person' person.father.id %}">{{ person.father.name }}</a>
+              {% if person.father.date_of_birth %}
+                <small class="text-muted pull-right">b.{{ person.father.date_of_birth|date:"Y" }}</small>
+              {% endif %}
+            {% endif %}
           </td>
         </tr>
       {% endif %}
@@ -47,7 +65,11 @@
           <td class="text-right text-primary small">Siblings</td>
           <td>
             {% for sibling in person.siblings %}
-              <a href="{% url 'person' sibling.id %}">{{ sibling.name }}</a><br/>
+              <a href="{% url 'person' sibling.id %}">{{ sibling.name }}</a>
+              {% if sibling.date_of_birth %}
+                <small class="text-muted pull-right">b.{{ sibling.date_of_birth|date:"Y" }}</small>
+              {% endif %}
+              <br/>
             {% endfor %}
           </td>
         </tr>

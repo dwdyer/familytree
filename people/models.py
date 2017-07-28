@@ -295,6 +295,8 @@ class Person(models.Model):
             raise ValidationError('Birth event must refer back to the same person.')
         if self.death and self.death.person.id != self.id:
             raise ValidationError('Death event must refer back to the same person.')
+        if self.mother.id == self.id or self.father.id == self.id:
+            raise ValidationError('Person cannot be their own parent.')
 
     def get_absolute_url(self):
         return reverse('person', args=[self.id])
@@ -387,7 +389,7 @@ class Photograph(models.Model):
         return self.image.url
 
     class Meta:
-        ordering = ['date']
+        ordering = ['-date']
 
 
 class Document(models.Model):
