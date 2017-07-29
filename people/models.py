@@ -295,7 +295,7 @@ class Person(models.Model):
             raise ValidationError('Birth event must refer back to the same person.')
         if self.death and self.death.person.id != self.id:
             raise ValidationError('Death event must refer back to the same person.')
-        if self.mother.id == self.id or self.father.id == self.id:
+        if (self.mother and self.mother == self) or (self.father and self.father == self):
             raise ValidationError('Person cannot be their own parent.')
 
     def get_absolute_url(self):
