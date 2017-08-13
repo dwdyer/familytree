@@ -406,3 +406,10 @@ class Document(models.Model):
 
     class Meta:
         ordering = ['title']
+
+
+class SurnameVariant(models.Model):
+    '''Some surnames have changed spellings over time. This model links
+    different versions of the same surname together.'''
+    canonical = models.CharField(max_length=30, help_text='Canonical surname')
+    variant = models.CharField(max_length=30, help_text='Surname variant')

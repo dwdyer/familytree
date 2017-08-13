@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.admin import GroupAdmin, UserAdmin
 from people.filters import BirthFilter, BaptismFilter, DeathFilter, BurialFilter, HasReferenceFilter
-from people.models import Country, Location, Person, Marriage, Photograph, Document, Event
+from people.models import Country, Location, Person, Marriage, Photograph, Document, Event, SurnameVariant
 
 class FamilyTreeAdminSite(admin.AdminSite):
     def each_context(self, request):
@@ -95,6 +95,12 @@ class LocationAdmin(admin.ModelAdmin):
     list_filter = ['country']
     search_fields = ['name', 'county_state_province', 'country__name']
 
+
+class SurnameVariantAdmin(admin.ModelAdmin):
+    list_display = ['canonical', 'variant']
+    search_fields = ['canonical', 'variant']
+
+
 admin.site = FamilyTreeAdminSite()
 
 admin.site.register(Group, GroupAdmin)
@@ -107,3 +113,4 @@ admin.site.register(Document, DocumentAdmin)
 admin.site.register(Marriage, MarriageAdmin)
 admin.site.register(Country, CountryAdmin)
 admin.site.register(Location, LocationAdmin)
+admin.site.register(SurnameVariant, SurnameVariantAdmin)

@@ -5,9 +5,10 @@
   <div class="panel-body">
     <p id="surname-cloud" class="text-center">
       {% for surname in surnames %}
-        <a href="{% url 'surname' surname.surname %}" rel="{{ surname.surname__count }}">{{ surname.surname }}</a>
+        <a href="{% url 'surname' surname.0 %}" rel="{{ surname.1 }}">{{ surname.0 }}{% if surname.2 %}<sup>*</sup>{% endif %}</a>
       {% endfor %}
     </p>
+    <p class="text-right small text-muted"><sup>*</sup> Includes variant spellings</p>
     <script>
       $(document).ready(function(){
         $('#surname-cloud a').tagcloud({size: {start: 14, end: 32, unit: 'px'},

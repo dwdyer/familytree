@@ -12,7 +12,7 @@ from itertools import chain, groupby
 from math import pow
 from operator import attrgetter, itemgetter
 from people.forms import AddLocationForm, AddPersonForm, EditPersonForm
-from people.models import Location, Person, Marriage, Event
+from people.models import Location, Person, Marriage, Event, SurnameVariant
 from people.relations import describe_relative
 from stronghold.decorators import public
 from taggit.models import Tag
@@ -30,8 +30,7 @@ def index(request):
                                       GROUP BY l.county_state_province, c.id
                                       ORDER BY count(1) DESC, l.county_state_province LIMIT 10''')
 
-    surnames = Person.objects.filter(blood_relative=True).values('surname').annotate(Count('surname'))
-    surnames = surnames.filter(surname__count__gte=2).order_by('surname')
+    surnames = _surnames()
     males = Person.objects.filter(gender='M', blood_relative=True)
     male_names = males.values('forename').annotate(Count('forename')).order_by('-forename__count', 'forename')
     females = Person.objects.filter(gender='F', blood_relative=True)
@@ -71,6 +70,16 @@ def index(request):
                    'today': today,
                    'on_this_day': events,
                    'list': Person.objects.select_related('birth')})
+
+def _surnames():
+    query = '''SELECT surname, n AS count, v FROM
+                 (SELECT IFNULL(canonical, surname) AS surname, COUNT(1) AS n, MAX(canonical IS NOT NULL) AS V
+                  FROM people_person LEFT JOIN people_surnamevariant ON variant=surname
+                  WHERE blood_relative=1 GROUP BY IFNULL(canonical, surname) ORDER BY surname)
+               AS surnames WHERE n >= 2'''
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        return [(s[0], s[1], s[2]) for s in cursor.fetchall()]
 
 
 def person(request, person_id):
@@ -267,8 +276,14 @@ def region(request, region_name):
 
 
 def surname(request, surname):
-    people = Person.objects.filter(Q(surname=surname) | Q(maiden_name=surname))
-    title = 'People with the surname ' + surname
+    try:
+        canonical = SurnameVariant.objects.get(variant=surname).canonical
+    except SurnameVariant.DoesNotExist:
+        canonical = surname
+    variants = SurnameVariant.objects.filter(canonical=canonical).values_list('variant', flat=True)
+    all_variants = [canonical] + list(variants)
+    people = Person.objects.filter(Q(surname__in=all_variants) | Q(maiden_name__in=all_variants))
+    title = 'People with the surname ' + '/'.join(all_variants)
     return render(request,
                   'people/people.html',
                   {'title': title,
