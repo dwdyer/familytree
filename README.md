@@ -1,6 +1,6 @@
 # Family Tree Django Web App
 
-##Python Virtual Environment
+## Python Virtual Environment
 
 This project requires Python 3.3 or later.
 
@@ -31,7 +31,7 @@ pip install -r ~/familytree/requirements.txt
 ```
 
 
-##Database Setup (MySQL)
+## Database Setup (MySQL)
 
 ```
 CREATE DATABASE familytree CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -39,11 +39,11 @@ GRANT ALL PRIVILEGES ON familytree.* TO 'familytree'@'localhost' \
     IDENTIFIED BY '<db_password>';
 ```
 
-##Django Settings
+## Django Settings
 
 ```
 cp secret_settings.template secret_settings.py
 ```
 
- Edit `secret_settings.py` to provide your own OpenCage, MapBox and Dropbox API
- keys.
+Edit `secret_settings.py` to provide your own OpenCage, MapBox and Dropbox API
+keys.
