@@ -20,10 +20,7 @@
                   <select name="person" id="person" class="form-control" style="width: 100%;" data-placeholder="Look-up person&hellip;">
                     <option></option>
                     {% for person in list %}
-                      <option value="{{ person.id }}">
-                        {{ person.name }}
-                        {% if person.date_of_birth %}|{{ person.date_of_birth|date:"Y" }}{% endif %}
-                      </option>
+                      <option value="{{ person.id }}">{{ person.name }}{% if person.date_of_birth %}|{{ person.date_of_birth|date:"Y" }}{% endif %}</option>
                     {% endfor %}
                   </select>
                 </div>
