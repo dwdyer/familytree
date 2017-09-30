@@ -101,7 +101,7 @@ TINYMCE_DEFAULT_CONFIG = {'theme': 'advanced',
                           'theme_advanced_buttons1': 'bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,|,bullist,numlist,|,outdent,indent,|,link,unlink,|,sub,sup,charmap,|,undo,redo,|,cleanup,code'}
 
 # Back-up
-DBBACKUP_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
+DBBACKUP_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 DBBACKUP_CLEANUP_KEEP = 3
 DBBACKUP_CLEANUP_KEEP_MEDIA = 1
 
