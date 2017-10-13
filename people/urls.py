@@ -13,6 +13,12 @@ urlpatterns = [
     url(r'^person/(?P<person_id>\d+)/descendants/tree/svg/$', views.descendants_tree_svg, name='descendants_tree_svg'),
     url(r'^person/(?P<person_id>\d+)/ancestors/$', views.ancestors, name='ancestors'),
     url(r'^person/(?P<person_id>\d+)/ancestors/report/$', views.ancestors_report, name='report'),
+    url(r'^person/(?P<person_id>\d+)/ancestors/report/undead/$',
+        views.ancestors_report_undead,
+        name='report_undead'),
+    url(r'^person/(?P<person_id>\d+)/ancestors/report/maiden-names/$',
+        views.ancestors_report_maiden_names,
+        name='report_maiden_names'),
     url(r'^person/(?P<person_id>\d+)/ancestors/map/$', views.ancestors_map, name='ancestors_map'),
     url(r'^person/(?P<person_id>\d+)/ancestors/ringchart/$', views.ring_chart, name='ring_chart'),
     url(r'^person/(?P<person_id>\d+)/ancestors/ringchart/svg/$', views.ring_chart_svg, name='ring_chart_svg'),
@@ -25,8 +31,5 @@ urlpatterns = [
     url(r'^location/add/$', views.add_location, name='add_location'),
 
     url(r'^public/surnames/$', views.surnames, name='surnames'),
-
-    url(r'^reports/undead/$', views.undead, name='undead'),
-    url(r'^reports/maiden-names/$', views.unknown_maiden_names, name='unknown_maiden_names'),
 ]
 

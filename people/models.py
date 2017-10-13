@@ -264,7 +264,6 @@ class Person(models.Model):
             self.mother._build_relatives_set(relatives_set)
         return relatives_set
 
-
     def annotated_relatives(self):
         '''Returns a list of all of this person's blood relatives. The first
         item in each tuple is the person, the second is the relationship, and
@@ -287,6 +286,9 @@ class Person(models.Model):
     def photos(self):
         '''Returns a list of all photos associated with this person.'''
         return Photograph.objects.filter(person=self)
+
+    def has_missing_maiden_name(self):
+        return self.gender == 'F' and self.wife_of.count() > 0 and (self.maiden_name=='' or self.maiden_name==None)
 
     def clean(self):
         if self.date_of_death() and not self.deceased:

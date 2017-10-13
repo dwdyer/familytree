@@ -153,6 +153,28 @@ def ancestors_report(request, person_id):
                    'list': Person.objects.select_related('birth')})
 
 
+def ancestors_report_undead(request, person_id):
+    person = get_object_or_404(Person, id=person_id)
+    people = [p for p in person.ancestors() if p.deceased and p.death == None]
+    title = 'Deceased ancestors of {0} with unknown death details'.format(person.name())
+    return render(request,
+                  'people/people.html',
+                  {'title': title,
+                   'people': people,
+                   'list': Person.objects.select_related('birth')})
+
+
+def ancestors_report_maiden_names(request, person_id):
+    person = get_object_or_404(Person, id=person_id)
+    people = [p for p in person.ancestors() if p.has_missing_maiden_name()]
+    title = 'Married female ancestors of {0} with unknown maiden names'.format(person.name())
+    return render(request,
+                  'people/people.html',
+                  {'title': title,
+                   'people': people,
+                   'list': Person.objects.select_related('birth')})
+
+
 def ancestors_map(request, person_id):
     person = get_object_or_404(Person, id=person_id)
     title = 'Ancestors of ' + person.name() + ' - Map of Birth Places'
@@ -354,28 +376,6 @@ def add_location(request):
         location = form.save()
         return HttpResponse('{0}|{1}|{2}'.format(location.id, str(location), location.country.country_code)) # 200 OK
     return HttpResponse(json.dumps(form.errors), content_type='application/json', status=422)
-
-
-def undead(request):
-    people = Person.objects.filter(deceased=True, blood_relative=True, death=None)
-    title = 'Deceased people with unknown death details'
-    return render(request,
-                  'people/people.html',
-                  {'title': title,
-                   'people': people,
-                   'list': Person.objects.select_related('birth')})
-
-
-def unknown_maiden_names(request):
-    people = Person.objects.filter(Q(maiden_name='') | Q(maiden_name=None),
-                                   blood_relative=True,
-                                   gender='F').exclude(wife_of=None).exclude(wife_of__divorced=True)
-    title = 'Married women with unknown maiden names'
-    return render(request,
-                  'people/people.html',
-                  {'title': title,
-                   'people': people,
-                   'list': Person.objects.select_related('birth')})
 
 
 @public
