@@ -11,6 +11,7 @@ from django.views.decorators.http import require_POST
 from itertools import chain, groupby
 from math import pow
 from operator import attrgetter, itemgetter
+from people.fields import UncertainDate
 from people.forms import AddLocationForm, AddPersonForm, EditPersonForm
 from people.models import Location, Person, Marriage, Event, SurnameVariant
 from people.relations import describe_relative
@@ -331,6 +332,22 @@ def tag(request, slug):
                   {'title': title,
                    'people': people,
                    'list': Person.objects.select_related('birth')})
+
+def alive_in_year(request, year):
+    year_start = UncertainDate(int(year), 1, 1)
+    year_end = UncertainDate(int(year), 12, 31)
+    hundred_years_earlier = UncertainDate(int(year) - 100, 1, 1)
+    hundred_years_later = UncertainDate(int(year) + 100, 12, 31)
+    born_before = Q(birth__date__lte=year_start) | Q(birth__date=None, death__date__lte=hundred_years_later)
+    died_after = Q(death__date__gte=year_end) | Q(deceased=False) | Q(death__date=None, birth__date__gte=hundred_years_earlier)
+    people = Person.objects.filter(born_before, died_after)
+    title = 'People alive (or possibly alive) in {0}'.format(year)
+    return render(request,
+                  'people/people.html',
+                  {'title': title,
+                   'people': people,
+                   'list': Person.objects.select_related('birth')})
+
 
 def _staff_only(user):
     return user.is_staff
