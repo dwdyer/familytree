@@ -102,7 +102,7 @@ class Person(models.Model):
                                related_name='children_of_father',
                                on_delete=models.SET_NULL)
     notes = HTMLField(blank=True)
-    tags = TaggableManager(blank=True)
+    tags = TaggableManager(blank=True, help_text='Tags')
     # A person can be linked to a user account. This allows a user to see
     # information relevant to their own relationships.
     user = models.OneToOneField(User, blank=True, null=True)

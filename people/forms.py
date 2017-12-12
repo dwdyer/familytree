@@ -86,7 +86,7 @@ class AddPersonForm(BootstrapModelForm):
         model = Person
         fields = ['gender', 'deceased', 'blood_relative',
                   'forename', 'middle_names', 'known_as', 'surname', 'maiden_name',
-                  'mother', 'father', 'notes']
+                  'mother', 'father', 'notes', 'tags']
         field_classes = {'mother': PersonChoiceField,
                          'father': PersonChoiceField}
         widgets = {'gender': forms.RadioSelect}

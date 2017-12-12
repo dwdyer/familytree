@@ -8,7 +8,7 @@ django-mathfilters==0.3.0
 django-settings-export==1.0.3
 django-storages==1.6.5
 django-stronghold==0.2.8
-django-taggit==0.19.1
+django-taggit==0.22.1
 django-tinymce==2.6.0
 docutils==0.14
 easy-thumbnails==2.4.2
