@@ -138,7 +138,6 @@
       $('#id_father').select2({templateResult: nameTemplate, templateSelection: nameTemplate, placeholder: 'Father'});
       $('#id_deceased').on('change', function(){$('#death, #id_death_location, #id_burial_location').prop('disabled', !$(this).is(':checked'));});
       $('.radio-inline').on('change', function(){$('#id_maiden_name').prop('disabled', !$('#id_gender_1').prop('checked'));});
-      $('#id_tags').attr('value', $('#id_tags').attr('value').replace(/"/g, ''));
       $('#id_tags').tagsinput({tagClass: function(item){return 'label label-primary';}, trimValue: true});
     });
   </script>

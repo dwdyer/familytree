@@ -100,6 +100,10 @@ TINYMCE_DEFAULT_CONFIG = {'theme': 'advanced',
                           'theme_advanced_resizing': True,
                           'theme_advanced_buttons1': 'bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,|,bullist,numlist,|,outdent,indent,|,link,unlink,|,sub,sup,charmap,|,undo,redo,|,cleanup,code'}
 
+# Taggit
+TAGGIT_TAGS_FROM_STRING = 'people.forms.tag_comma_splitter'
+TAGGIT_STRING_FROM_TAGS = 'people.forms.tag_comma_joiner'
+
 # Back-up
 DBBACKUP_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 DBBACKUP_CLEANUP_KEEP = 3

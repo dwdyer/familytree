@@ -123,3 +123,11 @@ class AddLocationForm(BootstrapModelForm):
         model = Location
         fields = ['name', 'county_state_province', 'country']
         field_classes = {'country': CountryChoiceField}
+
+
+# Custom parsing for tags (don't use spaces as separators).
+def tag_comma_splitter(tag_string):
+    return [t.strip() for t in tag_string.split(',') if t.strip()]
+
+def tag_comma_joiner(tags):
+    return ', '.join(t.name for t in tags)
