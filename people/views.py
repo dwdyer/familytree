@@ -50,7 +50,7 @@ def index(request):
         min_lng = min(location.longitude, min_lng)
         max_lng = max(location.longitude, max_lng)
 
-    tags = Tag.objects.annotate(tag_count=Count('taggit_taggeditem_items')).order_by('name')
+    tags = Tag.objects.all().order_by('name')
 
     # On this day
     today = date.today()

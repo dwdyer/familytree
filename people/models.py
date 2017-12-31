@@ -3,13 +3,16 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Q
+from django.db.models import Count, Q
+from django.db.models.signals import post_delete
+from django.dispatch.dispatcher import receiver
 from itertools import chain
 from opencage.geocoder import OpenCageGeocode
 from operator import attrgetter
 from people.fields import UncertainDateField
 from people.relations import closest_common_ancestor, describe_relative
 from taggit.managers import TaggableManager
+from taggit.models import Tag, TaggedItem
 from tinymce.models import HTMLField
 import os
 import settings
@@ -412,3 +415,10 @@ class SurnameVariant(models.Model):
     different versions of the same surname together.'''
     canonical = models.CharField(max_length=30, help_text='Canonical surname')
     variant = models.CharField(max_length=30, help_text='Surname variant')
+
+
+# Delete tags that are no longer in use.
+@receiver([post_delete], sender=TaggedItem)
+def delete_unused_tags(sender, instance, **kwargs):
+    for tag in Tag.objects.annotate(item_count=Count('taggit_taggeditem_items')).filter(item_count=0):
+        tag.delete()
