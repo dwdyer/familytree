@@ -59,6 +59,9 @@ class Location(models.Model):
                 print (e)
         super(Location, self).save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        return reverse('location', args=[self.id])
+
     def __str__(self):
         return '{0}, {1}'.format(self.name, self.county_state_province)
 
