@@ -18,7 +18,7 @@
               {% if spouse.date_of_birth %}
                 <small class="text-muted pull-right">b.{{ spouse.date_of_birth|date:"Y" }}</small>
               {% endif %}
-              <br/>
+              <br style="clear: right;"/>
             {% endfor %}
           </td>
         </tr>
@@ -33,7 +33,7 @@
               {% if child.date_of_birth %}
                 <small class="text-muted pull-right">b.{{ child.date_of_birth|date:"Y" }}</small>
               {% endif %}
-              <br/>
+              <br style="clear: right;"/>
             {% endfor %}
           </td>
         </tr>
@@ -48,7 +48,7 @@
               {% if person.mother.date_of_birth %}
                 <small class="text-muted pull-right">b.{{ person.mother.date_of_birth|date:"Y" }}</small>
               {% endif %}
-              <br/>
+              <br style="clear: right;"/>
             {% endif %}
             {% if person.father %}
               <a href="{% url 'person' person.father.id %}">{{ person.father.name }}</a>
@@ -69,7 +69,7 @@
               {% if sibling.date_of_birth %}
                 <small class="text-muted pull-right">b.{{ sibling.date_of_birth|date:"Y" }}</small>
               {% endif %}
-              <br/>
+              <br style="clear: right;"/>
             {% endfor %}
           </td>
         </tr>
