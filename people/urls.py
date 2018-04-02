@@ -20,6 +20,7 @@ urlpatterns = [
         views.ancestors_report_maiden_names,
         name='report_maiden_names'),
     url(r'^report/alive/(?P<year>\d+)/$', views.alive_in_year, name='alive_in_year'),
+    url(r'^report/alive/(?P<year>\d+)/no-census/$', views.no_census, name='no_census'),
     url(r'^person/(?P<person_id>\d+)/ancestors/map/$', views.ancestors_map, name='ancestors_map'),
     url(r'^person/(?P<person_id>\d+)/ancestors/ringchart/$', views.ring_chart, name='ring_chart'),
     url(r'^person/(?P<person_id>\d+)/ancestors/ringchart/svg/$', views.ring_chart_svg, name='ring_chart_svg'),

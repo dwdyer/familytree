@@ -13,7 +13,7 @@ from math import pow
 from operator import attrgetter, itemgetter
 from people.fields import UncertainDate
 from people.forms import AddLocationForm, AddPersonForm, EditPersonForm
-from people.models import Location, Person, Marriage, Event, SurnameVariant
+from people.models import Document, Location, Person, Marriage, Event, SurnameVariant
 from people.relations import describe_relative
 from stronghold.decorators import public
 from taggit.models import Tag
@@ -334,13 +334,7 @@ def tag(request, slug):
                    'list': Person.objects.select_related('birth')})
 
 def alive_in_year(request, year):
-    year_start = UncertainDate(int(year), 1, 1)
-    year_end = UncertainDate(int(year), 12, 31)
-    hundred_years_earlier = UncertainDate(int(year) - 100, 1, 1)
-    hundred_years_later = UncertainDate(int(year) + 100, 12, 31)
-    born_before = Q(birth__date__lte=year_start) | Q(birth__date=None, death__date__lte=hundred_years_later)
-    died_after = Q(death__date__gte=year_end) | Q(deceased=False) | Q(death__date=None, birth__date__gte=hundred_years_earlier)
-    people = Person.objects.filter(born_before, died_after)
+    people = _people_alive_in_year(year)
     title = 'People alive (or possibly alive) in {0}'.format(year)
     return render(request,
                   'people/people.html',
@@ -348,6 +342,27 @@ def alive_in_year(request, year):
                    'people': people,
                    'list': Person.objects.select_related('birth')})
 
+def _people_alive_in_year(year):
+    year_start = UncertainDate(int(year), 1, 1)
+    year_end = UncertainDate(int(year), 12, 31)
+    hundred_years_earlier = UncertainDate(int(year) - 100, 1, 1)
+    hundred_years_later = UncertainDate(int(year) + 100, 12, 31)
+    born_before = Q(birth__date__lte=year_start) | Q(birth__date=None, death__date__lte=hundred_years_later)
+    died_after = Q(death__date__gte=year_end) | Q(deceased=False) | Q(death__date=None, birth__date__gte=hundred_years_earlier)
+    return Person.objects.filter(born_before, died_after)
+
+
+def no_census(request, year):
+    '''Same as alive_in_year, but filtered to only include people who have no
+    census record attached for that year.'''
+    people = _people_alive_in_year(year)
+    people = people.exclude(Q(documents__document_type=Document.CENSUS, documents__title__contains=year))
+    title = 'People alive (or possibly alive) in {0} with no corresponding census record'.format(year)
+    return render(request,
+                  'people/people.html',
+                  {'title': title,
+                   'people': people,
+                   'list': Person.objects.select_related('birth')})
 
 def _staff_only(user):
     return user.is_staff
