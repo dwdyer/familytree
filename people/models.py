@@ -290,6 +290,10 @@ class Person(models.Model):
         '''Returns a list of all photos associated with this person.'''
         return Photograph.objects.filter(person=self)
 
+    def sorted_tags(self):
+        '''Returns a list of tags sorted alphabetically.'''
+        return self.tags.all().order_by('name')
+
     def has_missing_maiden_name(self):
         return self.gender == 'F' and self.wife_of.count() > 0 and (self.maiden_name=='' or self.maiden_name==None)
 

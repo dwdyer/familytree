@@ -38,7 +38,7 @@
       {% endif %}
     </div>
     <div class="col-md-6 col-sm-12 text-right">
-      {% for tag in person.tags.all %}
+      {% for tag in person.sorted_tags %}
         <a href="{% url 'tag' tag.slug %}" class="label label-primary">{{ tag.name }}</a>
       {% endfor %}
     </div>
