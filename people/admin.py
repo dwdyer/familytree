@@ -72,7 +72,8 @@ class DocumentAdminForm(forms.ModelForm):
 
 class DocumentAdmin(admin.ModelAdmin):
     form = DocumentAdminForm
-    list_display = ['title']
+    list_display = ['title', 'document_type']
+    list_filter = ['document_type']
 
 
 class MarriageAdmin(admin.ModelAdmin):

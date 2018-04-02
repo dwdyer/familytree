@@ -402,7 +402,26 @@ class Photograph(models.Model):
 
 
 class Document(models.Model):
+    BIRTH = 0
+    MARRIAGE = 1
+    DEATH = 2
+    CENSUS = 3
+    MILITARY = 4
+    LAND = 5
+    PRESS = 6
+    EMIGRATION = 7
+
+    DOCUMENT_TYPE = [(BIRTH, 'Birth/Baptism'),
+                     (MARRIAGE, 'Marriage'),
+                     (DEATH, 'Death/Burial'),
+                     (CENSUS, 'Census'),
+                     (MILITARY, 'Military'),
+                     (LAND, 'Land'),
+                     (PRESS, 'Press'),
+                     (EMIGRATION, 'Emigration/Citizenship')]
+
     file = models.FileField(upload_to='documents', blank=False, null=False)
+    document_type = models.PositiveSmallIntegerField(choices=DOCUMENT_TYPE, blank=False, null=False)
     title = models.CharField(max_length=100)
     people = models.ManyToManyField(Person, related_name='documents')
 
