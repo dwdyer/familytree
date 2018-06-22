@@ -60,6 +60,12 @@
     {% else %}
       <li class="disabled"><a href="#deaths">Deaths</a></li>
     {% endif %}
+
+    {% if burials %}
+      <li{% if not births and not marriages and not deaths %} class="active"{% endif %}><a href="#burials" data-toggle="tab">Burials <span class="badge">{{ burials|length }}</span></a></li>
+    {% else %}
+      <li class="disabled"><a href="#burials">Burials</a></li>
+    {% endif %}
   </ul>
   <br/>
   <div class="tab-content">
@@ -147,6 +153,35 @@
                 {% include 'people/fragments/location.html' with location=person.birth_location %}
               {% endif %}
             </td>
+            <td class="text-right hidden-xs">
+              {% if person.photos.all %}
+                &nbsp;<span class="glyphicon glyphicon-picture"
+                            title="{{ person.photos.count }} Photo{{ person.photos.cout|pluralize }}"></span>
+              {% endif %}
+              {% if person.notes %}&nbsp;<span class="glyphicon glyphicon-pencil" title="Has Notes"></span>{% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tab-pane{% if burials and not marriages and not births and not deaths %} active{% endif %}" id="burials">
+      <table class="table" id="burials-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th class="hidden-xs">Age</th>
+            <th class="hidden-xs">&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for person in burials %}
+          <tr{% if not person.blood_relative %} class="text-muted small"{% endif %}>
+            <td data-sort-value="{{ person.date_of_death.lower_bound|date:'Y-m-d' }}">{{ person.date_of_death.short }}</td>
+            <td><a href="{% url 'person' person.id %}">{{ person.name }}</a></td>
+            <td class="hidden-xs">{{ person.age|default_if_none:"Unknown" }}</td>
             <td class="text-right hidden-xs">
               {% if person.photos.all %}
                 &nbsp;<span class="glyphicon glyphicon-picture"

@@ -279,12 +279,16 @@ def location(request, location_id):
     births = Person.objects.filter(birth__location=location)
     marriages = Marriage.objects.filter(location=location)
     deaths = Person.objects.filter(death__location=location)
+    buried_ids = Event.objects.filter(event_type=Event.BURIAL,
+                                      location=location).values_list('person', flat=True)
+    burials = Person.objects.filter(id__in=buried_ids)
     return render(request,
                   'people/location.html',
                   {'location': location,
                    'births': births,
                    'marriages': marriages,
                    'deaths': deaths,
+                   'burials': burials,
                    'list': Person.objects.select_related('birth')})
 
 
