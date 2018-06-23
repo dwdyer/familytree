@@ -18,6 +18,10 @@ class BootstrapModelForm(forms.ModelForm):
 class PersonChoiceField(forms.ModelChoiceField):
     '''Custom version of the choice field that formats a person and their birth
     year in a way that can be interpreted by the client-side JavaScript.'''
+    def __init__(self, *args, **kwargs):
+        super(PersonChoiceField, self).__init__(*args, **kwargs)
+        self.queryset = self.queryset.select_related('birth')
+
     def label_from_instance(self, obj):
         if obj.date_of_birth():
             return '{0}|{1}'.format(obj.name(), obj.date_of_birth().year)
@@ -28,6 +32,10 @@ class PersonChoiceField(forms.ModelChoiceField):
 class LocationChoiceField(forms.ModelChoiceField):
     '''Custom version of the choice field that formats a location in a way that
     can be interpreted by the client-side JavaScript.'''
+    def __init__(self, *args, **kwargs):
+        locations = Location.objects.select_related('country').all()
+        super(LocationChoiceField, self).__init__(queryset=locations, *args, **kwargs)
+
     def label_from_instance(self, obj):
         return '{0}|{1}'.format(str(obj), obj.country.country_code)
 
@@ -40,21 +48,37 @@ class CountryChoiceField(forms.ModelChoiceField):
 
 
 class AddPersonForm(BootstrapModelForm):
-    date_of_birth = UncertainDateFormField(label='Date of birth', help_text='Date of birth', required=False)
-    birth_location = LocationChoiceField(label='Birthplace', queryset=Location.objects.all(), required=False)
-    birth_reference = forms.URLField(label='Reference', help_text='Reference URL (optional)', required=False)
+    date_of_birth = UncertainDateFormField(label='Date of birth',
+                                           help_text='Date of birth',
+                                           required=False)
+    birth_location = LocationChoiceField(label='Birthplace', required=False)
+    birth_reference = forms.URLField(label='Reference',
+                                     help_text='Reference URL (optional)',
+                                     required=False)
 
-    date_of_baptism = UncertainDateFormField(label='Baptism date', help_text='Baptism date', required=False)
-    baptism_location = LocationChoiceField(label='Location', queryset=Location.objects.all(), required=False)
-    baptism_reference = forms.URLField(label='Reference', help_text='Reference URL (optional)', required=False)
+    date_of_baptism = UncertainDateFormField(label='Baptism date',
+                                             help_text='Baptism date',
+                                             required=False)
+    baptism_location = LocationChoiceField(label='Location', required=False)
+    baptism_reference = forms.URLField(label='Reference',
+                                       help_text='Reference URL (optional)',
+                                       required=False)
 
-    date_of_death = UncertainDateFormField(label='Date of death', help_text='Date of death', required=False)
-    death_location = LocationChoiceField(label='Location', queryset=Location.objects.all(), required=False)
-    death_reference = forms.URLField(label='Reference', help_text='Reference URL (optional)', required=False)
+    date_of_death = UncertainDateFormField(label='Date of death',
+                                           help_text='Date of death',
+                                           required=False)
+    death_location = LocationChoiceField(label='Location', required=False)
+    death_reference = forms.URLField(label='Reference',
+                                     help_text='Reference URL (optional)',
+                                     required=False)
 
-    date_of_burial = UncertainDateFormField(label='Burial date', help_text='Burial date', required=False)
-    burial_location = LocationChoiceField(label='Location', queryset=Location.objects.all(), required=False)
-    burial_reference = forms.URLField(label='Reference', help_text='Reference URL (optional)', required=False)
+    date_of_burial = UncertainDateFormField(label='Burial date',
+                                            help_text='Burial date',
+                                            required=False)
+    burial_location = LocationChoiceField(label='Location', required=False)
+    burial_reference = forms.URLField(label='Reference',
+                                      help_text='Reference URL (optional)',
+                                      required=False)
 
     def save(self, commit=True, *args, **kwargs):
         with transaction.atomic():
