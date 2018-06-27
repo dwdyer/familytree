@@ -9,7 +9,11 @@
 
 {% block content %}
   <h1 class="page-header">
-    {{ person.name }}
+    {{ person.forename }} {{ person.middle_names }}
+    {% if person.known_as %}"{{ person.known_as }}"{% endif %}
+    <a href="{% url 'surname' person.surname %}">{{ person.surname|upper }}</a>
+    {% if person.maiden_name %}(n&eacute;e <a href="{% url 'surname' person.maiden_name %}">{{ person.maiden_name }}</a>){% endif %}
+
     {% if relationship %}
       <small>{{ relationship }}</small>
     {% elif person == user.person %}
