@@ -9,20 +9,22 @@
 
 {% block content %}
   <h1 class="page-header">
-    {{ person.forename }} {{ person.middle_names }}
-    {% if person.known_as %}"{{ person.known_as }}"{% endif %}
-    <a href="{% url 'surname' person.surname %}">{{ person.surname|upper }}</a>
-    {% if person.maiden_name %}(n&eacute;e <a href="{% url 'surname' person.maiden_name %}">{{ person.maiden_name }}</a>){% endif %}
-
-    {% if relationship %}
-      <small>{{ relationship }}</small>
-    {% elif person == user.person %}
-      <small>You</small>
-    {% endif %}
     {% if user.is_staff %}
       <a href="{% url 'edit_person' person.id %}" class="pull-right btn btn-default" title="Edit">
         <span class="glyphicon glyphicon-pencil"></span>
       </a>
+    {% endif %}
+    {{ person.forename }} {{ person.middle_names }}
+    {% if person.known_as %}"{{ person.known_as }}"{% endif %}
+    <a href="{% url 'surname' person.surname %}">{{ person.surname|upper }}</a>
+    {% if person.maiden_name %}
+      <small>(n&eacute;e <a href="{% url 'surname' person.maiden_name %}">{{ person.maiden_name }}</a>)</small>
+    {% endif %}
+
+    {% if relationship %}
+      <br/><small>{{ relationship }}</small>
+    {% elif person == user.person %}
+      <br/><small>You</small>
     {% endif %}
   </h1>
   <div class="row" style="margin-top: -10px; margin-bottom: 20px;">
