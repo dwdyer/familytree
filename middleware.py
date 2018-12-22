@@ -6,9 +6,15 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 class QueryCountMiddleware:
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+
     '''This middleware will log the number of queries run and the total time
     taken for each request (with a status code of 200).'''
-    def process_response(self, request, response):
+    def __call__(self, request):
+        response = self.get_response(request)
         if response.status_code == 200:
             total_time = 0
             for query in connection.queries:

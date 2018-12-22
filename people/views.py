@@ -2,11 +2,11 @@ from collections import defaultdict
 from datetime import date
 from django.contrib.auth.decorators import user_passes_test
 from django.core.serializers import serialize
-from django.core.urlresolvers import reverse
 from django.db import connection
 from django.db.models import Count, Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 from itertools import chain, groupby
 from math import pow

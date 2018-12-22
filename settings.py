@@ -60,7 +60,7 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_URL = '/logout/'
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -69,7 +69,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
-if DEBUG: MIDDLEWARE_CLASSES += ('middleware.QueryCountMiddleware',)
+if DEBUG: MIDDLEWARE += ('middleware.QueryCountMiddleware',)
 
 INSTALLED_APPS = (
     'django.contrib.auth',

@@ -1,11 +1,11 @@
 from datetime import date
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Count, Q
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
+from django.urls import reverse
 from itertools import chain
 from opencage.geocoder import OpenCageGeocode
 from operator import attrgetter
@@ -36,7 +36,7 @@ class Location(models.Model):
     county_state_province = models.CharField(max_length=30,
                                              verbose_name='county/state/province',
                                              help_text='County / state / province')
-    country = models.ForeignKey(Country, help_text='Country')
+    country = models.ForeignKey(Country, models.CASCADE, help_text='Country')
     # If left blank, these fields will be set by geocoding when the model is
     # saved.
     latitude = models.FloatField(blank=True, null=True)
@@ -96,22 +96,22 @@ class Person(models.Model):
     deceased = models.BooleanField(default=True)
     blood_relative = models.BooleanField(default=True)
     mother = models.ForeignKey('self',
+                               models.SET_NULL,
                                blank=True,
                                null=True,
                                limit_choices_to={'gender': 'F'},
-                               related_name='children_of_mother',
-                               on_delete=models.SET_NULL)
+                               related_name='children_of_mother')
     father = models.ForeignKey('self',
+                               models.SET_NULL,
                                blank=True,
                                null=True,
                                limit_choices_to={'gender': 'M'},
-                               related_name='children_of_father',
-                               on_delete=models.SET_NULL)
+                               related_name='children_of_father')
     notes = HTMLField(blank=True)
     tags = TaggableManager(blank=True, help_text='Tags')
     # A person can be linked to a user account. This allows a user to see
     # information relevant to their own relationships.
-    user = models.OneToOneField(User, blank=True, null=True)
+    user = models.OneToOneField(User, models.SET_NULL, blank=True, null=True)
 
     def name(self, use_middle_names=True, use_maiden_name=False):
         '''Returns the full name of this person.'''
@@ -329,10 +329,14 @@ class Event(models.Model):
                   (DEATH, 'Death'),
                   (BURIAL, 'Burial')]
 
-    person = models.ForeignKey(Person, related_name='events')
+    person = models.ForeignKey(Person, models.CASCADE, related_name='events')
     event_type = models.PositiveSmallIntegerField(choices=EVENT_TYPE)
     date = UncertainDateField()
-    location = models.ForeignKey(Location, blank=True, null=True, related_name='events')
+    location = models.ForeignKey(Location,
+                                 models.SET_NULL,
+                                 blank=True,
+                                 null=True,
+                                 related_name='events')
     reference = models.URLField(blank=True, null=True)
 
     def verb(self):
@@ -368,10 +372,20 @@ class Event(models.Model):
 class Marriage(models.Model):
     '''The marriage record links spouses.'''
     event_type = Event.MARRIAGE
-    husband = models.ForeignKey(Person, limit_choices_to={'gender': 'M'}, related_name='husband_of')
-    wife = models.ForeignKey(Person, limit_choices_to={'gender': 'F'}, related_name='wife_of')
+    husband = models.ForeignKey(Person,
+                                models.CASCADE,
+                                limit_choices_to={'gender': 'M'},
+                                related_name='husband_of')
+    wife = models.ForeignKey(Person,
+                             models.CASCADE,
+                             limit_choices_to={'gender': 'F'},
+                             related_name='wife_of')
     date = UncertainDateField(blank=True, null=True)
-    location = models.ForeignKey(Location, blank=True, null=True, related_name='weddings')
+    location = models.ForeignKey(Location,
+                                 models.SET_NULL,
+                                 blank=True,
+                                 null=True,
+                                 related_name='weddings')
     divorced = models.BooleanField(default=False)
     reference = models.URLField(blank=True, null=True)
 
@@ -392,7 +406,11 @@ class Photograph(models.Model):
     people = models.ManyToManyField(Person, related_name='photos')
     caption = models.TextField(blank=True)
     date = UncertainDateField(blank=True, null=True)
-    location = models.ForeignKey(Location, blank=True, null=True, related_name='photos')
+    location = models.ForeignKey(Location,
+                                 models.SET_NULL,
+                                 blank=True,
+                                 null=True,
+                                 related_name='photos')
 
     def __str__(self):
         return self.image.url
