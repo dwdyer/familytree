@@ -161,9 +161,9 @@ class Person(models.Model):
     def spouses(self):
         '''Return a list of anybody that this person is or was married to.'''
         if self.gender == 'F':
-            return [(m.husband, m.date, m.location, m.divorced) for m in self.wife_of.all()]
+            return [(m.husband, m.date, m.location, m.divorced) for m in self.wife_of.order_by('date').all()]
         else:
-            return [(m.wife, m.date, m.location, m.divorced) for m in self.husband_of.all()]
+            return [(m.wife, m.date, m.location, m.divorced) for m in self.husband_of.order_by('date').all()]
 
     def siblings(self):
         '''Returns a list of this person's brothers and sisters, including
