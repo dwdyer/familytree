@@ -29,35 +29,6 @@
       <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#show_relationship" title="Show relationship">
         <span class="glyphicon glyphicon-tree-conifer"></span>
       </button>
-<script>
-  function ajaxSuccess(data) {
-    var id = data.substring(0, data.indexOf('|'));
-    var item = data.substring(data.indexOf('|') + 1);
-    $('.location-field select').each(function(){
-      $(this).append(new Option(item, id, false, location_field_id === $(this).attr('id')));
-    });
-    $('#add_location').modal('hide');
-  }
-
-  function ajaxError(data) {
-    if (data.responseJSON.__all__)
-    {
-      $('#add_location_error').removeClass('hidden').html(data.responseJSON.__all__);
-    }
-  }
-
-  $(document).ready(function(){
-    $('#id_country').select2({templateResult: placeTemplate, templateSelection: placeTemplate, placeholder: 'Country', dropdownParent: $('#add_location')});
-    $('#add_location').on('show.bs.modal', function(event) {
-      location_field_id = 'id_' + $(event.relatedTarget).data('event') + '_location';
-    });
-    $('#add_location_form').submit(function(event){
-      $('#add_location_error').addClass('hidden').html('');
-      $.ajax({type: 'POST', url: $(this).attr('action'), data: $(this).serialize(), success: ajaxSuccess, error: ajaxError});
-      event.preventDefault();
-    });
-  });
-</script>
     {% elif person == user.person %}
       <br/><small>You</small>
     {% endif %}
