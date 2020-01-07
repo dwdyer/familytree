@@ -68,6 +68,7 @@ def position(position):
         return str(position) + 'rd'
     return str(position) + 'th'
 
+
 def number_of_times(number):
     if number == 1:
         return 'Once'

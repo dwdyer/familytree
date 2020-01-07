@@ -1,0 +1,48 @@
+<div class="modal fade" id="show_relationship" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        <h4 class="modal-title">Relationship</h4>
+      </div>
+      <div class="modal-body text-center">
+        {% if relationship.0|length == 1 %}
+          {% for person in relationship.1 %}
+            <a href="{% url 'person' person.id %}">{{ person.name }}</a><br/>
+            <small class="text-muted">{{ person.year_range }}</small><br/>
+            {% if not forloop.last %}<span class="text-muted">|</span><br/>{% endif %}
+          {% endfor %}
+        {% elif relationship.1|length == 1 %}
+          {% for person in relationship.0 %}
+            <a href="{% url 'person' person.id %}">{{ person.name }}</a><br/>
+            <small class="text-muted">{{ person.year_range }}</small><br/>
+            {% if not forloop.last %}<span class="text-muted">|</span><br/>{% endif %}
+          {% endfor %}
+        {% else %}
+          {% with root=relationship.0|first %}
+            <a href="{% url 'person' root.id %}">{{ root.name }}</a><br/>
+            <small class="text-muted">{{ root.year_range }}</small><br/>
+            <span class="text-muted">|</span>
+          {% endwith %}
+          <div class="row">
+            <div class="col-xs-6">
+              {% for person in relationship.0|slice:"1:" %}
+                <a href="{% url 'person' person.id %}">{{ person.name }}</a><br/>
+                <small class="text-muted">{{ person.year_range }}</small><br/>
+                {% if not forloop.last %}<span class="text-muted">|</span><br/>{% endif %}
+              {% endfor %}
+            </div>
+            <div class="col-xs-6">
+              {% for person in relationship.1|slice:"1:" %}
+                <a href="{% url 'person' person.id %}">{{ person.name }}</a><br/>
+                <small class="text-muted">{{ person.year_range }}</small><br/>
+                {% if not forloop.last %}<span class="text-muted">|</span><br/>{% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+

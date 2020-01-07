@@ -89,12 +89,14 @@ def person(request, person_id):
                                      person,
                                      request.user.person._ancestor_distances(),
                                      person._ancestor_distances()) if request.user.person else None
+    expanded_relationship = request.user.person.expand_relationship(person) if relationship else None
     return render(request,
                   'people/person.html',
                   {'person': person,
                    'descendants': len(list(person.descendants())),
                    'ancestors': len(list(person.ancestors())),
                    'relationship': relationship,
+                   'expanded_relationship': expanded_relationship,
                    'list': Person.objects.select_related('birth')})
 
 

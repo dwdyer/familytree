@@ -286,6 +286,38 @@ class Person(models.Model):
         annotated.sort(key=lambda x: (x[2], x[1], x[0].surname))
         return annotated
 
+    def expand_relationship(self, relative):
+        distances = self._ancestor_distances()
+        relative_distances = relative._ancestor_distances()
+        if self in relative_distances:
+            root = self
+        elif relative in distances:
+            root = relative
+        else:
+            (root, _, _) = closest_common_ancestor(distances, relative_distances)
+
+        ancestors = []
+        person = root
+        while person != self:
+            ancestors.append(person)
+            for child in person.children():
+                if child == self or child in distances:
+                    person = child
+                    break
+        ancestors.append(person)
+
+        relative_ancestors = []
+        person = root
+        while person != relative:
+            relative_ancestors.append(person)
+            for child in person.children():
+                if child == relative or child in relative_distances:
+                    person = child
+                    break
+        relative_ancestors.append(person)
+
+        return (ancestors, relative_ancestors)
+
     def photos(self):
         '''Returns a list of all photos associated with this person.'''
         return Photograph.objects.filter(person=self)
@@ -311,6 +343,9 @@ class Person(models.Model):
         return reverse('person', args=[self.id])
 
     def __str__(self):
+        return self.name()
+
+    def __repr__(self):
         return self.name()
 
     class Meta:
