@@ -41,7 +41,7 @@
 
       {% if person.mother or person.father %}
         <tr>
-          <td class="text-right text-primary small">Parents</td>
+          <td class="text-right text-primary small nowrap">Parents</td>
           <td>
             {% if person.mother %}
               <a href="{% url 'person' person.mother.id %}">{{ person.mother.name }}</a>
@@ -60,20 +60,36 @@
         </tr>
       {% endif %}
 
-      {% if person.siblings %}
-        <tr>
-          <td class="text-right text-primary small">Siblings</td>
-          <td>
-            {% for sibling in person.siblings %}
-              <a href="{% url 'person' sibling.id %}">{{ sibling.name }}</a>
-              {% if sibling.date_of_birth %}
-                <small class="text-muted pull-right">b.{{ sibling.date_of_birth|date:"Y" }}</small>
-              {% endif %}
-              <br style="clear: right;"/>
-            {% endfor %}
-          </td>
-        </tr>
-      {% endif %}
+      {% with full_siblings=person.full_siblings half_siblings=person.half_siblings %}
+        {% if full_siblings %}
+          <tr>
+            <td class="text-right text-primary small nowrap">Siblings</td>
+            <td>
+              {% for sibling in full_siblings %}
+                <a href="{% url 'person' sibling.id %}">{{ sibling.name }}</a>
+                {% if sibling.date_of_birth %}
+                  <small class="text-muted pull-right">b.{{ sibling.date_of_birth|date:"Y" }}</small>
+                {% endif %}
+                <br style="clear: right;"/>
+              {% endfor %}
+            </td>
+          </tr>
+        {% endif %}
+        {% if half_siblings %}
+          <tr{% if full_siblings %} class="flatten"{% endif %}>
+            <td class="text-right text-primary small nowrap">Half-siblings</td>
+            <td>
+              {% for sibling in half_siblings %}
+                <a href="{% url 'person' sibling.id %}">{{ sibling.name }}</a>
+                {% if sibling.date_of_birth %}
+                  <small class="text-muted pull-right">b.{{ sibling.date_of_birth|date:"Y" }}</small>
+                {% endif %}
+                <br style="clear: right;"/>
+              {% endfor %}
+            </td>
+          </tr>
+        {% endif %}
+      {% endwith %}
     </table>
   </div>
 

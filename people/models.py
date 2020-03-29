@@ -165,12 +165,19 @@ class Person(models.Model):
         else:
             return [(m.wife, m.date, m.location, m.divorced) for m in self.husband_of.order_by('date').all()]
 
-    def siblings(self):
-        '''Returns a list of this person's brothers and sisters, including
-        half-siblings.'''
+    def full_siblings(self):
+        '''Returns a list of this person's brothers and sisters, excluding
+        half-siblings. Siblings are assumed to be full siblings if only one
+        parent is known.'''
         return Person.objects.filter(~Q(id=self.id),
-                                     Q(~Q(father=None), father=self.father) | \
-                                     Q(~Q(mother=None), mother=self.mother)).order_by('birth__date')
+                                     Q(~Q(father=None), father=self.father, mother=self.mother) | \
+                                     Q(~Q(mother=None), mother=self.mother, father=self.father)).order_by('birth__date')
+
+    def half_siblings(self):
+        '''Returns a list of this person's half-brothers and half-sisters.'''
+        return Person.objects.filter(~Q(id=self.id),
+                                     Q(~Q(father=None), ~Q(mother=self.mother), father=self.father) | \
+                                     Q(~Q(mother=None), ~Q(father=self.father), mother=self.mother)).order_by('birth__date')
 
     def children(self):
         '''Returns a list of this person's children.'''
