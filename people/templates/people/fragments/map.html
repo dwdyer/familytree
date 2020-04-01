@@ -30,7 +30,7 @@
                                               var classes = 'marker-cluster';
                                               if (cluster.getChildCount() > 1)
                                               {
-                                                  classes += ' marker-cluster-' + ['small', 'medium', 'large'][Math.floor(Math.log10(count))];
+                                                  classes += ' marker-cluster-' + ['small', 'medium', 'large'][Math.min(2, Math.floor(Math.log10(count)))];
                                                   html = '<div><span><b>' + count + '</b></span></div>';
                                               }
                                               else
