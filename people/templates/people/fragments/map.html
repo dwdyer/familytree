@@ -6,7 +6,7 @@
     {% else %}
       var map = L.map('map', {zoomControl: false}).setView([{{ location.latitude }},{{ location.longitude }}],{{ zoom|default_if_none:"7" }});
     {% endif %}
-    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
+    L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}@2x?access_token={accessToken}',
                 {attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,\
                                <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,\
                                Imagery &copy; <a href="http://mapbox.com">Mapbox</a>',
@@ -14,7 +14,6 @@
                  maxZoom: 18,
                  zoomOffset: -1,
                  tileSize: 512,
-                 id: '{{ settings.MAPBOX_PROJECT_ID }}',
                  accessToken: '{{ settings.MAPBOX_ACCESS_TOKEN }}'}).addTo(map);
     {% if locations %}
       var markers = L.markerClusterGroup({showCoverageOnHover: false,
