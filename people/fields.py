@@ -51,6 +51,9 @@ class UncertainDate(object):
         else:
             return dateformat.format(self.lower_bound, 'Y')
 
+    def is_uncertain(self):
+        return self.day is None
+
 
 class UncertainDateField(models.Field):
     '''Stores a possibly incomplete date as a (partial) ISO format date

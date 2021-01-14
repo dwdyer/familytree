@@ -154,6 +154,11 @@ class Person(models.Model):
                 years -= 1
         return years
 
+    def is_age_exact(self):
+        '''If the date of birth isn't accurate then the age might be off by up
+        to a year.'''
+        return self.date_of_birth() is not None and not self.date_of_birth().is_uncertain()
+
     def year_range(self):
         return '{0}-{1}'.format(self.date_of_birth().year if self.date_of_birth() else '????',
                                 '' if not self.deceased else self.date_of_death().year if self.date_of_death() else '????')
