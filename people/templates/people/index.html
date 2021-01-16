@@ -18,18 +18,29 @@
   <br/>
   <div class="row">
     <div class="col-md-8">
-      <div class="panel-group">
-        {% include 'people/fragments/clouds.html' %}
+      <div class="panel-group" id="accordion1">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title">Map of Birthplaces</h3>
+            <h3 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion1" href="#collapse1">
+                Map of Birthplaces
+              </a>
+            </h3>
           </div>
-          {% include 'people/fragments/map.html' with zoom=6 %}
+          <div id="collapse1" class="panel-collapse collapse in">
+            {% include 'people/fragments/map.html' with zoom=6 %}
+          </div>
         </div>
+        {% include 'people/fragments/clouds.html' with id='collapse2' parent='accordion1' %}
       </div>
     </div>
     <div class="col-md-4">
-      {% include 'people/fragments/accordion.html' %}
+      <div class="panel-group" id="accordion2">
+        {% include 'people/fragments/onthisday.html' with id='collapse3' parent='accordion2' %}
+        {% include 'people/fragments/birthplaces.html' with id='collapse4' parent='accordion2' %}
+        {% include 'people/fragments/names.html' with id='collapse5' parent='accordion2' %}
+        {% include 'people/fragments/tags.html' with id='collapse6' parent='accordion2' %}
+      </div>
     </div>
   </div>
 {% endblock %}

@@ -1,0 +1,16 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      <a data-toggle="collapse" data-parent="#{{ parent }}" href="#{{ id }}">Tags</a>
+    </h3>
+  </div>
+  <div id="{{ id }}" class="panel-collapse collapse">
+    <div class="panel-body">
+      <p>
+      {% for tag in tags %}
+        <a href="{% url 'tag' tag.slug %}" class="label label-primary">{{ tag.name }}</a>
+      {% endfor %}
+      </p>
+    </div>
+  </div>
+</div>
