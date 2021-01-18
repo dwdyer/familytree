@@ -25,7 +25,7 @@ def index(request):
         return redirect(reverse('surnames'))
 
     regions = Location.objects.raw('''SELECT ANY_VALUE(l.id) AS id, l.county_state_province AS name, c.name AS country_name,
-                                      c.country_code AS country_code, count(1) AS natives_count
+                                      c.country_code AS country_code, count(1) AS event_count
                                       FROM people_location l, people_person p, people_event e, people_country c
                                       WHERE p.birth_id = e.id AND e.location_id = l.id AND l.country_id = c.id AND p.blood_relative = 1
                                       GROUP BY l.county_state_province, c.id
@@ -37,14 +37,24 @@ def index(request):
     females = Person.objects.filter(gender='F', blood_relative=True)
     female_names = females.values('forename').annotate(Count('forename')).order_by('-forename__count', 'forename')
 
-    locations = Location.objects.raw('''SELECT l.id, l.name, l.latitude, l.longitude, COUNT(l.id) AS natives_count
-                                        FROM people_person p, people_event e, people_location l
-                                        WHERE p.birth_id = e.id AND e.location_id = l.id AND p.blood_relative
-                                        AND l.latitude IS NOT NULL AND l.longitude IS NOT NULL
-                                        GROUP BY l.id''')
+    birth_locations = Location.objects.raw('''SELECT l.id, l.name, l.latitude, l.longitude, COUNT(l.id) AS event_count
+                                              FROM people_person p, people_event e, people_location l
+                                              WHERE p.birth_id = e.id AND e.location_id = l.id AND p.blood_relative
+                                              AND l.latitude IS NOT NULL AND l.longitude IS NOT NULL
+                                              GROUP BY l.id''')
+    death_locations = Location.objects.raw('''SELECT l.id, l.name, l.latitude, l.longitude, COUNT(l.id) AS event_count
+                                              FROM people_person p, people_event e, people_location l
+                                              WHERE p.death_id = e.id AND e.location_id = l.id AND p.blood_relative
+                                              AND l.latitude IS NOT NULL AND l.longitude IS NOT NULL
+                                              GROUP BY l.id''')
+    burial_locations = Location.objects.raw('''SELECT l.id, l.name, l.latitude, l.longitude, COUNT(l.id) AS event_count
+                                               FROM people_person p, people_event e, people_location l
+                                               WHERE p.id = e.person_id AND e.event_type = {0} AND e.location_id = l.id AND p.blood_relative
+                                               AND l.latitude IS NOT NULL AND l.longitude IS NOT NULL
+                                               GROUP BY l.id'''.format(Event.BURIAL))
     min_lat = min_lng = 90
     max_lat = max_lng = -90
-    for location in locations:
+    for location in chain(birth_locations, death_locations, burial_locations):
         min_lat = min(location.latitude, min_lat)
         max_lat = max(location.latitude, max_lat)
         min_lng = min(location.longitude, min_lng)
@@ -65,7 +75,9 @@ def index(request):
                    'male_names': male_names[:10],
                    'female_names': female_names[:10],
                    'regions': regions,
-                   'locations': locations,
+                   'locations': {'born': birth_locations,
+                                 'died': death_locations,
+                                 'buried': burial_locations},
                    'tags': tags,
                    'map_area' : ((min_lat, min_lng), (max_lat, max_lng)),
                    'today': today,
@@ -247,7 +259,7 @@ def _people_map(request, people, title):
             min_lng = min(location.longitude, min_lng)
             max_lng = max(location.longitude, max_lng)
     for location in counts.keys():
-        location.natives_count = counts.get(location)
+        location.event_count = counts.get(location)
     return render(request,
                   'people/map.html',
                   {'title': title,

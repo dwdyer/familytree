@@ -4,6 +4,40 @@
 <script src="//unpkg.com/leaflet.markercluster@1.0.0/dist/leaflet.markercluster.js"></script>
 <link rel="stylesheet" href="//unpkg.com/leaflet.markercluster@1.0.0/dist/MarkerCluster.Default.css" />
 <link rel="stylesheet" href="//unpkg.com/leaflet.markercluster@1.0.0/dist/MarkerCluster.css" />
+<script>
+  function clusterIcon(cluster)
+  {
+      var children = cluster.getAllChildMarkers();
+      var count = 0;
+      for (var i = 0; i < children.length; i++)
+      {
+          count += children[i].people_count;
+      }
+      var html;
+      var classes = 'marker-cluster';
+      if (cluster.getChildCount() > 1)
+      {
+          classes += ' marker-cluster-' + ['small', 'medium', 'large'][Math.min(2, Math.floor(Math.log10(count)))];
+          html = '<div><span><b>' + count + '</b></span></div>';
+      }
+      else
+      {
+          classes += ' marker-simple';
+          html = '<div><small>' + count + '</small></div>';
+      }
+      return L.divIcon({html: html, className: classes, iconSize: new L.Point(40, 40)});
+  }
+
+  function addMarker(markers, lat, lng, place, region, type, count, url)
+  {
+    var marker = L.marker([lat, lng]);
+    marker.people_count = count;
+    marker.bindPopup(
+      '<a href="' + url + '">' + place + '</a><br/>' + region + '<br/>\
+       <small class="text-muted">' + count + ' ' + (count == 1 ? 'person' : 'people') + ' ' + type + ' here</small>');
+    markers.addLayer(marker);
+  }
+</script>
 {% endif %}
 {% if fullscreen %}
 <link rel="stylesheet" href="//api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css" />

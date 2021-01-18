@@ -23,12 +23,39 @@
           <div class="panel-heading">
             <h3 class="panel-title">
               <a data-toggle="collapse" data-parent="#accordion1" href="#collapse1">
-                Map of Birthplaces
+                Event Map
               </a>
+              <div class="pull-right">
+                <label class="radio-inline"><input type="radio" name="eventType" value="born" checked> Births</label>
+                <label class="radio-inline"><input type="radio" name="eventType" value="died"> Deaths</label>
+                <label class="radio-inline"><input type="radio" name="eventType" value="buried"> Burials</label>
+              </div>
             </h3>
           </div>
           <div id="collapse1" class="panel-collapse collapse in">
             {% include 'people/fragments/map.html' with zoom=6 %}
+            <script>
+              var layers = {};
+              function showEvents(type){
+                  for (var k in layers) { map.removeLayer(layers[k]); }
+                  map.addLayer(layers[type]);
+              }
+              $(document).ready(function(){
+                $('input:radio[name=eventType]').change(function() { showEvents(this.value); });
+                {% for type, places in locations.items %}
+                  var g = L.markerClusterGroup({showCoverageOnHover: false,
+                                                singleMarkerMode: true,
+                                                spiderfyOnMaxZoom: false,
+                                                maxClusterRadius: 70,
+                                                iconCreateFunction: clusterIcon});
+                  {% for l in places %}
+                    addMarker(g, {{ l.latitude }}, {{ l.longitude }}, '{{ l.name }}', '{{ l.county_state_province }}', '{{ type }}', {{ l.event_count|default:1 }}, '{% url 'location' l.id %}');
+                  {% endfor %}
+                  layers['{{ type }}'] = g;
+                {% endfor %}
+                showEvents('born');
+              });
+            </script>
           </div>
         </div>
         {% include 'people/fragments/clouds.html' with id='collapse2' parent='accordion1' %}
