@@ -53,6 +53,7 @@
                   {% endfor %}
                   layers['{{ type }}'] = g;
                 {% endfor %}
+                $('input:radio[name=eventType][value=born]').prop('checked', true);
                 showEvents('born');
               });
             </script>
