@@ -37,17 +37,20 @@ def index(request):
     females = Person.objects.filter(gender='F', blood_relative=True)
     female_names = females.values('forename').annotate(Count('forename')).order_by('-forename__count', 'forename')
 
-    birth_locations = Location.objects.raw('''SELECT l.id, l.name, l.latitude, l.longitude, COUNT(l.id) AS event_count
+    birth_locations = Location.objects.raw('''SELECT l.id, l.name, l.county_state_province, l.latitude, l.longitude,
+                                              COUNT(l.id) AS event_count
                                               FROM people_person p, people_event e, people_location l
                                               WHERE p.birth_id = e.id AND e.location_id = l.id AND p.blood_relative
                                               AND l.latitude IS NOT NULL AND l.longitude IS NOT NULL
                                               GROUP BY l.id''')
-    death_locations = Location.objects.raw('''SELECT l.id, l.name, l.latitude, l.longitude, COUNT(l.id) AS event_count
+    death_locations = Location.objects.raw('''SELECT l.id, l.name, l.county_state_province, l.latitude, l.longitude,
+                                              COUNT(l.id) AS event_count
                                               FROM people_person p, people_event e, people_location l
                                               WHERE p.death_id = e.id AND e.location_id = l.id AND p.blood_relative
                                               AND l.latitude IS NOT NULL AND l.longitude IS NOT NULL
                                               GROUP BY l.id''')
-    burial_locations = Location.objects.raw('''SELECT l.id, l.name, l.latitude, l.longitude, COUNT(l.id) AS event_count
+    burial_locations = Location.objects.raw('''SELECT l.id, l.name, l.county_state_province, l.latitude, l.longitude,
+                                               COUNT(l.id) AS event_count
                                                FROM people_person p, people_event e, people_location l
                                                WHERE p.id = e.person_id AND e.event_type = {0} AND e.location_id = l.id AND p.blood_relative
                                                AND l.latitude IS NOT NULL AND l.longitude IS NOT NULL
@@ -65,7 +68,7 @@ def index(request):
     # On this day
     today = date.today()
     lookup = today.strftime('-%m-%d')
-    events = sorted(chain(Event.objects.filter(date__endswith=lookup),
+    events = sorted(chain(Event.objects.filter(date__endswith=lookup, person__blood_relative=True),
                           Marriage.objects.filter(date__endswith=lookup)),
                     key=attrgetter('date'))
 
