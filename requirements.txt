@@ -27,4 +27,4 @@ s3transfer==0.1.11
 six==1.11.0
 sqlparse==0.3.0
 typing==3.5.2.2
-urllib3==1.24.2
+urllib3==1.26.5
