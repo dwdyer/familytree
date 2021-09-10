@@ -182,6 +182,17 @@ def ancestors_report_undead(request, person_id):
                    'list': Person.objects.select_related('birth')})
 
 
+def ancestors_report_unburied(request, person_id):
+    person = get_object_or_404(Person, id=person_id)
+    people = [p for p in person.ancestors() if p.deceased and not p.events.filter(event_type=Event.BURIAL).exists()]
+    title = 'Deceased ancestors of {0} with unknown burial details'.format(person.name())
+    return render(request,
+                  'people/people.html',
+                  {'title': title,
+                   'people': people,
+                   'list': Person.objects.select_related('birth')})
+
+
 def ancestors_report_maiden_names(request, person_id):
     person = get_object_or_404(Person, id=person_id)
     people = [p for p in person.ancestors() if p.has_missing_maiden_name()]
