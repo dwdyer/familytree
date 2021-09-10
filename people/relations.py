@@ -58,6 +58,11 @@ def closest_common_ancestor(person_ancestors, relative_ancestors):
     return (common_ancestor, person_distance, relative_distance)
 
 
+def are_related(person1, person2):
+    '''Return True if two people are blood relatives, False otherwise.'''
+    return not set(person1.ancestors()).isdisjoint(set(person2.ancestors()))
+
+
 def position(position):
     remainder = position % 10
     if remainder == 1 and position != 11:

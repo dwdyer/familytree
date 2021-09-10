@@ -27,32 +27,32 @@ def index(request):
     regions = Location.objects.raw('''SELECT ANY_VALUE(l.id) AS id, l.county_state_province AS name, c.name AS country_name,
                                       c.country_code AS country_code, count(1) AS event_count
                                       FROM people_location l, people_person p, people_event e, people_country c
-                                      WHERE p.birth_id = e.id AND e.location_id = l.id AND l.country_id = c.id AND p.blood_relative = 1
+                                      WHERE p.birth_id = e.id AND e.location_id = l.id AND l.country_id = c.id
                                       GROUP BY l.county_state_province, c.id
                                       ORDER BY count(1) DESC, l.county_state_province LIMIT 10''')
 
     surnames = _surnames()
-    males = Person.objects.filter(gender='M', blood_relative=True)
+    males = Person.objects.filter(gender='M')
     male_names = males.values('forename').annotate(Count('forename')).order_by('-forename__count', 'forename')
-    females = Person.objects.filter(gender='F', blood_relative=True)
+    females = Person.objects.filter(gender='F')
     female_names = females.values('forename').annotate(Count('forename')).order_by('-forename__count', 'forename')
 
     birth_locations = Location.objects.raw('''SELECT l.id, l.name, l.county_state_province, l.latitude, l.longitude,
                                               COUNT(l.id) AS event_count
                                               FROM people_person p, people_event e, people_location l
-                                              WHERE p.birth_id = e.id AND e.location_id = l.id AND p.blood_relative
+                                              WHERE p.birth_id = e.id AND e.location_id = l.id
                                               AND l.latitude IS NOT NULL AND l.longitude IS NOT NULL
                                               GROUP BY l.id''')
     death_locations = Location.objects.raw('''SELECT l.id, l.name, l.county_state_province, l.latitude, l.longitude,
                                               COUNT(l.id) AS event_count
                                               FROM people_person p, people_event e, people_location l
-                                              WHERE p.death_id = e.id AND e.location_id = l.id AND p.blood_relative
+                                              WHERE p.death_id = e.id AND e.location_id = l.id
                                               AND l.latitude IS NOT NULL AND l.longitude IS NOT NULL
                                               GROUP BY l.id''')
     burial_locations = Location.objects.raw('''SELECT l.id, l.name, l.county_state_province, l.latitude, l.longitude,
                                                COUNT(l.id) AS event_count
                                                FROM people_person p, people_event e, people_location l
-                                               WHERE p.id = e.person_id AND e.event_type = {0} AND e.location_id = l.id AND p.blood_relative
+                                               WHERE p.id = e.person_id AND e.event_type = {0} AND e.location_id = l.id
                                                AND l.latitude IS NOT NULL AND l.longitude IS NOT NULL
                                                GROUP BY l.id'''.format(Event.BURIAL))
     min_lat = min_lng = 90
@@ -68,7 +68,7 @@ def index(request):
     # On this day
     today = date.today()
     lookup = today.strftime('-%m-%d')
-    events = sorted(chain(Event.objects.filter(date__endswith=lookup, person__blood_relative=True),
+    events = sorted(chain(Event.objects.filter(date__endswith=lookup),
                           Marriage.objects.filter(date__endswith=lookup)),
                     key=attrgetter('date'))
 
@@ -91,8 +91,8 @@ def _surnames():
     query = '''SELECT surname, n AS count, v FROM
                  (SELECT IFNULL(canonical, surname) AS surname, COUNT(1) AS n, MAX(canonical IS NOT NULL) AS V
                   FROM people_person LEFT JOIN people_surnamevariant ON variant=surname
-                  WHERE blood_relative=1 GROUP BY IFNULL(canonical, surname) ORDER BY surname)
-               AS surnames WHERE n >= 2'''
+                  GROUP BY IFNULL(canonical, surname) ORDER BY surname)
+               AS surnames WHERE n >= 3'''
     with connection.cursor() as cursor:
         cursor.execute(query)
         return [(s[0], s[1], s[2]) for s in cursor.fetchall()]
@@ -461,7 +461,7 @@ def add_location(request):
 @public
 def surnames(request):
     with connection.cursor() as cursor:
-        # List all surnames for non-living blood relatives born over 100 years ago, where at least
+        # List all surnames for non-living people born over 100 years ago, where at least
         # two people share that name.
         today = date.today()
         hundred_years_ago = date(today.year - 100, today.month, today.day)
@@ -469,9 +469,9 @@ def surnames(request):
                           (SELECT IF(maiden_name != '' AND maiden_name IS NOT NULL, maiden_name, surname) AS s, COUNT(1) AS n
                            FROM people_person p LEFT JOIN people_event e
                            ON (e.person_id = p.id AND e.event_type = 0)
-                           WHERE deceased = 1 AND blood_relative = 1
-                           AND (date = '' OR date IS NULL OR date < '{0}') GROUP BY s)
-                          AS surnames WHERE n >= 2'''.format(hundred_years_ago))
+                           WHERE deceased = 1 AND (date = '' OR date IS NULL OR date < '{0}') 
+                           GROUP BY s)
+                          AS surnames WHERE n >= 2 ORDER BY s'''.format(hundred_years_ago))
         surnames = [(s[0], _locations_for_surname(s[0])) for s in cursor.fetchall()]
     return render(request,
                   'people/surnames.html',
@@ -482,7 +482,6 @@ def _locations_for_surname(surname):
     surname_filter = Q(events__person__maiden_name=surname) | (Q(events__person__maiden_name='') & Q(events__person__surname=surname))
     locations = Location.objects.filter(surname_filter,
                                         events__event_type__in=[0, 3],
-                                        events__person__blood_relative=True,
                                         events__person__deceased=True)
     # Exclude places that only relate to a single individual, unless that place is the
     # only one we know for anybody with that surname.

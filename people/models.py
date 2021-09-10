@@ -94,7 +94,6 @@ class Person(models.Model):
     birth = models.ForeignKey('Event', models.SET_NULL, null=True, blank=True, related_name='+')
     death = models.ForeignKey('Event', models.SET_NULL, null=True, blank=True, related_name='+')
     deceased = models.BooleanField(default=True)
-    blood_relative = models.BooleanField(default=True)
     mother = models.ForeignKey('self',
                                models.SET_NULL,
                                blank=True,

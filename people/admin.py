@@ -28,13 +28,13 @@ class EventInline(admin.TabularInline):
 class PersonAdmin(admin.ModelAdmin):
     fieldsets = [(None, {'fields': [('forename', 'middle_names', 'known_as'),
                                     ('surname', 'maiden_name'),
-                                    ('gender', 'blood_relative', 'deceased'),
+                                    ('gender', 'deceased'),
                                     ('mother', 'father'),
                                     'notes',
                                     ('tags', 'user')]})]
     list_display = ['full_name', 'gender', 'born', 'birth_location']
     list_display_links = ['full_name']
-    list_filter = ['blood_relative', BirthFilter, BaptismFilter, DeathFilter, BurialFilter,
+    list_filter = [BirthFilter, BaptismFilter, DeathFilter, BurialFilter,
                    'surname', 'gender', 'deceased']
     inlines = [EventInline]
     search_fields = ['surname', 'forename', 'middle_names', 'known_as', 'maiden_name', 'notes']

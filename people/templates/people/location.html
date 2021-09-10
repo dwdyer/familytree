@@ -82,7 +82,7 @@
         </thead>
         <tbody>
         {% for person in births %}
-          <tr class="{% if not person.blood_relative %}text-muted small{% endif %}">
+          <tr>
             <td data-sort-value="{{ person.date_of_birth.lower_bound|date:'Y-m-d' }}">{{ person.date_of_birth.short }}</td>
             <td>
               <a href="{% url 'person' person.id %}">{{ person.name }}</a>
@@ -119,10 +119,10 @@
         {% for marriage in marriages %}
           <tr>
             <td data-sort-value="{{ marriage.date.lower_bound|date:'Y-m-d' }}">{{ marriage.date.short }}</td>
-            <td{% if not marriage.husband.blood_relative %} class="text-muted small"{% endif %}>
+            <td>
               <a href="{% url 'person' marriage.husband.id %}">{{ marriage.husband.birth_name }}</a>
             </td>
-            <td{% if not marriage.wife.blood_relative %} class="text-muted small"{% endif %}>
+            <td>
               <a href="{% url 'person' marriage.wife.id %}">{{ marriage.wife.birth_name }}</a>
             </td>
           </tr>
@@ -144,7 +144,7 @@
         </thead>
         <tbody>
         {% for person in deaths %}
-          <tr{% if not person.blood_relative %} class="text-muted small"{% endif %}>
+          <tr>
             <td data-sort-value="{{ person.date_of_death.lower_bound|date:'Y-m-d' }}">{{ person.date_of_death.short }}</td>
             <td><a href="{% url 'person' person.id %}">{{ person.name }}</a></td>
             <td class="hidden-xs">{{ person.age|default_if_none:"Unknown" }}</td>
@@ -178,7 +178,7 @@
         </thead>
         <tbody>
         {% for person in burials %}
-          <tr{% if not person.blood_relative %} class="text-muted small"{% endif %}>
+          <tr>
             <td data-sort-value="{{ person.date_of_death.lower_bound|date:'Y-m-d' }}">{{ person.date_of_death.short }}</td>
             <td><a href="{% url 'person' person.id %}">{{ person.name }}</a></td>
             <td class="hidden-xs">{{ person.age|default_if_none:"Unknown" }}</td>

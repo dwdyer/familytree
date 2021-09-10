@@ -27,7 +27,7 @@
     </thead>
     <tbody>
     {% for person in people %}
-      <tr{% if not person.blood_relative %} class="text-muted small"{% endif %}>
+      <tr>
         <td><a href="{% url 'person' person.id %}">{{ person.name }}</a></td>
         <td>{{ person.year_range }}</td>
         <td class="hidden-xs">

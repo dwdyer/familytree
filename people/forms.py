@@ -108,7 +108,7 @@ class AddPersonForm(BootstrapModelForm):
 
     class Meta:
         model = Person
-        fields = ['gender', 'deceased', 'blood_relative',
+        fields = ['gender', 'deceased',
                   'forename', 'middle_names', 'known_as', 'surname', 'maiden_name',
                   'mother', 'father', 'notes', 'tags']
         field_classes = {'mother': PersonChoiceField,
