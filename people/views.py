@@ -385,6 +385,22 @@ def no_census(request, year):
                    'people': people,
                    'list': Person.objects.select_related('birth')})
 
+def unknown_maiden_names(request):
+    people = [p for p in Person.objects.all() if p.has_missing_maiden_name()]
+    return render(request,
+                  'people/people.html',
+                  {'title': 'Married women with unknown maiden names',
+                   'people': people,
+                   'list': Person.objects.select_related('birth')})
+
+def undead(request):
+    people = Person.objects.filter(deceased=True, death=None)
+    return render(request,
+                  'people/people.html',
+                  {'title': 'Deceased people with unknown death details',
+                   'people': people,
+                   'list': Person.objects.select_related('birth')})
+
 def _staff_only(user):
     return user.is_staff
 
