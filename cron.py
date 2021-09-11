@@ -6,7 +6,7 @@ class BackupsJob(CronJobBase):
 
     RUN_AT_TIMES = ['01:00']
     schedule = Schedule(run_at_times=RUN_AT_TIMES)
-    code = 'meta.cron.BackupsJob'
+    code = 'cron.BackupsJob'
 
     def do(self):
         management.call_command('dbbackup', '--quiet', '--compress', '--clean')
