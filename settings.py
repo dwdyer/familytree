@@ -93,16 +93,13 @@ INSTALLED_APPS = (
 )
 
 # TinyMCE configuration
-TINYMCE_DEFAULT_CONFIG = {'theme': 'advanced',
-                          'relative_urls': False,
-                          'plugins': 'paste,autoresize',
+TINYMCE_DEFAULT_CONFIG = {'relative_urls': False,
+                          'plugins': 'paste,link,lists',
                           'width': '100%',
                           'paste_text_sticky': True,
                           'paste_text_sticky_default': True,
                           'paste_text_linebreaktype': 'p',
-                          'content_css': '/static/people/css/tinymce.css',
-                          'theme_advanced_resizing': True,
-                          'theme_advanced_buttons1': 'bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,|,bullist,numlist,|,outdent,indent,|,link,unlink,|,sub,sup,charmap,|,undo,redo,|,cleanup,code'}
+                          'toolbar': 'bold italic underline strikethrough | alignleft aligncenter alignright | bullist numlist blockquote | link unlink | subscript superscript | undo redo'}
 
 # Taggit
 TAGGIT_TAGS_FROM_STRING = 'people.forms.tag_comma_splitter'

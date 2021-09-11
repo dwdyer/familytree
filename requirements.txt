@@ -13,7 +13,7 @@ django-settings-export==1.0.3
 django-storages==1.6.5
 django-stronghold==0.3.0
 django-taggit==1.5.1
-django-tinymce==2.7.0
+django-tinymce==3.3.0
 docutils==0.14
 easy-thumbnails==2.7.1
 idna==2.7
