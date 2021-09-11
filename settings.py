@@ -95,6 +95,7 @@ INSTALLED_APPS = (
 # TinyMCE configuration
 TINYMCE_DEFAULT_CONFIG = {'relative_urls': False,
                           'plugins': 'paste,link,lists',
+                          'language': 'en',
                           'width': '100%',
                           'paste_text_sticky': True,
                           'paste_text_sticky_default': True,
