@@ -15,6 +15,7 @@ DATABASES = {'default': {'ENGINE': 'django.db.backends.mysql',
                          'USER': 'familytree',
                          'PASSWORD': DATABASE_PASSWORD}}
 CONN_MAX_AGE = 0 if DEBUG else 21600 # 6-hour keep-alive (must be <= MySQL's default of 8 hours)
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Locale/iternationalisation
 TIME_ZONE = 'Europe/London'
@@ -47,6 +48,7 @@ TEMPLATES = [
                         'django.contrib.messages.context_processors.messages',
                         'django.template.context_processors.debug',
                         'django.template.context_processors.media',
+                        'django.template.context_processors.request',
                         'django.template.context_processors.static',
                         'django_settings_export.settings_export',
                     ]},

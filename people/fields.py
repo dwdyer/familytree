@@ -68,7 +68,7 @@ class UncertainDateField(models.Field):
         del kwargs['max_length']
         return name, path, args, kwargs
 
-    def from_db_value(self, value, expression, connection, context):
+    def from_db_value(self, value, expression, connection):
        return _parse_date_string(value)
 
     def to_python(self, value):
