@@ -404,6 +404,14 @@ def unknown_maiden_names(request):
                    'people': people,
                    'list': Person.objects.select_related('birth')})
 
+def unexpanded_initials(request):
+    people = [p for p in Person.objects.all() if len([i for i in p.middle_names.split() if len(i) == 1]) > 0]
+    return render(request,
+                  'people/people.html',
+                  {'title': 'People with unexpanded initials',
+                   'people': people,
+                   'list': Person.objects.select_related('birth')})
+
 def undead(request):
     people = Person.objects.filter(deceased=True, death=None)
     return render(request,

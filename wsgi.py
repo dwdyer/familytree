@@ -1,7 +1,7 @@
 import os, sys
 
 sys.path.append('/usr/share/familytree')
-sys.path.append('/usr/share/familytree-virtualenv/lib/python3.5/site-packages')
+sys.path.append('/usr/share/familytree-virtualenv/lib/python3.6/site-packages')
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 
 # This application object is used by the development server
