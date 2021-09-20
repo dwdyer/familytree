@@ -41,7 +41,7 @@ def _describe_offset(base, distance):
     if distance <= 2:
         return base
     else:
-        return ('Great-' if distance == 3 else 'Great(x{0})-'.format(distance - 2)) + base
+        return ('Great-' if distance == 3 else '{0}×Great-'.format(distance - 2)) + base
 
 
 def closest_common_ancestor(person_ancestors, relative_ancestors):

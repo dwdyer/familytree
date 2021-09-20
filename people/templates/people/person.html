@@ -11,7 +11,7 @@
 
 {% block content %}
   {% if expanded_relationship %}
-    {% include 'people/fragments/relationship.html' with relationship=expanded_relationship %}
+    {% include 'people/fragments/relationship.html' with relationship=expanded_relationship description=relationship %}
   {% endif %}
   <h1 class="page-header">
     {% if user.is_staff %}
