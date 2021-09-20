@@ -7,6 +7,7 @@ from django.db.models import Count, Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.views.decorators.http import require_POST
 from itertools import chain, groupby
 from math import pow
@@ -217,6 +218,7 @@ def ring_chart(request, person_id):
                   {'person': person, 'list': Person.objects.select_related('birth')}) 
 
 
+@xframe_options_sameorigin
 def ring_chart_svg(request, person_id):
     person = get_object_or_404(Person, id=person_id)
     rings = [[person]]
