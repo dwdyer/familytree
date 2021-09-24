@@ -1,0 +1,7 @@
+{% for person in people %}
+  <a href="{% url 'person' person.id %}">
+    {% if forloop.last or forloop.first and ancestor %}<b>{{ person.name }}</b>{% else %}{{ person.name }}{% endif %}
+  </a><br/>
+  <small class="text-muted">{{ person.year_range }}</small><br/>
+  {% if not forloop.last %}<span class="text-muted">|</span><br/>{% endif %}
+{% endfor %}
