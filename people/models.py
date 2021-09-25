@@ -350,7 +350,7 @@ class Person(models.Model):
         return self.tags.all().order_by('name')
 
     def has_missing_maiden_name(self):
-        return self.gender == 'F' and self.wife_of.count() > 0 and (self.maiden_name=='' or self.maiden_name==None)
+        return self.gender == 'F' and self.wife_of.filter(divorced=False).count() > 0 and (self.maiden_name=='' or self.maiden_name==None)
 
     def clean(self):
         if self.date_of_death() and not self.deceased:
