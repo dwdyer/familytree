@@ -302,17 +302,25 @@ class Person(models.Model):
         return annotated
 
     def expand_relationship(self, relative):
+        '''Returns a tuple containing the closest common ancestor(s) shared with
+        the specified relative (i.e. a list containing one or two people), a
+        list of all people separating this person from the first common ancestor 
+        (starting with the ancestor and ending with this person), and a list of
+        all people separating the relative from the common ancestor (starting
+        with the ancestor and ending with the relative). In the case of a direct
+        descendent/ancestor relationship, one of these two lists will contain
+        only the ancestor.'''
         distances = self._ancestor_distances()
         relative_distances = relative._ancestor_distances()
         if self in relative_distances:
-            root = self
+            root = [self]
         elif relative in distances:
-            root = relative
+            root = [relative]
         else:
             (root, _, _) = closest_common_ancestor(distances, relative_distances)
 
         ancestors = []
-        person = root
+        person = root[0]
         while person != self:
             ancestors.append(person)
             for child in person.children():
@@ -322,7 +330,7 @@ class Person(models.Model):
         ancestors.append(person)
 
         relative_ancestors = []
-        person = root
+        person = root[0]
         while person != relative:
             relative_ancestors.append(person)
             for child in person.children():
@@ -331,7 +339,7 @@ class Person(models.Model):
                     break
         relative_ancestors.append(person)
 
-        return (ancestors, relative_ancestors)
+        return (root, ancestors, relative_ancestors)
 
     def photos(self):
         '''Returns a list of all photos associated with this person.'''

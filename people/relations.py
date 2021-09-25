@@ -17,9 +17,9 @@ def describe_relative(person, relative, person_ancestor_distances={}, relative_a
                 return _describe_offset(base, distance)
 
         # Then check for shared ancestors.
-        (ancestor, distance1, distance2) = closest_common_ancestor(person_ancestor_distances,
-                                                                   relative_ancestor_distances)
-        if ancestor:
+        (ancestors, distance1, distance2) = closest_common_ancestor(person_ancestor_distances,
+                                                                    relative_ancestor_distances)
+        if ancestors:
             if distance1 == 1 and distance2 == 1:
                 return 'Sister' if relative.gender == 'F' else 'Brother'
             elif distance1 == 1:
@@ -45,17 +45,22 @@ def _describe_offset(base, distance):
 
 
 def closest_common_ancestor(person_ancestors, relative_ancestors):
-    '''Returns the closest common ancestor of two people, or None if they are
-    not blood relations.'''
-    common_ancestor = None
+    '''Returns the closest common ancestor(s) of two people, or None if they are
+    not blood relations. Result is a tuple containing the common ancestor(s) and
+    the number of generations separating the ancestor(s) from both people in the
+    relationship.'''
+    common_ancestors = None
     person_distance = 0
     relative_distance = 0
     for ancestor, distance in person_ancestors.items():
         if ancestor in relative_ancestors:
             distance2 = relative_ancestors[ancestor]
-            if common_ancestor == None or distance < person_distance or distance2 < relative_distance:
-                (common_ancestor, person_distance, relative_distance) = (ancestor, distance, distance2)
-    return (common_ancestor, person_distance, relative_distance)
+            if common_ancestors == None or distance < person_distance or distance2 < relative_distance:
+                (common_ancestors, person_distance, relative_distance) = ([ancestor], distance, distance2)
+            elif distance == person_distance and distance2 == relative_distance:
+                common_ancestors.append(ancestor)
+    common_ancestors.sort(key=lambda p:p.gender, reverse=True) # List male ancestor before female.
+    return (common_ancestors, person_distance, relative_distance)
 
 
 def are_related(person1, person2):

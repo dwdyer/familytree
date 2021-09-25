@@ -6,23 +6,26 @@
         <h4 class="modal-title">Relationship - {{ description }}</h4>
       </div>
       <div class="modal-body text-center">
-        {% if relationship.0|length == 1 %}
+        {% if relationship.1|length == 1 %}
+          {% include 'people/fragments/treeperson.html' with people=relationship.2 ancestor=True %}
+        {% elif relationship.2|length == 1 %}
           {% include 'people/fragments/treeperson.html' with people=relationship.1 ancestor=True %}
-        {% elif relationship.1|length == 1 %}
-          {% include 'people/fragments/treeperson.html' with people=relationship.0 ancestor=True %}
         {% else %}
-          {% with root=relationship.0|first %}
-            <a href="{% url 'person' root.id %}">{{ root.name }}</a><br/>
-            <small class="text-muted">{{ root.year_range }}</small><br/>
-            <span class="text-muted">|</span>
-            <div class="tree-span"></div>
-          {% endwith %}
+          {% for root in relationship.0 %}
+            <div class="tree-root">
+              <a href="{% url 'person' root.id %}">{{ root.name }}</a><br/>
+              <small class="text-muted">{{ root.year_range }}</small>
+            </div>
+          {% endfor %}
+          <br/>
+          <span class="text-muted">|</span>
+          <div class="tree-span"></div>
           <div class="row">
             <div class="col-xs-6">
-              {% include 'people/fragments/treeperson.html' with people=relationship.0|slice:"1:" ancestor=False %}
+              {% include 'people/fragments/treeperson.html' with people=relationship.1|slice:"1:" ancestor=False %}
             </div>
             <div class="col-xs-6">
-              {% include 'people/fragments/treeperson.html' with people=relationship.1|slice:"1:" ancestor=False %}
+              {% include 'people/fragments/treeperson.html' with people=relationship.2|slice:"1:" ancestor=False %}
             </div>
           </div>
         {% endif %}
