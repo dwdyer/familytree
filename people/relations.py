@@ -59,7 +59,7 @@ def closest_common_ancestor(person_ancestors, relative_ancestors):
                 (common_ancestors, person_distance, relative_distance) = ([ancestor], distance, distance2)
             elif distance == person_distance and distance2 == relative_distance:
                 common_ancestors.append(ancestor)
-    common_ancestors.sort(key=lambda p:p.gender, reverse=True) # List male ancestor before female.
+                common_ancestors.sort(key=lambda p:p.gender, reverse=True) # List male ancestor before female.
     return (common_ancestors, person_distance, relative_distance)
 
 
