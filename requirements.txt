@@ -24,7 +24,7 @@ opencage==1.2
 Pillow==9.3.0
 python-dateutil==2.6.1
 pytz==2018.7
-requests==2.26.0
+requests==2.31.0
 s3transfer==0.5.0
 six==1.11.0
 sqlparse==0.4.4
