@@ -21,7 +21,7 @@ xcode-select --install
 On Ubuntu, install these libraries first to ensure JPEG support is included:
 
 ```
-sudo apt-get install libfreetype6-dev libjpeg62 libjpeg62-dev libpng12-dev
+sudo apt-get install libfreetype6-dev libjpeg62 libjpeg62-dev libpng-dev
 ```
 
 Then install the project-specific Python libraries:
