@@ -2,7 +2,7 @@
 
 ## Python Virtual Environment
 
-This project requires Python 3.3 or later.
+This project requires Python 3.10 or later.
 
 ```
 mkdir ~/virtualenv
