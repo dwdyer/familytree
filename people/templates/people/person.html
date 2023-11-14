@@ -23,7 +23,7 @@
     {% endif %}
     {{ person.forename }} {{ person.middle_names }}
     {% if person.known_as %}"{{ person.known_as }}"{% endif %}
-    <a href="{% url 'surname' person.surname %}">{{ person.surname|upper }}</a>
+    <a href="{% url 'surname' person.surname %}">{{ person.surname_cap }}</a>
     {% if person.maiden_name %}
       <small>(n&eacute;e <a href="{% url 'surname' person.maiden_name %}">{{ person.maiden_name }}</a>)</small>
     {% endif %}

@@ -118,18 +118,30 @@ class Person(models.Model):
         if self.known_as:
             name = name + ' "{0}"'.format(self.known_as)
         if self.maiden_name != '':
-            return name + ' ' + (self.maiden_name if use_maiden_name else self.surname.upper() + u' (n\xe9e ' + self.maiden_name + ')')
+            return name + ' ' + (self.maiden_name if use_maiden_name else self.surname_cap() + u' (n\xe9e ' + self.birth_surname_cap() + ')')
         else:
-            return name + ' ' + self.surname.upper()
+            return name + ' ' + self.surname_cap()
 
     def given_names(self):
         return " ".join([self.forename, self.middle_names]) if self.middle_names else self.forename
 
+    def surname_cap(self):
+        '''Return current surname capitalised.'''
+        return self._capitalise_name(self.surname)
+
+    def _capitalise_name(self, name: str):
+        # Don't capitalise the 'c' in names that begin with 'Mc'.
+        return 'Mc{0}'.format(name[2:].upper()) if name.startswith('Mc') else name.upper()
+
     def birth_surname(self):
         return self.maiden_name if self.maiden_name else self.surname
 
+    def birth_surname_cap(self):
+        '''Return birth surname capitalised.'''
+        return self._capitalise_name(self.birth_surname())
+
     def birth_name(self):
-        return '{0} {1}'.format(self.given_names(), self.birth_surname().upper())
+        return '{0} {1}'.format(self.given_names(), self.birth_surname_cap())
 
     def date_of_birth(self):
         return self.birth.date if self.birth else None
@@ -304,7 +316,7 @@ class Person(models.Model):
     def expand_relationship(self, relative):
         '''Returns a tuple containing the closest common ancestor(s) shared with
         the specified relative (i.e. a list containing one or two people), a
-        list of all people separating this person from the first common ancestor 
+        list of all people separating this person from the first common ancestor
         (starting with the ancestor and ending with this person), and a list of
         all people separating the relative from the common ancestor (starting
         with the ancestor and ending with the relative). In the case of a direct
