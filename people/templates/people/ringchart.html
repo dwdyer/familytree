@@ -19,7 +19,7 @@
             </a>
           </div>
         </h1>
-        <object id="chart" type="image/svg+xml" data="{% url 'ring_chart_svg' person.id %}">
+        <object id="chart" type="image/svg+xml" data="{% url 'ring_chart_svg' person.id depth %}">
           Ancestors chart for {{ person.name }}
         </object>
       </div>

@@ -211,18 +211,22 @@ def ancestors_map(request, person_id):
     return _people_map(request, person.ancestors(), title)
 
 
-def ring_chart(request, person_id):
+def ring_chart(request, person_id, depth=10):
     person = get_object_or_404(Person, id=person_id)
     return render(request,
                   'people/ringchart.html',
-                  {'person': person, 'list': Person.objects.select_related('birth')}) 
+                  {'person': person,
+                   'depth': depth,
+                   'list': Person.objects.select_related('birth')})
 
 
 @xframe_options_sameorigin
-def ring_chart_svg(request, person_id):
+def ring_chart_svg(request, person_id, depth):
     person = get_object_or_404(Person, id=person_id)
     rings = [[person]]
-    while len(rings) < 10:
+    # Depth must be at least 2 rings, no more than 12.
+    depth = max(2, min(12, int(depth)))
+    while len(rings) < depth:
         (ring, count) = _next_ring(rings[-1])
         rings.append(ring)
     return render(request,
@@ -479,7 +483,7 @@ def surnames(request):
                           (SELECT IF(maiden_name != '' AND maiden_name IS NOT NULL, maiden_name, surname) AS s, COUNT(1) AS n
                            FROM people_person p LEFT JOIN people_event e
                            ON (e.person_id = p.id AND e.event_type = 0)
-                           WHERE deceased = 1 AND (date = '' OR date IS NULL OR date < '{0}') 
+                           WHERE deceased = 1 AND (date = '' OR date IS NULL OR date < '{0}')
                            GROUP BY s)
                           AS surnames WHERE n >= 2 ORDER BY s'''.format(hundred_years_ago))
         surnames = [(s[0], _locations_for_surname(s[0])) for s in cursor.fetchall()]

@@ -101,6 +101,12 @@
    .middle.spoke {font-size: 10px;}
    .outer.spoke {font-size: 8px;}
    .bold {font-weight: bold;}
+
+   text.centre {fill: #fff;}
+   .male circle {fill: #325d88 !important;}
+   .male .centre.extra {fill: #d9edf7 !important;}
+   .female circle {fill: #d9534f !important;}
+   .female .centre.extra {fill: #f2dede !important;}
   </style>
   {% for ring in rings %}
     {% for person in ring %}
@@ -226,9 +232,9 @@
         {% else %}
           <text x="{{ centre }}" y="{{ centre }}" class="centre">{{ person.forename }}</text>
         {% endif %}
-        <text x="{{ centre }}" y="{{ centre }}" dy="32" class="centre surname bold">{{ person.surname_cap }}</text>
+        <text x="{{ centre }}" y="{{ centre }}" dy="32" class="centre surname bold">{{ person.birth_surname_cap }}</text>
 
-        <text dy="-10" class="extra">
+        <text dy="-10" class="centre extra">
           <textPath xlink:href="#text-circle" startOffset="25%">
             Born {{ person.birth.date.short }}
             {% if person.birth_location %}- {{ person.birth_location }}{% endif %}
