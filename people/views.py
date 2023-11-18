@@ -496,7 +496,7 @@ def _locations_for_surname(surname):
     surname_filter = Q(events__person__maiden_name=surname) | (Q(events__person__maiden_name='') & Q(events__person__surname=surname))
     locations = Location.objects.filter(surname_filter,
                                         events__event_type__in=[0, 3],
-                                        events__person__deceased=True).order_by('county_state_province')
+                                        events__person__deceased=True).order_by('country', 'county_state_province', 'name')
     # Exclude places that only relate to a single individual, unless that place is the
     # only one we know for anybody with that surname.
     if locations.count() > 1:
