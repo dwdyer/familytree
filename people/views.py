@@ -418,6 +418,14 @@ def unexpanded_initials(request):
                    'people': people,
                    'list': Person.objects.select_related('birth')})
 
+def unborn(request):
+    people = Person.objects.filter(birth__location=None)
+    return render(request,
+                  'people/people.html',
+                  {'title': 'People with unknown or incomplete birth details',
+                   'people': people,
+                   'list': Person.objects.select_related('birth')})
+
 def undead(request):
     people = Person.objects.filter(deceased=True, death=None)
     return render(request,

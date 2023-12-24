@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^report/alive/(?P<year>\d+)/no-census/$', views.no_census, name='no_census'),
     url(r'^report/maiden-names/$', views.unknown_maiden_names, name='maiden_names'),
     url(r'^report/initials/$', views.unexpanded_initials, name='initials'),
+    url(r'^report/unborn/$', views.unborn, name='unborn'),
     url(r'^report/undead/$', views.undead, name='undead'),
     url(r'^person/(?P<person_id>\d+)/ancestors/map/$', views.ancestors_map, name='ancestors_map'),
     url(r'^person/(?P<person_id>\d+)/ancestors/ringchart/$', views.ring_chart, name='ring_chart'),
