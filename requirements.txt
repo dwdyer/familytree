@@ -21,7 +21,7 @@ jmespath==0.9.3
 mysqlclient==2.2.0
 olefile==0.44
 opencage==2.3.0
-Pillow==10.0.1
+Pillow==10.2.0
 python-dateutil==2.8.2
 pytz==2018.7
 requests==2.31.0
