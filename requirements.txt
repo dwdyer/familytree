@@ -16,7 +16,7 @@ django-taggit==1.5.1
 django-tinymce==3.4.0
 docutils==0.14
 easy-thumbnails==2.8.5
-idna==2.7
+idna==3.7
 jmespath==0.9.3
 mysqlclient==2.2.0
 olefile==0.44
