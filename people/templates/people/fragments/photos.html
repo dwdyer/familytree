@@ -8,7 +8,9 @@
           <img src="{% thumbnail photo.image 155x155 crop="scale" %}" alt="Thumbnail" />
           <div class="caption text-center small">
             {{ photo.caption }}<br/>
-            <em class="text-muted">{{ photo.date|date:"F Y" }}</em>
+            <em class="text-muted">
+              {% if photo.date.month %}{{ photo.date|date:"F Y" }}{% else %}{{ photo.date|date:"Y" }}{% endif %}
+            </em>
           </div>
         </a>
       </div>
