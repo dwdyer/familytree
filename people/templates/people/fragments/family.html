@@ -7,8 +7,8 @@
       {% if person.spouses %}
         <tr>
           <td class="text-right text-primary small">
-            {% ifequal person.gender 'F' %}Husband{{ person.spouses|length|pluralize }}{% endifequal %}
-            {% ifequal person.gender 'M' %}Wi{{ person.spouses|length|pluralize:"fe,ves"}}{% endifequal %}
+            {% if person.gender == 'F' %}Husband{{ person.spouses|length|pluralize }}{% endif %}
+            {% if person.gender == 'M' %}Wi{{ person.spouses|length|pluralize:"fe,ves"}}{% endif %}
           </td>
           <td>
             {% for spouse, date, location, divorced in person.spouses %}
