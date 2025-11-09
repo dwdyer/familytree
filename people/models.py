@@ -112,6 +112,12 @@ class Person(models.Model):
     # information relevant to their own relationships.
     user = models.OneToOneField(User, models.SET_NULL, blank=True, null=True)
 
+    def is_male(self):
+        return self.gender == 'M'
+
+    def is_female(self):
+        return self.gender == 'F'
+
     def name(self, use_middle_names=True, use_maiden_name=False):
         '''Returns the full name of this person.'''
         name = ' '.join([self.forename, self.middle_names]) if use_middle_names and self.middle_names else self.forename
@@ -130,15 +136,18 @@ class Person(models.Model):
         return self._capitalise_name(self.surname)
 
     def _capitalise_name(self, name: str):
-        # Don't capitalise the 'c' in names that begin with 'Mc'.
-        return 'Mc{0}'.format(name[2:].upper()) if name.startswith('Mc') else name.upper()
+        if name is None:
+            return None
+        else:
+            # Don't capitalise the 'c' in names that begin with 'Mc'.
+            return 'Mc{0}'.format(name[2:].upper()) if name.startswith('Mc') else name.upper()
 
     def birth_surname(self):
-        return self.maiden_name if self.maiden_name else self.surname
+        return self.maiden_name if self.is_female() and self.married() else self.surname
 
     def birth_surname_cap(self):
         '''Return birth surname capitalised.'''
-        return self._capitalise_name(self.birth_surname())
+        return self._capitalise_name(self.birth_surname()) or '?'
 
     def birth_name(self):
         return '{0} {1}'.format(self.given_names(), self.birth_surname_cap())
@@ -180,7 +189,7 @@ class Person(models.Model):
 
     def spouses(self):
         '''Return a list of anybody that this person is or was married to.'''
-        if self.gender == 'F':
+        if self.is_female():
             return [(m.husband, m.date, m.location, m.divorced) for m in self.wife_of.order_by('date').all()]
         else:
             return [(m.wife, m.date, m.location, m.divorced) for m in self.husband_of.order_by('date').all()]
@@ -205,7 +214,11 @@ class Person(models.Model):
         return offspring.select_related('birth', 'death').order_by('birth__date')
 
     def marriages(self):
-        return self.husband_of.all() if self.gender == 'M' else self.wife_of.all()
+        return self.husband_of.all() if self.is_male() else self.wife_of.all()
+
+    def married(self):
+        '''Return true if this person is or was married.'''
+        return self.marriages().count() > 0
 
     def timeline(self):
         timeline = list(self.events.all()) + list(self.marriages().filter(date__isnull=False))
@@ -362,7 +375,7 @@ class Person(models.Model):
         return self.tags.all().order_by('name')
 
     def has_missing_maiden_name(self):
-        return self.gender == 'F' and self.wife_of.filter(divorced=False).count() > 0 and (self.maiden_name=='' or self.maiden_name==None)
+        return self.is_female() and self.wife_of.filter(divorced=False).count() > 0 and (self.maiden_name=='' or self.maiden_name==None)
 
     def clean(self):
         if self.date_of_death() and not self.deceased:

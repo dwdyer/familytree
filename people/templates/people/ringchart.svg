@@ -96,6 +96,7 @@
    .middle {font-size: 18px;}
    .middle.extra {font-size: 12px;}
    .outer {font-size: 14px;}
+   .outer.extra {font-size: 10px;}
    .spoke {dominant-baseline: middle;}
    .inner.spoke {font-size: 12px;}
    .middle.spoke {font-size: 10px;}
@@ -152,26 +153,33 @@
                     {{ person.birth.date.short }}
                     {% if person.death %} - {{ person.death.date.short }}{% endif %}
                   {% else %}
-                    {{ person.year_range }}
+                    {{ person.birth.date.year }}
+                    {% if person.death %} - {{ person.death.date.year }}{% endif %}
                   {% endif %}
                 </textPath>
               </text>
             {% elif forloop.parentloop.revcounter0 == 5 %}
-              <text dy="{% if person.middle_names %}-52{% else %}-34{% endif %}" class="outer">
+              <text dy="{% if person.middle_names %}-60{% else %}-42{% endif %}" class="outer">
                 <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
                   {{ person.forename }}
                 </textPath>
               </text>
               {% if person.middle_names %}
-                <text dy="-34" class="outer">
+                <text dy="-42" class="outer">
                   <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
                     {{ person.middle_names }}
                   </textPath>
                 </text>
               {% endif %}
-              <text dy="-15" class="outer bold">
+              <text dy="-23" class="outer bold">
                 <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
                   {{ person.birth_surname_cap }}
+                </textPath>
+              </text>
+              <text dy="-8" class="outer extra">
+                <textPath xlink:href="#text{{ forloop.parentloop.counter }}_{{ forloop.counter }}" startOffset="50%">
+                    {{ person.birth.date.year }}
+                    {% if person.death %} - {{ person.death.date.year }}{% endif %}
                 </textPath>
               </text>
             {% elif forloop.parentloop.revcounter0 == 6 %}
