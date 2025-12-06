@@ -30,4 +30,4 @@ six==1.16.0
 sqlparse==0.5.0
 typing==3.5.2.2
 typing-extensions==4.15.0
-urllib3==2.5.0
+urllib3==2.6.0
