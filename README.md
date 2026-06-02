@@ -11,7 +11,7 @@ virtualenv -p <path_to>/python3 ~/virtualenv/familytree
 ```
 
 Before installing the requirements, ensure the pre-requisites for Pillow (a
-Python imaging library) are satisfied. On OS X run the following command to
+Python imaging library) are satisfied. On MacOS run the following command to
 ensure X11 headers are available (assumes Xcode is installed):
 
 ```
@@ -30,6 +30,13 @@ Then install the project-specific Python libraries:
 pip install -r ~/familytree/requirements.txt
 ```
 
+### MacOS Issues
+
+Ensure `pkg-config` is available by installing it with Homebrew and making it available on
+the `$PATH`.
+
+If you have problems with loading MySQL libraries on MacOS, this may help:
+https://stackoverflow.com/a/61211114/5171
 
 ## Database Setup (MySQL)
 

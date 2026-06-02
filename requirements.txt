@@ -12,13 +12,13 @@ django-mathfilters==0.3.0
 django-settings-export==1.0.3
 django-storages==1.11.1
 django-stronghold==0.3.0
-django-taggit==1.5.1
+django-taggit==6.1.0
 django-tinymce==4.1.0
 docutils==0.14
 easy-thumbnails==2.8.5
 idna==3.15
 jmespath==0.9.3
-mysqlclient==2.2.7
+mysqlclient==2.2.8
 olefile==0.44
 opencage==2.3.0
 Pillow==12.2.0
