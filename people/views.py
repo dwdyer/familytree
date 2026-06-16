@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import date
+from datetime import date, datetime
 from django.contrib.auth.decorators import user_passes_test
 from django.core.serializers import serialize
 from django.db import connection
@@ -380,7 +380,7 @@ def on_this_day(request, month, day):
     return render(request,
                   'people/onthisday.html',
                   {'on_this_day': events,
-                   'date': dateformat.format(date.strptime('2024{0}'.format(lookup), '%Y-%m-%d'), 'jS F'),
+                   'date': dateformat.format(datetime.strptime('2024{0}'.format(lookup), '%Y-%m-%d'), 'jS F'),
                    'list': Person.objects.select_related('birth')})
 
 def alive_in_year(request, year):
