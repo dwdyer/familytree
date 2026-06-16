@@ -123,7 +123,7 @@ class Person(models.Model):
         name = ' '.join([self.forename, self.middle_names]) if use_middle_names and self.middle_names else self.forename
         if self.known_as:
             name = name + ' "{0}"'.format(self.known_as)
-        if self.maiden_name != '':
+        if self.maiden_name != '' and self.maiden_name != self.surname:
             return name + ' ' + (self.maiden_name if use_maiden_name else self.surname_cap() + u' (n\xe9e ' + self.birth_surname_cap() + ')')
         else:
             return name + ' ' + self.surname_cap()
