@@ -6,6 +6,7 @@ from django.db import connection
 from django.db.models import Count, Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import dateformat
 from django.urls import reverse
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.views.decorators.http import require_POST
@@ -369,6 +370,17 @@ def tag(request, slug):
                   'people/people.html',
                   {'title': title,
                    'people': people,
+                   'list': Person.objects.select_related('birth')})
+
+def on_this_day(request, month, day):
+    lookup = '-{0}-{1}'.format(month, day)
+    events = sorted(chain(Event.objects.filter(date__endswith=lookup),
+                          Marriage.objects.filter(date__endswith=lookup)),
+                    key=attrgetter('date'))
+    return render(request,
+                  'people/onthisday.html',
+                  {'on_this_day': events,
+                   'date': dateformat.format(date.strptime('2024{0}'.format(lookup), '%Y-%m-%d'), 'jS F'),
                    'list': Person.objects.select_related('birth')})
 
 def alive_in_year(request, year):

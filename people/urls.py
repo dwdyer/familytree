@@ -37,6 +37,7 @@ urlpatterns = [
     re_path(r'^surname/(?P<surname>[\w\W]+)/$', views.surname, name='surname'),
     re_path(r'^forename/(?P<forename>[\w\W]+)/$', views.forename, name='forename'),
     re_path(r'^tag/(?P<slug>[\w-]+)/$', views.tag, name='tag'),
+    re_path(r'^on-this-day/(?P<month>\d+)/(?P<day>\d+)/$', views.on_this_day, name='on_this_day'),
     path('person/add/', views.add_person, name='add_person'),
     path('location/add/', views.add_location, name='add_location'),
 

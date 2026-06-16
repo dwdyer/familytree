@@ -1,0 +1,30 @@
+{% extends "people/base.html" %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+{% block head %}
+{% endblock %}
+
+{% block content %}
+  <h1 class="page-header">On This Day <small>{{ date }}</small></h1>
+  <table class="table">
+    {% for event in on_this_day %}
+      <tr>
+        <td class="text-primary">{{ event.date|date:"Y" }}</td>
+        <td>
+          {% if event.event_type == 2 %}
+            <a href="{% url 'person' event.husband.id %}">{{ event.husband.birth_name }}</a>
+            married
+            <a href="{% url 'person' event.wife.id %}">{{ event.wife.birth_name }}</a>
+          {% else %}
+            <a href="{% url 'person' event.person_id %}">{{ event.person.name }}</a>
+            {% if event.event_type != 3 %}was {% endif %}{{ event.verb }}
+          {% endif %}
+          {% if event.location %}
+            in {% include 'people/fragments/location.html' with location=event.location %}
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}
+
