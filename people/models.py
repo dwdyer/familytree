@@ -15,7 +15,10 @@ from taggit.managers import TaggableManager
 from taggit.models import Tag, TaggedItem
 from tinymce.models import HTMLField
 import os
+import logging
 import settings
+
+logger = logging.getLogger(__name__)
 
 class Country(models.Model):
     name = models.CharField(max_length=50)
@@ -56,7 +59,7 @@ class Location(models.Model):
             except Exception as e:
                 # If something goes wrong, there's not much we can do, just leave
                 # the coordinates blank.
-                print (e)
+                logger.exception("Geocoding failed for %s: %s", query, e)
         super(Location, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
